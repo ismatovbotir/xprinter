@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->enum('role',['admin','owner','user','client'])->default('owner');
             $table->foreignUuid('company_id')->nullable()->constrained();
-
+            $table->string('lang')->default('uz');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
