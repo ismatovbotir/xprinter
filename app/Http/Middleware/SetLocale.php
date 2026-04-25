@@ -10,9 +10,11 @@ class SetLocale
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $lang = auth()->user()?->lang
-            ?? session('lang')
-            ?? 'uz';
+        $user = auth()->user();
+
+        $lang = $user?->role === 'producer'
+            ? ($user->lang ?? 'en')
+            : ($user?->lang ?? session('lang') ?? 'uz');
 
         app()->setLocale($lang);
 

@@ -35,7 +35,8 @@ class CityController extends Controller
     public function create(): View
     {
         $countries = Country::with('translations')->get();
-        return view('admin.cities.form', compact('countries'));
+        $regions   = Region::with('translations')->get();
+        return view('admin.cities.form', compact('countries', 'regions'));
     }
 
     public function store(Request $request): RedirectResponse

@@ -47,7 +47,36 @@ body {
     top: 0; left: 0;
     z-index: 40;
     overflow-y: auto;
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+.sidebar.open { transform: translateX(0); }
+
+/* ── Overlay (mobile) ────────────────────────────────────── */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 27, 61, 0.4);
+    backdrop-filter: blur(2px);
+    z-index: 39;
+}
+.sidebar-overlay.open { display: block; }
+
+/* ── Hamburger ───────────────────────────────────────────── */
+.hamburger {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: border-color 0.15s;
+}
+.hamburger:hover { border-color: var(--line-hi); }
+.hamburger svg { width: 18px; height: 18px; stroke: var(--ink-soft); fill: none; stroke-width: 2; stroke-linecap: round; }
 
 .sidebar-logo {
     padding: 20px 24px;
@@ -200,7 +229,7 @@ body {
 
 /* ── Main ────────────────────────────────────────────────── */
 .main {
-    margin-left: 260px;
+    margin-left: 0;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -210,11 +239,11 @@ body {
 .header {
     background: var(--surface);
     border-bottom: 1px solid var(--line);
-    padding: 0 32px;
-    height: 64px;
+    padding: 0 16px;
+    height: 56px;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 10px;
     position: sticky;
     top: 0;
     z-index: 30;
@@ -226,7 +255,7 @@ body {
 .bc-sep { color: var(--faint); }
 
 .header-search {
-    display: flex;
+    display: none;
     align-items: center;
     gap: 8px;
     background: var(--bg-soft);
@@ -263,10 +292,10 @@ body {
 .hbtn svg { width: 16px; height: 16px; stroke: var(--ink-soft); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
 /* ── Content ─────────────────────────────────────────────── */
-.content { padding: 32px; flex: 1; }
+.content { padding: 16px; flex: 1; }
 
 /* ── Page header ─────────────────────────────────────────── */
-.page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; }
+.page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
 .page-title { font-family: 'Unbounded', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); }
 .page-subtitle { font-size: 13.5px; color: var(--muted); margin-top: 4px; }
 
@@ -291,7 +320,7 @@ body {
 .btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
 /* ── Stat cards ──────────────────────────────────────────── */
-.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+.stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
 
 .stat-card {
     background: var(--surface);
@@ -365,3 +394,38 @@ tbody td { padding: 13px 22px; font-size: 13.5px; color: var(--ink-soft); vertic
 .flash { padding: 12px 18px; border-radius: 12px; font-size: 13.5px; font-weight: 500; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
 .flash-success { background: #E0FAF3; color: #007A5A; border: 1px solid #B2EFD8; }
 .flash-error   { background: #FFEBEE; color: #B0001E; border: 1px solid #FFCDD2; }
+
+/* ── Filter bar ──────────────────────────────────────────── */
+.filter-bar { display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap; }
+.filter-search { display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:0 14px;height:40px;flex:1;max-width:360px;transition:border-color 0.15s; }
+.filter-search:focus-within { border-color:var(--blue); }
+.filter-search svg { width:14px;height:14px;stroke:var(--muted);fill:none;stroke-width:2;flex-shrink:0; }
+.filter-search input { border:none;background:transparent;font-family:'Manrope',sans-serif;font-size:13px;color:var(--ink);outline:none;width:100%; }
+.filter-search input::placeholder { color:var(--faint); }
+.filter-select { height:40px;padding:0 12px;border:1.5px solid var(--line);border-radius:10px;font-family:'Manrope',sans-serif;font-size:13px;color:var(--ink);background:var(--surface);outline:none;cursor:pointer;transition:border-color 0.15s; }
+.filter-select:focus { border-color:var(--blue); }
+
+/* ── Forms ───────────────────────────────────────────────── */
+.form-grid { display:grid;grid-template-columns:1fr 1fr;gap:20px; }
+.form-group { display:flex;flex-direction:column;gap:6px; }
+.form-label { font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted); }
+.form-input { padding:10px 14px;border:1.5px solid var(--line);border-radius:10px;font-family:'Manrope',sans-serif;font-size:13.5px;color:var(--ink);background:var(--surface);outline:none;transition:border-color 0.15s,box-shadow 0.15s;width:100%;box-sizing:border-box; }
+.form-input:focus { border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,102,255,0.08); }
+.form-input.error { border-color:#D32F2F; }
+select.form-input { cursor:pointer; }
+.form-hint { font-size:12px;color:var(--muted); }
+.form-error { font-size:12px;color:#D32F2F;font-weight:500; }
+.form-actions { display:flex;gap:10px;padding-top:8px; }
+.table-footer { padding:16px 22px;border-top:1px solid var(--line); }
+
+/* ── Desktop (1024px+) ───────────────────────────────────── */
+@media (min-width: 1024px) {
+    .sidebar    { transform: translateX(0); }
+    .hamburger  { display: none; }
+    .main       { margin-left: 260px; }
+    .header     { padding: 0 32px; height: 64px; gap: 16px; }
+    .header-search { display: flex; }
+    .content    { padding: 32px; }
+    .page-header { margin-bottom: 28px; flex-wrap: nowrap; }
+    .stats-grid { grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+}

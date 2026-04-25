@@ -22,5 +22,7 @@ class DatabaseSeeder extends Seeder
                 'password' => 'qwerty&123456789',
             ]
         );
+
+        $this->call(UiTranslationSeeder::class);
     }
 }

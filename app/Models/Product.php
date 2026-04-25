@@ -36,4 +36,9 @@ class Product extends Model
     {
         return $this->hasMany(ProductTranslation::class);
     }
+
+    public function serials(): HasMany
+    {
+        return $this->hasMany(ProductSerial::class);
+    }
 }

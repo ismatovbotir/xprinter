@@ -6,12 +6,27 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property string $id
+ * @property string $name
+ * @property string|null $brand
+ * @property string $inn
+ * @property string|null $phone
+ * @property string|null $legal_form
+ * @property string|null $logo
+ * @property string|null $slug
+ * @property array $types
+ * @property string $status
+ * @property string $vat_status
+ * @property string $manufacturer_status
+ */
 class Company extends Model
 {
     use HasUuids;
 
     protected $fillable = [
-        'name', 'brand', 'inn', 'legal_form', 'logo', 'slug', 'types', 'status',
+        'name', 'brand', 'inn', 'phone', 'legal_form', 'logo', 'slug',
+        'types', 'status', 'vat_status', 'manufacturer_status',
     ];
 
     protected $casts = [
@@ -46,5 +61,15 @@ class Company extends Model
     public function isApproved(): bool
     {
         return $this->status === 'approved';
+    }
+
+    public function isAuthorized(): bool
+    {
+        return \in_array($this->manufacturer_status, ['authorized_partner', 'authorized_distributor'], true);
+    }
+
+    public function serials(): HasMany
+    {
+        return $this->hasMany(ProductSerial::class);
     }
 }

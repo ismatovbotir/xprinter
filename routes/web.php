@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ParameterController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RegionController;
+use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -58,4 +59,10 @@ Route::prefix('admin')
 
         // Users
         Route::resource('users', UserController::class);
+
+        // UI Translations
+        Route::get('translations',          [TranslationController::class, 'index'])->name('translations.index');
+        Route::post('translations',         [TranslationController::class, 'store'])->name('translations.store');
+        Route::post('translations/add-key', [TranslationController::class, 'addKey'])->name('translations.add-key');
+        Route::delete('translations/key',   [TranslationController::class, 'destroyKey'])->name('translations.destroy-key');
     });
