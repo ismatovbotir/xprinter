@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('city_id')->constrained();
             $table->string('name');
             $table->string('postal_code')->nullable();
-            $table->text('description');
+            $table->text('description')->nullable();
             $table->string('location')->nullable();
 
             $table->timestamps();

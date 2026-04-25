@@ -6,25 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('company_products', function (Blueprint $table) {
             $table->id();
             $table->foreignUuid('company_id')->constrained();
-            $table->foreignUuid('user_id')->constrained();
             $table->foreignId('product_id')->constrained();
-            
-
+            $table->boolean('is_available')->default(true);
+            $table->unsignedInteger('quantity')->nullable();
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('company_products');

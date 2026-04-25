@@ -6,27 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('names', function (Blueprint $table) {
+        Schema::create('parameter_translations', function (Blueprint $table) {
             $table->id();
-            $table->string('model');
-            $table->unsignedBigInteger('model_id');
-            $table->string('lang');
+            $table->foreignId('parameter_id')->constrained()->cascadeOnDelete();
+            $table->enum('lang', ['uz', 'ru']);
             $table->string('name');
-
+            $table->unique(['parameter_id', 'lang']);
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('names');
+        Schema::dropIfExists('parameter_translations');
     }
 };

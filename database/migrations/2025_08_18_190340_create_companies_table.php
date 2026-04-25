@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('companies', function (Blueprint $table) {
@@ -16,16 +13,15 @@ return new class extends Migration
             $table->string('name');
             $table->string('brand')->nullable();
             $table->string('inn')->nullable();
+            $table->string('legal_form')->nullable();
             $table->string('logo')->nullable();
             $table->string('slug')->unique();
-
+            $table->json('types')->nullable();
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('companies');
