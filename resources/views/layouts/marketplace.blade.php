@@ -274,5 +274,6 @@ function toggleSidebar() {
 }
 </style>
 
+@include('layouts._confirm-modal')
 </body>
 </html>

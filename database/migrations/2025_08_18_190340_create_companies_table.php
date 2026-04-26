@@ -22,6 +22,7 @@ return new class extends Migration
             $table->enum('vat_status', ['non_payer', 'payer'])->default('non_payer');
             $table->enum('manufacturer_status', ['none', 'authorized_partner', 'authorized_distributor'])->default('none');
             $table->text('admin_note')->nullable();
+            $table->string('website')->nullable();
             $table->string('token')->nullable();
             $table->timestamps();
         });

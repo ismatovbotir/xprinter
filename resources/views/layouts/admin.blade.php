@@ -1307,6 +1307,7 @@
 
     </div>
 
+    @include('layouts._confirm-modal')
     @livewireScripts
     @stack('scripts')
     <script>

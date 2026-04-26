@@ -4,18 +4,24 @@
     $catName = $activeCategory
         ? ($activeCategory->translations->firstWhere('lang', $locale)?->name ?? $activeCategory->slug)
         : null;
+
+    $metaTitle = $catName ?? 'Katalog';
+    $metaDesc  = $catName
+        ? "Xprinter {$catName} O'zbekistonda — rasmiy distribyutordan sotib oling. 12 oy kafolat, Toshkentga yetkazib berish."
+        : "Xprinter termoprinterlari katalogi — chek, etiket va mobil printerlar. O'zbekistonda rasmiy distribyutor.";
+    $metaKeys  = $catName
+        ? "{$catName} toshkent, xprinter {$catName}, termoprinter narxi"
+        : 'termoprinter katalog, chek printer, etiket printer, mobil printer, xprinter uzbekistan';
+    $ogTitle   = ($catName ? $catName . ' — ' : '') . 'Xprinter.uz Katalog';
+    $ogDesc    = $catName
+        ? "Xprinter {$catName} — O'zbekistonda rasmiy distribyutordan. 12 oy kafolat, tez yetkazib berish."
+        : "Xprinter termoprinterlari katalogi O'zbekistonda. Rasmiy distribyutor — chek, etiket va mobil printerlar.";
 @endphp
-@section('title',       $catName ?? 'Katalog')
-@section('description', $catName
-    ? "Xprinter {$catName} O'zbekistonda — rasmiy distribyutordan sotib oling. 12 oy kafolat, Toshkentga yetkazib berish."
-    : "Xprinter termoprinterlari katalogi — chek, etiket va mobil printerlar. O'zbekistonda rasmiy distribyutor.")
-@section('keywords',    $catName
-    ? "{$catName} toshkent, xprinter {$catName}, termoprinter narxi"
-    : 'termoprinter katalog, chek printer, etiket printer, mobil printer, xprinter uzbekistan')
-@section('og_title',    ($catName ? $catName . ' — ' : '') . 'Xprinter.uz Katalog')
-@section('og_description', $catName
-    ? "Xprinter {$catName} — O'zbekistonda rasmiy distribyutordan. 12 oy kafolat, tez yetkazib berish."
-    : "Xprinter termoprinterlari katalogi O'zbekistonda. Rasmiy distribyutor — chek, etiket va mobil printerlar.")
+@section('title',          $metaTitle)
+@section('description',    $metaDesc)
+@section('keywords',       $metaKeys)
+@section('og_title',       $ogTitle)
+@section('og_description', $ogDesc)
 
 @push('schema')
 @php

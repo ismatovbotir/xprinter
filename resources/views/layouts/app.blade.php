@@ -42,7 +42,7 @@
     {{-- ── LocalBusiness (all pages) ── --}}
     <script type="application/ld+json">
     {
-        "@context": "https://schema.org",
+        "@@context": "https://schema.org",
         "@type": "LocalBusiness",
         "name": "Xprinter.uz",
         "description": "O'zbekistonda Xprinter termoprinterlari rasmiy distribyutori. Chek, etiket va mobil printerlar.",

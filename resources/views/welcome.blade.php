@@ -9,7 +9,7 @@
 @push('schema')
 <script type="application/ld+json">
 {
-    "@context": "https://schema.org",
+    "@@context": "https://schema.org",
     "@type": "WebSite",
     "name": "Xprinter.uz",
     "url": "{{ url('/') }}",
@@ -26,7 +26,7 @@
 </script>
 <script type="application/ld+json">
 {
-    "@context": "https://schema.org",
+    "@@context": "https://schema.org",
     "@type": "WebPage",
     "name": "Xprinter.uz — Bosh sahifa",
     "url": "{{ url('/') }}",
