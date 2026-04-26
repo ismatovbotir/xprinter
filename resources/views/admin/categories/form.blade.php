@@ -115,7 +115,7 @@
           <td style="text-align:right">
             <form method="POST"
                   action="{{ route('admin.categories.parameters.detach', [$category, $param]) }}"
-                  onsubmit="return confirm('Parametrni olib tashlaysizmi?')">
+                  data-confirm="Parametrni olib tashlaysizmi?">
               @csrf @method('DELETE')
               <button type="submit" class="btn btn-ghost"
                       style="padding:4px 10px;font-size:12px;color:var(--red);border-color:var(--red)">

@@ -106,7 +106,7 @@
             </td>
             <td>
               <form method="POST" action="{{ route('admin.translations.destroy-key') }}"
-                    onsubmit="return confirm('{{ $key }} kalitini o\'chirishni tasdiqlaysizmi?')">
+                    data-confirm="{{ $key }} kalitini o'chirishni tasdiqlaysizmi?">
                 @csrf @method('DELETE')
                 <input type="hidden" name="group" value="{{ $group }}">
                 <input type="hidden" name="key" value="{{ $key }}">
