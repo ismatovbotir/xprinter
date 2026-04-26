@@ -13,6 +13,7 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained();
             $table->string('slug')->unique();
             $table->string('model_number');
+            $table->string('photo')->nullable();
             $table->timestamps();
         });
     }

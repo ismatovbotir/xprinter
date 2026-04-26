@@ -18,12 +18,17 @@ use App\Http\Controllers\Marketplace\TeamController;
 use App\Http\Controllers\Producer\DashboardController as ProducerDashboard;
 use App\Http\Controllers\Producer\PartnerController;
 use App\Http\Controllers\Producer\SerialController;
+use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 // ── Public ────────────────────────────────────────────────
-Route::get('/', fn() => view('welcome'))->name('home');
+Route::get('/', HomeController::class)->name('home');
+Route::get('/catalog',                          [CatalogController::class, 'index'])->name('catalog');
+Route::get('/catalog/{slug}',                   [CatalogController::class, 'category'])->name('catalog.category');
+Route::get('/catalog/{category}/{slug}',        [CatalogController::class, 'show'])->name('products.show');
 
 // ── Profile (all authenticated roles) ────────────────────
 Route::middleware('auth')->group(function () {
@@ -63,6 +68,8 @@ Route::prefix('admin')
 
         // Catalog
         Route::resource('categories', CategoryController::class);
+        Route::post(  'categories/{category}/parameters',             [CategoryController::class, 'attachParameter'])->name('categories.parameters.attach');
+        Route::delete('categories/{category}/parameters/{parameter}', [CategoryController::class, 'detachParameter'])->name('categories.parameters.detach');
         Route::resource('parameters', ParameterController::class);
         Route::resource('products',   ProductController::class);
 

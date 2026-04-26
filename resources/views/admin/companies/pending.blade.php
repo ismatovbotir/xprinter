@@ -87,14 +87,11 @@
             <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>
             Tahrirlash
           </a>
-          <form method="POST" action="{{ route('admin.companies.reject', $company) }}">
-            @csrf @method('PATCH')
-            <button type="submit" class="btn btn-danger" style="height:36px;padding:0 14px;font-size:12.5px"
-                    onclick="return confirm('Rad etishni tasdiqlaysizmi?')">
-              <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              Rad etish
-            </button>
-          </form>
+          <button type="button" class="btn btn-danger" style="height:36px;padding:0 14px;font-size:12.5px"
+                  onclick="document.getElementById('reject-form-{{ $company->id }}').style.display='block';this.style.display='none'">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Rad etish
+          </button>
           <form method="POST" action="{{ route('admin.companies.approve', $company) }}">
             @csrf @method('PATCH')
             <button type="submit" class="btn btn-success" style="height:36px;padding:0 14px;font-size:12.5px">
@@ -105,6 +102,32 @@
         </div>
 
       </div>
+
+      {{-- Reject form (hidden by default) --}}
+      <form id="reject-form-{{ $company->id }}" method="POST"
+            action="{{ route('admin.companies.reject', $company) }}"
+            style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--line)">
+        @csrf @method('PATCH')
+        <div style="font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--red);margin-bottom:8px">
+          Rad etish sababi <span style="color:var(--red)">*</span>
+        </div>
+        <textarea name="admin_note" rows="3" required
+                  class="form-input {{ $errors->has('admin_note') ? 'is-invalid' : '' }}"
+                  placeholder="Masalan: INN noto'g'ri, telefon raqam ishlamaydi, kompaniya mavjud emas..."
+                  style="width:100%;resize:vertical;margin-bottom:10px">{{ old('admin_note') }}</textarea>
+        @error('admin_note')<div class="invalid-feedback" style="display:block;margin-bottom:8px">{{ $message }}</div>@enderror
+        <div style="display:flex;gap:8px">
+          <button type="submit" class="btn btn-danger" style="height:36px;padding:0 16px;font-size:12.5px">
+            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Rad etishni tasdiqlash
+          </button>
+          <button type="button" class="btn btn-ghost" style="height:36px;padding:0 14px;font-size:12.5px"
+                  onclick="this.closest('form').style.display='none';this.closest('.card').querySelector('[onclick*=reject-form]').style.display=''">
+            Bekor qilish
+          </button>
+        </div>
+      </form>
+
     </div>
   </div>
   @endforeach

@@ -14,12 +14,12 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::firstOrCreate(
-            ['email' => 'tiboruz@gmail.com'],
+            ['email' => env('ADMIN_EMAIL', 'admin@xprinter.uz')],
             [
-                'name'     => 'Botir',
+                'name'     => env('ADMIN_NAME', 'Admin'),
                 'role'     => 'admin',
                 'lang'     => 'uz',
-                'password' => 'qwerty&123456789',
+                'password' => env('ADMIN_PASSWORD', 'changeme'),
             ]
         );
 

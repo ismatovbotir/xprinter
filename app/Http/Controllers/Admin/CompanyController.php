@@ -80,15 +80,25 @@ class CompanyController extends Controller
             ->with('success', "«{$name}» o'chirildi");
     }
 
-    public function approve(Company $company): RedirectResponse
+    public function approve(Request $request, Company $company): RedirectResponse
     {
-        $company->update(['status' => 'approved']);
+        $company->update([
+            'status'     => 'approved',
+            'admin_note' => $request->input('admin_note') ?: null,
+        ]);
         return redirect()->back()->with('success', "«{$company->name}» tasdiqlandi");
     }
 
-    public function reject(Company $company): RedirectResponse
+    public function reject(Request $request, Company $company): RedirectResponse
     {
-        $company->update(['status' => 'rejected']);
+        $request->validate([
+            'admin_note' => ['required', 'string', 'max:1000'],
+        ]);
+
+        $company->update([
+            'status'     => 'rejected',
+            'admin_note' => $request->input('admin_note'),
+        ]);
         return redirect()->back()->with('success', "«{$company->name}» rad etildi");
     }
 }

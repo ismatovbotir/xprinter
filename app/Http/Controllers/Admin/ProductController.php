@@ -14,16 +14,18 @@ class ProductController extends Controller
     public function index(Request $request): View
     {
         $categories = Category::with('translations')->get();
+        $search     = $request->input('search');
+        $categoryId = $request->input('category_id');
 
         $products = Product::with(['translations', 'category.translations'])
-            ->when($request->search, fn($q) =>
-                $q->where('model_number', 'like', "%{$request->search}%")
+            ->when($search, fn($q) =>
+                $q->where('model_number', 'like', "%{$search}%")
                   ->orWhereHas('translations', fn($t) =>
-                      $t->where('name', 'like', "%{$request->search}%")
+                      $t->where('name', 'like', "%{$search}%")
                   )
             )
-            ->when($request->category_id, fn($q) =>
-                $q->where('category_id', $request->category_id)
+            ->when($categoryId, fn($q) =>
+                $q->where('category_id', $categoryId)
             )
             ->latest()
             ->paginate(20)
@@ -34,8 +36,7 @@ class ProductController extends Controller
 
     public function create(): View
     {
-        $categories = Category::with('translations')->get();
-        return view('admin.products.form', compact('categories'));
+        return view('admin.products.form');
     }
 
     public function store(Request $request): RedirectResponse
@@ -72,9 +73,8 @@ class ProductController extends Controller
 
     public function edit(Product $product): View
     {
-        $product->load('translations', 'category');
-        $categories = Category::with('translations')->get();
-        return view('admin.products.form', compact('product', 'categories'));
+        $product->load('translations', 'parameterValues');
+        return view('admin.products.form', compact('product'));
     }
 
     public function update(Request $request, Product $product): RedirectResponse

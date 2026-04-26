@@ -14,13 +14,11 @@
   </div>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
     @if($company->status === 'pending')
-    <form method="POST" action="{{ route('admin.companies.reject', $company) }}">
-      @csrf @method('PATCH')
-      <button class="btn btn-danger" onclick="return confirm('Rad etishni tasdiqlaysizmi?')">
-        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        Rad etish
-      </button>
-    </form>
+    <button type="button" class="btn btn-danger" id="reject-btn"
+            onclick="document.getElementById('reject-panel').style.display='block';this.style.display='none'">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      Rad etish
+    </button>
     <form method="POST" action="{{ route('admin.companies.approve', $company) }}">
       @csrf @method('PATCH')
       <button class="btn btn-success">
@@ -39,6 +37,43 @@
     </a>
   </div>
 </div>
+
+{{-- Reject panel --}}
+@if($company->status === 'pending')
+<div id="reject-panel" style="display:none;background:#FFF1F2;border:1px solid #FECDD3;border-radius:14px;padding:20px;margin-bottom:20px;max-width:560px">
+  <div style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:12px">
+    Rad etish sababi yozing — owner bu xabarni ko'radi
+  </div>
+  <form method="POST" action="{{ route('admin.companies.reject', $company) }}">
+    @csrf @method('PATCH')
+    <textarea name="admin_note" rows="3" required
+              class="form-input {{ $errors->has('admin_note') ? 'is-invalid' : '' }}"
+              placeholder="Masalan: INN noto'g'ri, telefon raqam mavjud emas..."
+              style="width:100%;resize:vertical;margin-bottom:10px;border-color:#FECDD3">{{ old('admin_note') }}</textarea>
+    @error('admin_note')<div class="invalid-feedback" style="display:block;margin-bottom:8px">{{ $message }}</div>@enderror
+    <div style="display:flex;gap:8px">
+      <button type="submit" class="btn btn-danger">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        Rad etishni tasdiqlash
+      </button>
+      <button type="button" class="btn btn-ghost"
+              onclick="document.getElementById('reject-panel').style.display='none';document.getElementById('reject-btn').style.display=''">
+        Bekor qilish
+      </button>
+    </div>
+  </form>
+</div>
+@endif
+
+{{-- Admin note (if rejected) --}}
+@if($company->admin_note)
+<div style="background:#FFF1F2;border:1px solid #FECDD3;border-radius:14px;padding:16px 20px;margin-bottom:20px;max-width:560px">
+  <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--red);font-weight:600;margin-bottom:6px">
+    Admin izohi
+  </div>
+  <div style="font-size:14px;color:var(--ink-soft);line-height:1.6">{{ $company->admin_note }}</div>
+</div>
+@endif
 
 <div class="two-col">
 

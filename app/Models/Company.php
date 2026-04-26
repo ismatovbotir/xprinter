@@ -26,7 +26,7 @@ class Company extends Model
 
     protected $fillable = [
         'name', 'brand', 'inn', 'phone', 'legal_form', 'logo', 'slug',
-        'types', 'status', 'vat_status', 'manufacturer_status',
+        'types', 'status', 'vat_status', 'manufacturer_status', 'admin_note',
     ];
 
     protected $casts = [

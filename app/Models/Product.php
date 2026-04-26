@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Product extends Model
 {
-    protected $fillable = ['category_id', 'slug', 'model_number'];
+    protected $fillable = ['category_id', 'slug', 'model_number', 'photo'];
 
     public function category(): BelongsTo
     {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Parameter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -56,8 +57,9 @@ class CategoryController extends Controller
 
     public function edit(Category $category): View
     {
-        $category->load('translations');
-        return view('admin.categories.form', compact('category'));
+        $category->load('translations', 'parameters.translations');
+        $allParameters = Parameter::with('translations')->get();
+        return view('admin.categories.form', compact('category', 'allParameters'));
     }
 
     public function update(Request $request, Category $category): RedirectResponse
@@ -80,6 +82,29 @@ class CategoryController extends Controller
 
         return redirect()->route('admin.categories.index')
             ->with('success', "«{$request->name_uz}» yangilandi");
+    }
+
+    public function attachParameter(Request $request, Category $category): RedirectResponse
+    {
+        $request->validate([
+            'parameter_id' => 'required|exists:parameters,id',
+            'sort_order'   => 'nullable|integer|min:0',
+        ]);
+
+        $category->parameters()->syncWithoutDetaching([
+            $request->input('parameter_id') => [
+                'sort_order' => $request->input('sort_order', 0),
+            ],
+        ]);
+
+        return back()->with('success', 'Parametr biriktirildi');
+    }
+
+    public function detachParameter(Category $category, Parameter $parameter): RedirectResponse
+    {
+        $category->parameters()->detach($parameter->id);
+
+        return back()->with('success', 'Parametr olib tashlandi');
     }
 
     public function destroy(Category $category): RedirectResponse
