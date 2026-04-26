@@ -12,7 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'role' => \App\Http\Middleware\RoleMiddleware::class,
+            'role'             => \App\Http\Middleware\RoleMiddleware::class,
+            'company.approved' => \App\Http\Middleware\CompanyApproved::class,
         ]);
 
         $middleware->web(append: [

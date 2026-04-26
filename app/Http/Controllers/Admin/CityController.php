@@ -49,7 +49,7 @@ class CityController extends Controller
 
         $city = City::create(['region_id' => $request->region_id]);
 
-        foreach (['uz', 'ru'] as $lang) {
+        foreach (['uz', 'ru', 'en'] as $lang) {
             $city->translations()->create([
                 'lang' => $lang,
                 'name' => $request->{"name_{$lang}"},
@@ -81,7 +81,7 @@ class CityController extends Controller
 
         $city->update(['region_id' => $request->region_id]);
 
-        foreach (['uz', 'ru'] as $lang) {
+        foreach (['uz', 'ru', 'en'] as $lang) {
             $city->translations()->updateOrCreate(
                 ['lang' => $lang],
                 ['name' => $request->{"name_{$lang}"}]

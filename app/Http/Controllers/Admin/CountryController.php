@@ -36,11 +36,12 @@ class CountryController extends Controller
             'code'    => 'nullable|string|max:2|alpha',
             'name_uz' => 'required|string|max:255',
             'name_ru' => 'required|string|max:255',
+            'name_en' => 'required|string|max:255',
         ]);
 
         $country = Country::create(['code' => $request->code]);
 
-        foreach (['uz', 'ru'] as $lang) {
+        foreach (['uz', 'ru', 'en'] as $lang) {
             $country->translations()->create([
                 'lang' => $lang,
                 'name' => $request->{"name_{$lang}"},
@@ -63,11 +64,12 @@ class CountryController extends Controller
             'code'    => 'nullable|string|max:2|alpha',
             'name_uz' => 'required|string|max:255',
             'name_ru' => 'required|string|max:255',
+            'name_en' => 'required|string|max:255',
         ]);
 
         $country->update(['code' => $request->code]);
 
-        foreach (['uz', 'ru'] as $lang) {
+        foreach (['uz', 'ru', 'en'] as $lang) {
             $country->translations()->updateOrCreate(
                 ['lang' => $lang],
                 ['name' => $request->{"name_{$lang}"}]

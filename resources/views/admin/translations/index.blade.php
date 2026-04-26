@@ -6,7 +6,7 @@
 <div class="page-header">
   <div>
     <div class="page-title">Tarjimalar</div>
-    <div class="page-subtitle">Interfeys matnlarini UZ / RU tillariga tarjima qilish</div>
+    <div class="page-subtitle">Interfeys matnlarini UZ / RU / EN tillariga tarjima qilish</div>
   </div>
 </div>
 
@@ -18,7 +18,7 @@
   <div style="padding:20px">
     <form method="POST" action="{{ route('admin.translations.add-key') }}">
       @csrf
-      <div style="display:grid;grid-template-columns:160px 220px 1fr 1fr auto;gap:12px;align-items:end">
+      <div style="display:grid;grid-template-columns:140px 200px 1fr 1fr 1fr auto;gap:12px;align-items:end">
         <div class="form-group">
           <label class="form-label">Guruh</label>
           <input type="text" name="group" class="form-input" placeholder="menu" value="{{ old('group') }}" required>
@@ -35,12 +35,16 @@
           <label class="form-label">Ruscha <span style="color:#D32F2F">*</span></label>
           <input type="text" name="value_ru" class="form-input" placeholder="Дашборд" value="{{ old('value_ru') }}" required>
         </div>
+        <div class="form-group">
+          <label class="form-label">English <span style="color:#D32F2F">*</span></label>
+          <input type="text" name="value_en" class="form-input" placeholder="Dashboard" value="{{ old('value_en') }}" required>
+        </div>
         <button type="submit" class="btn btn-primary" style="height:42px">
           <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Qo'shish
         </button>
       </div>
-      @foreach(['group','key','value_uz','value_ru'] as $f)
+      @foreach(['group','key','value_uz','value_ru','value_en'] as $f)
         @error($f) <span class="form-error" style="margin-top:8px;display:block">{{ $message }}</span> @enderror
       @endforeach
     </form>
@@ -73,9 +77,10 @@
       <table>
         <thead>
           <tr>
-            <th style="width:200px">Kalit</th>
+            <th style="width:180px">Kalit</th>
             <th>O'zbekcha</th>
             <th>Ruscha</th>
+            <th>English</th>
             <th style="width:48px"></th>
           </tr>
         </thead>
@@ -87,19 +92,17 @@
                 {{ $key }}
               </span>
             </td>
-            <td style="padding:8px 22px">
-              <input type="text"
-                     name="t[{{ $key }}][uz]"
-                     class="form-input"
-                     value="{{ $langs['uz'] ?? '' }}"
-                     placeholder="O'zbekcha tarjima">
+            <td style="padding:8px 16px">
+              <input type="text" name="t[{{ $key }}][uz]" class="form-input"
+                     value="{{ $langs['uz'] ?? '' }}" placeholder="O'zbekcha">
             </td>
-            <td style="padding:8px 22px">
-              <input type="text"
-                     name="t[{{ $key }}][ru]"
-                     class="form-input"
-                     value="{{ $langs['ru'] ?? '' }}"
-                     placeholder="Ruscha tarjima">
+            <td style="padding:8px 16px">
+              <input type="text" name="t[{{ $key }}][ru]" class="form-input"
+                     value="{{ $langs['ru'] ?? '' }}" placeholder="Ruscha">
+            </td>
+            <td style="padding:8px 16px">
+              <input type="text" name="t[{{ $key }}][en]" class="form-input"
+                     value="{{ $langs['en'] ?? '' }}" placeholder="English">
             </td>
             <td>
               <form method="POST" action="{{ route('admin.translations.destroy-key') }}"

@@ -13,7 +13,7 @@
         href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet" />
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/admin.css', 'resources/js/app.js'])
 
     <style>
         :root {
@@ -1019,7 +1019,7 @@
     </style>
 </head>
 
-<body style="display:flex;min-height:100vh">
+<body>
 
     {{-- Overlay (mobile) --}}
     <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
@@ -1259,6 +1259,8 @@
                     onclick="window.location='{{ route('lang.switch', 'uz') }}'">UZ</button>
                 <button class="lang-btn @if (app()->getLocale() === 'ru') active @endif"
                     onclick="window.location='{{ route('lang.switch', 'ru') }}'">RU</button>
+                <button class="lang-btn @if (app()->getLocale() === 'en') active @endif"
+                    onclick="window.location='{{ route('lang.switch', 'en') }}'">EN</button>
             </div>
 
             {{-- Logout --}}

@@ -47,7 +47,7 @@ class RegionController extends Controller
 
         $region = Region::create(['country_id' => $request->country_id]);
 
-        foreach (['uz', 'ru'] as $lang) {
+        foreach (['uz', 'ru', 'en'] as $lang) {
             $region->translations()->create([
                 'lang' => $lang,
                 'name' => $request->{"name_{$lang}"},
@@ -75,7 +75,7 @@ class RegionController extends Controller
 
         $region->update(['country_id' => $request->country_id]);
 
-        foreach (['uz', 'ru'] as $lang) {
+        foreach (['uz', 'ru', 'en'] as $lang) {
             $region->translations()->updateOrCreate(
                 ['lang' => $lang],
                 ['name' => $request->{"name_{$lang}"}]

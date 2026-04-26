@@ -49,9 +49,10 @@ class TranslationController extends Controller
             'key'      => 'required|string|max:100|regex:/^[a-z_.]+$/',
             'value_uz' => 'required|string|max:500',
             'value_ru' => 'required|string|max:500',
+            'value_en' => 'required|string|max:500',
         ]);
 
-        foreach (['uz', 'ru'] as $lang) {
+        foreach (['uz', 'ru', 'en'] as $lang) {
             UiTranslation::updateOrCreate(
                 ['group' => $request->group, 'key' => $request->key, 'lang' => $lang],
                 ['value' => trim($request->{"value_{$lang}"})]

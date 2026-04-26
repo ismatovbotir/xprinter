@@ -14,7 +14,7 @@
   </div>
 </div>
 
-<div class="card" style="max-width:680px">
+<div class="card" style="max-width:780px">
   <div class="card-header">
     <div class="card-title">Asosiy ma'lumotlar</div>
   </div>
@@ -37,9 +37,9 @@
         @error('country_id') <span class="form-error">{{ $message }}</span> @enderror
       </div>
 
-      <div class="form-grid" style="margin-bottom:28px">
+      <div class="form-grid" style="grid-template-columns:1fr 1fr 1fr;margin-bottom:28px">
         <div class="form-group">
-          <label class="form-label">Nomi — O'zbekcha <span style="color:#D32F2F">*</span></label>
+          <label class="form-label">O'zbekcha <span style="color:#D32F2F">*</span></label>
           <input type="text" name="name_uz"
                  class="form-input @error('name_uz') error @enderror"
                  value="{{ old('name_uz', isset($region) ? ($region->translations->firstWhere('lang','uz')?->name ?? '') : '') }}"
@@ -47,12 +47,20 @@
           @error('name_uz') <span class="form-error">{{ $message }}</span> @enderror
         </div>
         <div class="form-group">
-          <label class="form-label">Nomi — Ruscha <span style="color:#D32F2F">*</span></label>
+          <label class="form-label">Ruscha <span style="color:#D32F2F">*</span></label>
           <input type="text" name="name_ru"
                  class="form-input @error('name_ru') error @enderror"
                  value="{{ old('name_ru', isset($region) ? ($region->translations->firstWhere('lang','ru')?->name ?? '') : '') }}"
                  placeholder="Ташкентская область">
           @error('name_ru') <span class="form-error">{{ $message }}</span> @enderror
+        </div>
+        <div class="form-group">
+          <label class="form-label">English <span style="color:#D32F2F">*</span></label>
+          <input type="text" name="name_en"
+                 class="form-input @error('name_en') error @enderror"
+                 value="{{ old('name_en', isset($region) ? ($region->translations->firstWhere('lang','en')?->name ?? '') : '') }}"
+                 placeholder="Tashkent region">
+          @error('name_en') <span class="form-error">{{ $message }}</span> @enderror
         </div>
       </div>
 

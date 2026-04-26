@@ -47,13 +47,47 @@ class User extends Authenticatable
     public function isUser(): bool     { return $this->role === 'user'; }
     public function isClient(): bool   { return $this->role === 'client'; }
 
+    /** Roles that must never be linked to a company. */
+    public function isCompanyForbidden(): bool
+    {
+        return in_array($this->role, ['admin', 'producer'], true);
+    }
+
+    /** Roles that can belong to a company. */
+    public function canHaveCompany(): bool
+    {
+        return in_array($this->role, ['owner', 'user'], true);
+    }
+
     public function redirectPath(): string
     {
         return match($this->role) {
-            'admin'         => '/admin',
-            'producer'      => '/producer',
-            'owner', 'user' => '/marketplace',
-            default         => '/',
+            'admin'    => '/admin',
+            'producer' => '/producer',
+            'owner'    => $this->ownerRedirect(),
+            'user'     => $this->userRedirect(),
+            default    => '/',
         };
+    }
+
+    private function ownerRedirect(): string
+    {
+        $company = $this->company;
+        if (!$company) {
+            return '/marketplace/onboarding';
+        }
+        return match($company->status) {
+            'approved' => '/marketplace',
+            default    => '/marketplace/pending',
+        };
+    }
+
+    private function userRedirect(): string
+    {
+        $company = $this->company;
+        if (!$company || $company->status !== 'approved') {
+            return '/';
+        }
+        return '/marketplace';
     }
 }
