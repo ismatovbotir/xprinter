@@ -44,7 +44,7 @@
 
         @if(auth()->user()->isOwner())
         <div class="nav-section-label">Kompaniya</div>
-        <a href="#" class="nav-item {{ request()->routeIs('marketplace.company.*') ? 'active' : '' }}">
+        <a href="{{ route('marketplace.company.show') }}" class="nav-item {{ request()->routeIs('marketplace.company.*') ? 'active' : '' }}">
             <span class="nav-icon">
                 <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
             </span>
@@ -59,7 +59,7 @@
         @endif
 
         <div class="nav-section-label">Assortiment</div>
-        <a href="#" class="nav-item {{ request()->routeIs('marketplace.products.*') ? 'active' : '' }}">
+        <a href="{{ route('marketplace.assortiment.index') }}" class="nav-item {{ request()->routeIs('marketplace.assortiment.*') ? 'active' : '' }}">
             <span class="nav-icon">
                 <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
             </span>

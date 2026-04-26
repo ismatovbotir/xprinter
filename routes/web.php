@@ -10,9 +10,14 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RegionController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Marketplace\AssortimentController;
+use App\Http\Controllers\Marketplace\CompanyController as MarketplaceCompanyController;
 use App\Http\Controllers\Marketplace\DashboardController as MarketplaceDashboard;
 use App\Http\Controllers\Marketplace\OnboardingController;
 use App\Http\Controllers\Marketplace\TeamController;
+use App\Http\Controllers\Producer\DashboardController as ProducerDashboard;
+use App\Http\Controllers\Producer\PartnerController;
+use App\Http\Controllers\Producer\SerialController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -89,11 +94,44 @@ Route::prefix('marketplace')->name('marketplace.')->middleware(['auth', 'role:ow
 Route::prefix('marketplace')->name('marketplace.')->middleware(['auth', 'role:owner,user', 'company.approved'])->group(function () {
     Route::get('/', MarketplaceDashboard::class)->name('dashboard');
 
+    // Assortiment (owner + user)
+    Route::get('assortiment',                        [AssortimentController::class, 'index'])->name('assortiment.index');
+    Route::get('assortiment/create',                 [AssortimentController::class, 'create'])->name('assortiment.create');
+    Route::post('assortiment',                       [AssortimentController::class, 'store'])->name('assortiment.store');
+    Route::get('assortiment/{companyProduct}/edit',  [AssortimentController::class, 'edit'])->name('assortiment.edit');
+    Route::put('assortiment/{companyProduct}',       [AssortimentController::class, 'update'])->name('assortiment.update');
+    Route::delete('assortiment/{companyProduct}',    [AssortimentController::class, 'destroy'])->name('assortiment.destroy');
+
     // Team management — owner only
     Route::middleware('role:owner')->group(function () {
         Route::get('team',             [TeamController::class, 'index'])->name('team.index');
         Route::get('team/create',      [TeamController::class, 'create'])->name('team.create');
         Route::post('team',            [TeamController::class, 'store'])->name('team.store');
         Route::delete('team/{user}',   [TeamController::class, 'destroy'])->name('team.destroy');
+
+        // Company profile
+        Route::get('company',                         [MarketplaceCompanyController::class, 'show'])->name('company.show');
+        Route::put('company',                         [MarketplaceCompanyController::class, 'update'])->name('company.update');
+        Route::post('company/address',                [MarketplaceCompanyController::class, 'storeAddress'])->name('company.address.store');
+        Route::delete('company/address/{address}',   [MarketplaceCompanyController::class, 'destroyAddress'])->name('company.address.destroy');
     });
+});
+
+// ── Producer ──────────────────────────────────────────────
+Route::prefix('producer')->name('producer.')->middleware(['auth', 'role:producer'])->group(function () {
+    Route::get('/', ProducerDashboard::class)->name('dashboard');
+
+    // Serials
+    Route::get('serials',         [SerialController::class, 'index'])->name('serials.index');
+    Route::get('serials/import',  [SerialController::class, 'import'])->name('serials.import');
+    Route::post('serials/import', [SerialController::class, 'store'])->name('serials.store');
+
+    // Partners (manufacturer_status only)
+    Route::get('partners',                    [PartnerController::class, 'index'])->name('partners.index');
+    Route::patch('partners/{company}/status', [PartnerController::class, 'updateStatus'])->name('partners.status');
+});
+
+// ── Role-based catch-all redirects ────────────────────────
+Route::middleware('auth')->group(function () {
+    Route::get('/home', fn() => redirect(\App\Models\User::findOrFail(Auth::id())->redirectPath()))->name('home.redirect');
 });

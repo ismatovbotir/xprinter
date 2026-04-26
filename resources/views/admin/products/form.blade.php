@@ -71,21 +71,21 @@
         <div class="form-group">
           <label class="form-label">O'zbekcha <span style="color:#D32F2F">*</span></label>
           <input type="text" name="name_uz" class="form-input {{ $errors->has('name_uz') ? 'is-error' : '' }}"
-                 value="{{ old('name_uz', $product?->translations->firstWhere('lang','uz')?->name) }}"
+                 value="{{ old('name_uz', $product?->translations?->firstWhere('lang','uz')?->name) }}"
                  placeholder="Chek printeri XP-Q890K">
           @error('name_uz') <div class="form-error">{{ $message }}</div> @enderror
         </div>
         <div class="form-group">
           <label class="form-label">Ruscha <span style="color:#D32F2F">*</span></label>
           <input type="text" name="name_ru" class="form-input {{ $errors->has('name_ru') ? 'is-error' : '' }}"
-                 value="{{ old('name_ru', $product?->translations->firstWhere('lang','ru')?->name) }}"
+                 value="{{ old('name_ru', $product?->translations?->firstWhere('lang','ru')?->name) }}"
                  placeholder="Принтер чеков XP-Q890K">
           @error('name_ru') <div class="form-error">{{ $message }}</div> @enderror
         </div>
         <div class="form-group">
           <label class="form-label">English <span style="color:#D32F2F">*</span></label>
           <input type="text" name="name_en" class="form-input {{ $errors->has('name_en') ? 'is-error' : '' }}"
-                 value="{{ old('name_en', $product?->translations->firstWhere('lang','en')?->name) }}"
+                 value="{{ old('name_en', $product?->translations?->firstWhere('lang','en')?->name) }}"
                  placeholder="Receipt printer XP-Q890K">
           @error('name_en') <div class="form-error">{{ $message }}</div> @enderror
         </div>
