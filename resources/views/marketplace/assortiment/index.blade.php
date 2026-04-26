@@ -93,8 +93,7 @@
                             </a>
                             <form method="POST" action="{{ route('marketplace.assortiment.destroy', $item) }}" data-confirm="{{ $name }} ni assortimentdan olib tashlaysizmi?">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="action-btn danger" title="O'chirish"
-                                        onclick="return confirm('{{ $name }} ni assortimentdan olib tashlaysizmi?')">
+                                <button type="submit" class="action-btn danger" title="O'chirish">
                                     <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
                                 </button>
                             </form>
