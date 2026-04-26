@@ -62,7 +62,7 @@
       @enderror
     </div>
 
-    <div class="form-group" style="margin-bottom: 28px">
+    <div class="form-group">
       <label for="password-confirm" class="form-label">Parolni tasdiqlash</label>
       <input
         id="password-confirm"
@@ -73,6 +73,15 @@
         required
         autocomplete="new-password"
       >
+    </div>
+
+    <div class="form-group" style="margin-bottom: 28px">
+      <label for="lang" class="form-label">Interfeys tili</label>
+      <select id="lang" name="lang" class="form-input">
+        <option value="uz" {{ old('lang', 'uz') === 'uz' ? 'selected' : '' }}>O'zbekcha</option>
+        <option value="ru" {{ old('lang') === 'ru' ? 'selected' : '' }}>Русский</option>
+        <option value="en" {{ old('lang') === 'en' ? 'selected' : '' }}>English</option>
+      </select>
     </div>
 
     <button type="submit" class="btn-auth">Ro'yxatdan o'tish</button>

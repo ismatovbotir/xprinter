@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('group', 50);
             $table->string('key', 100);
-            $table->enum('lang', ['uz', 'ru']);
+            $table->enum('lang', ['uz', 'ru', 'en']);
             $table->text('value');
             $table->timestamps();
 

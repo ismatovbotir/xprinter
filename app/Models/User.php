@@ -23,7 +23,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable, HasUuids;
 
     protected $fillable = [
-        'name', 'email', 'password', 'role', 'company_id', 'lang', 'telegram_chat_id',
+        'name', 'last_name', 'email', 'password', 'role', 'company_id', 'lang', 'phone', 'telegram_chat_id',
     ];
 
     protected $hidden = ['password', 'remember_token'];

@@ -13,11 +13,18 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Marketplace\DashboardController as MarketplaceDashboard;
 use App\Http\Controllers\Marketplace\OnboardingController;
 use App\Http\Controllers\Marketplace\TeamController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 // ── Public ────────────────────────────────────────────────
 Route::get('/', fn() => view('welcome'))->name('home');
+
+// ── Profile (all authenticated roles) ────────────────────
+Route::middleware('auth')->group(function () {
+    Route::get('profile',  [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('profile',  [ProfileController::class, 'update'])->name('profile.update');
+});
 
 // ── Auth ──────────────────────────────────────────────────
 Auth::routes(['verify' => false, 'confirm' => false]);
@@ -41,8 +48,8 @@ Route::prefix('admin')
 
         Route::get('/', DashboardController::class)->name('dashboard');
 
-        // Profile
-        Route::get('/profile', fn() => view('admin.profile'))->name('profile');
+        // Profile (redirects to shared profile route)
+        Route::get('/profile', fn() => redirect()->route('profile.edit'))->name('profile');
 
         // Geography
         Route::resource('countries',  CountryController::class);

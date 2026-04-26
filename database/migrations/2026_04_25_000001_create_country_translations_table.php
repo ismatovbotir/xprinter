@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('country_translations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('country_id')->constrained()->cascadeOnDelete();
-            $table->enum('lang', ['uz', 'ru']);
+            $table->enum('lang', ['uz', 'ru', 'en']);
             $table->string('name');
             $table->unique(['country_id', 'lang']);
             $table->timestamps();

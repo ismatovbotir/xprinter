@@ -19,7 +19,7 @@
 <body>
 
 {{-- Sidebar --}}
-<div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
+<div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
 
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
@@ -68,7 +68,7 @@
     </nav>
 
     <div class="sidebar-footer">
-        <div class="user-card">
+        <a href="{{ route('profile.edit') }}" class="user-card" style="text-decoration:none">
             <div class="user-avatar">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</div>
             <div style="flex:1;min-width:0">
                 <div class="user-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
@@ -76,7 +76,7 @@
                 </div>
                 <div class="user-role">{{ auth()->user()->company?->brand ?? auth()->user()->role }}</div>
             </div>
-            <form method="POST" action="{{ route('logout') }}">
+            <form method="POST" action="{{ route('logout') }}" onclick="event.stopPropagation()">
                 @csrf
                 <button type="submit" style="background:none;border:none;cursor:pointer;padding:4px" title="Chiqish">
                     <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--muted);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round">
@@ -86,14 +86,14 @@
                     </svg>
                 </button>
             </form>
-        </div>
+        </a>
     </div>
 </aside>
 
 {{-- Main --}}
-<div class="main" style="margin-left:0">
+<div class="main">
     <header class="header">
-        <button class="hamburger" onclick="openSidebar()" aria-label="Menu">
+        <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">
             <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
 
@@ -126,24 +126,11 @@
 </div>
 
 <script>
-function openSidebar()  { document.getElementById('sidebar').classList.add('open'); document.getElementById('overlay').classList.add('open'); }
-function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('overlay').classList.remove('open'); }
-
-window.matchMedia('(min-width: 1024px)').addEventListener('change', e => {
-    if (e.matches) { document.getElementById('sidebar').style.transform = 'translateX(0)'; document.getElementById('overlay').classList.remove('open'); }
-    else { document.getElementById('sidebar').style.transform = ''; }
-});
-if (window.innerWidth >= 1024) document.getElementById('sidebar').style.transform = 'translateX(0)';
-document.getElementById('sidebar').style.marginLeft = window.innerWidth >= 1024 ? '260px' : '0';
-</script>
-
-<style>
-@media (min-width: 1024px) {
-    .sidebar { transform: translateX(0) !important; }
-    .main { margin-left: 260px !important; }
-    .hamburger { display: none; }
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('open');
 }
-</style>
+</script>
 
 </body>
 </html>
