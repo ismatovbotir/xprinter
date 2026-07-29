@@ -6,7 +6,7 @@
 
 <div class="page-header">
     <div>
-        <div class="page-title">Xush kelibsiz, {{ auth()->user()->name }}</div>
+        <div class="page-title">Xush kelibsiz, {{ auth()->user()->name }} <x-help-icon section="marketplace.dashboard" /></div>
         <div class="page-subtitle">{{ $company->brand ?? $company->name }} — diler kabineti</div>
     </div>
 </div>

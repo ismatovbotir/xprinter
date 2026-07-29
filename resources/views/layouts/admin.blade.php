@@ -1029,14 +1029,14 @@
 
         {{-- Logo --}}
         <div class="sidebar-logo">
-            <div class="logo-mark">
+            <div class="sidebar-logo-mark">
                 <svg viewBox="0 0 24 24">
                     <path d="M5 7h14M5 12h14M5 17h8" />
                 </svg>
             </div>
             <div>
-                <div class="logo-text">XPRINTER</div>
-                <div class="logo-sub">Admin Panel</div>
+                <div class="sidebar-logo-text">XPRINTER</div>
+                <div class="sidebar-logo-sub">Admin Panel</div>
             </div>
         </div>
 
@@ -1101,7 +1101,7 @@
 
             <a href="{{ route('admin.categories.index') }}" @class([
                 'nav-item',
-                'active' => request()->routeIs('admin.categories.*'),
+                'active' => request()->routeIs('admin.categories.*') || request()->routeIs('admin.parameters.*'),
             ])>
                 <div class="nav-icon">
                     <svg viewBox="0 0 24 24">
@@ -1109,20 +1109,6 @@
                     </svg>
                 </div>
                 Kategoriyalar
-            </a>
-
-            <a href="{{ route('admin.parameters.index') }}" @class([
-                'nav-item',
-                'active' => request()->routeIs('admin.parameters.*'),
-            ])>
-                <div class="nav-icon">
-                    <svg viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="3" />
-                        <path
-                            d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83" />
-                    </svg>
-                </div>
-                Parametrlar
             </a>
 
             <a href="{{ route('admin.products.index') }}" @class([
@@ -1136,6 +1122,20 @@
                     </svg>
                 </div>
                 Mahsulotlar
+            </a>
+
+            <a href="{{ route('admin.files.index') }}" @class(['nav-item', 'active' => request()->routeIs('admin.files.*')])>
+                <div class="nav-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                </div>
+                Fayllar
+                @php($fileCount = \App\Models\File::count())
+                @if($fileCount)
+                <span class="nav-badge">{{ $fileCount }}</span>
+                @endif
             </a>
 
             <span class="nav-section-label">Kompaniyalar</span>
@@ -1187,7 +1187,60 @@
                 Foydalanuvchilar
             </a>
 
+            <span class="nav-section-label">Kontent</span>
+
+            <a href="{{ route('admin.homepage.edit') }}" @class(['nav-item', 'active' => request()->routeIs('admin.homepage.*')])>
+                <div class="nav-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                </div>
+                Bosh sahifa
+            </a>
+
+            <a href="{{ route('admin.banners.index') }}" @class(['nav-item', 'active' => request()->routeIs('admin.banners.*')])>
+                <div class="nav-icon">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="3" y="3" width="18" height="14" rx="2"/>
+                        <path d="M3 9h18"/>
+                    </svg>
+                </div>
+                Bannerlar
+                @php($bannerCount = \App\Models\Banner::where('is_active', true)->count())
+                @if($bannerCount)
+                <span class="nav-badge">{{ $bannerCount }}</span>
+                @endif
+            </a>
+
+            <a href="{{ route('admin.help.index') }}" @class(['nav-item', 'active' => request()->routeIs('admin.help.*')])>
+                <div class="nav-icon">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 16v-4M12 8h.01"/>
+                    </svg>
+                </div>
+                Yordam
+                @php($helpCount = \App\Models\HelpArticle::where('is_active', true)->count())
+                @if($helpCount)
+                <span class="nav-badge">{{ $helpCount }}</span>
+                @endif
+            </a>
+
             <span class="nav-section-label">Sozlamalar</span>
+
+            <a href="{{ route('admin.settings.edit') }}" @class([
+                'nav-item',
+                'active' => request()->routeIs('admin.settings.*'),
+            ])>
+                <div class="nav-icon">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="3" />
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                    </svg>
+                </div>
+                Asosiy sozlamalar
+            </a>
 
             <a href="{{ route('admin.translations.index') }}" @class([
                 'nav-item',
@@ -1240,17 +1293,9 @@
                 </svg>
             </button>
             <div class="breadcrumb">
-                <span class="bc">Admin</span>
-                <span class="bc-sep">/</span>
-                <span class="bc current">@yield('title', 'Dashboard')</span>
-            </div>
-
-            <div class="header-search">
-                <svg viewBox="0 0 24 24">
-                    <circle cx="11" cy="11" r="8" />
-                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </svg>
-                <input type="text" placeholder="Qidirish..." />
+                <span class="breadcrumb-item">Admin</span>
+                <span class="breadcrumb-sep">/</span>
+                <span class="breadcrumb-item current">@yield('title', 'Dashboard')</span>
             </div>
 
             {{-- Language switcher --}}
@@ -1266,7 +1311,7 @@
             {{-- Logout --}}
             <form method="POST" action="{{ route('logout') }}" style="display:contents">
                 @csrf
-                <button type="submit" class="hbtn" title="Chiqish">
+                <button type="submit" class="header-btn" title="Chiqish">
                     <svg viewBox="0 0 24 24">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                         <polyline points="16 17 21 12 16 7" />
@@ -1277,7 +1322,7 @@
         </header>
 
         {{-- Flash messages --}}
-        <div style="padding: 0 32px; padding-top: 24px;">
+        <div class="flash-container">
             @if (session('success'))
                 <div class="flash flash-success">
                     <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0"
@@ -1308,6 +1353,7 @@
     </div>
 
     @include('layouts._confirm-modal')
+    @livewireStyles
     @livewireScripts
     @stack('scripts')
     <script>

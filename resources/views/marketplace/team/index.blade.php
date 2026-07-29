@@ -6,7 +6,7 @@
 
 <div class="page-header">
     <div>
-        <div class="page-title">Jamoa</div>
+        <div class="page-title">Jamoa <x-help-icon section="marketplace.team" /></div>
         <div class="page-subtitle">{{ $company->brand ?? $company->name }} — operatorlar ro'yxati</div>
     </div>
     <a href="{{ route('marketplace.team.create') }}" class="btn btn-primary">

@@ -1,9 +1,9 @@
 @extends('layouts.app')
-@section('title', 'Xprinter.uz — O\'zbekistonda rasmiy distribyutor')
-@section('description', 'Termoprinterlari Xprinter — chek, etiket va mobil printerlar. O\'zbekistonda rasmiy distribyutor, 12 oy kafolat, Toshkentda servis markaz.')
+@section('title', "Xprinter.uz — distribyutorlar va dilerlar platformasi")
+@section('description', "Termoprinterlari Xprinter — chek, etiket va mobil printerlar. O'zbekistondagi rasmiy distribyutorlar va dilerlar tarmog'i, 12 oy kafolat, servis markazlari.")
 
-@section('og_title',       'Xprinter.uz — Rasmiy distribyutor Xprinter O\'zbekistonda')
-@section('og_description', 'Termoprinterlari Xprinter O\'zbekistonda — chek, etiket va mobil printerlar. Rasmiy distribyutor, 12 oy kafolat, Toshkentda servis markaz.')
+@section('og_title',       "Xprinter.uz — distribyutorlar va dilerlar platformasi")
+@section('og_description', "Termoprinterlari Xprinter O'zbekistonda — chek, etiket va mobil printerlar. Rasmiy distribyutorlar va dilerlar tarmog'i, 12 oy kafolat.")
 @section('keywords',       'termoprinter toshkent, xprinter uzbekistan, chek printer sotib olish, etiket printer narxi, termoprinter kafolat')
 
 @push('schema')
@@ -13,7 +13,7 @@
     "@type": "WebSite",
     "name": "Xprinter.uz",
     "url": "{{ url('/') }}",
-    "description": "O'zbekistonda Xprinter termoprinterlari rasmiy distribyutori",
+    "description": "Xprinter termoprinterlari uchun O'zbekistondagi rasmiy distribyutorlar va dilerlar platformasi",
     "potentialAction": {
         "@type": "SearchAction",
         "target": {
@@ -59,35 +59,32 @@
         <div class="hero-inner">
 
             {{-- Left --}}
+            @php
+                $badges = array_filter($content->badges()) ?: ['12 oy rasmiy kafolat', "Tasdiqlangan distribyutorlar", '24 soat ichida yetkazib berish'];
+            @endphp
             <div class="hero-left">
                 <div class="hero-tag">
                     <span class="hero-tag-dot"></span>
-                    Rasmiy distribyutor · O'zbekiston
+                    {{ $content->hero_tag ?: "Distribyutorlar va dilerlar platformasi · O'zbekiston" }}
                 </div>
 
                 <h1 class="hero-headline">
-                    Xprinter<br>
-                    <em>termoprinterlar</em><br>
-                    O'zbekistonda
+                    {{ $content->hero_line1 ?: 'Xprinter' }}<br>
+                    <em>{{ $content->hero_line2 ?: 'termoprinterlar' }}</em><br>
+                    {{ $content->hero_line3 ?: "O'zbekistonda" }}
                 </h1>
 
                 <p class="hero-sub">
-                    Chek, etiket va mobil printerlar — rasmiy kafolat, Toshkentda servis markaz, butun respublikaga yetkazib berish.
+                    {{ $content->hero_subtitle ?: "Chek, etiket va mobil printerlar — O'zbekistondagi rasmiy distribyutorlar va dilerlar tarmog'idan, rasmiy kafolat va servis bilan." }}
                 </p>
 
                 <div class="hero-attrs">
+                    @foreach($badges as $badge)
                     <span class="hero-attr">
                         <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                        12 oy rasmiy kafolat
+                        {{ $badge }}
                     </span>
-                    <span class="hero-attr">
-                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                        Toshkentda servis markaz
-                    </span>
-                    <span class="hero-attr">
-                        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                        24 soat ichida yetkazib berish
-                    </span>
+                    @endforeach
                 </div>
 
                 <div class="hero-btns">
@@ -159,25 +156,26 @@
 </section>
 
 {{-- ═══════════════ STATS ═══════════════ --}}
+@php
+    $stats = collect($content->statList())->filter(fn($s) => !empty($s['value']))->values();
+    if ($stats->isEmpty()) {
+        $stats = collect([
+            ['value' => '5',    'suffix' => '+', 'label' => "Yil O'zbekiston bozorida"],
+            ['value' => '1000', 'suffix' => '+', 'label' => "Muvaffaqiyatli o'rnatish"],
+            ['value' => '24',   'suffix' => 'h', 'label' => 'Toshkentda yetkazib berish'],
+            ['value' => '12',   'suffix' => '',  'label' => 'Oy rasmiy kafolat'],
+        ]);
+    }
+@endphp
 <div class="stats-strip">
     <div class="container">
         <div class="stats-grid">
+            @foreach($stats as $stat)
             <div class="stat-cell">
-                <div class="stat-num">5<span>+</span></div>
-                <div class="stat-label">Yil O'zbekiston bozorida</div>
+                <div class="stat-num">{{ $stat['value'] }}<span>{{ $stat['suffix'] }}</span></div>
+                <div class="stat-label">{{ $stat['label'] }}</div>
             </div>
-            <div class="stat-cell">
-                <div class="stat-num">1000<span>+</span></div>
-                <div class="stat-label">Muvaffaqiyatli o'rnatish</div>
-            </div>
-            <div class="stat-cell">
-                <div class="stat-num">24<span>h</span></div>
-                <div class="stat-label">Toshkentda yetkazib berish</div>
-            </div>
-            <div class="stat-cell">
-                <div class="stat-num">12</div>
-                <div class="stat-label">Oy rasmiy kafolat</div>
-            </div>
+            @endforeach
         </div>
     </div>
 </div>
@@ -283,48 +281,10 @@
 </section>
 @endif
 
-{{-- ═══════════════ WHY US ═══════════════ --}}
+{{-- ═══════════════ WHY US / ABOUT ═══════════════ --}}
 <section class="section" id="about">
     <div class="container">
-        <div class="section-header">
-            <div class="section-tag">// Nega biz</div>
-            <div class="section-title">Xprinter.uz — rasmiy kanal</div>
-            <div class="section-sub">Xprinter Group Xitoy tomonidan vakolatlashtrilgan yagona distribyutor O'zbekistonda.</div>
-        </div>
-
-        <div class="why-grid">
-            <div class="why-card">
-                <div class="why-icon" style="background:#EAF2FD">
-                    <svg viewBox="0 0 24 24" style="stroke:var(--blue)">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
-                </div>
-                <div class="why-title">Rasmiy distribyutor</div>
-                <div class="why-text">Xprinter Group (Xitoy) tomonidan O'zbekistonda yagona vakolatli distribyutor. Sertifikatlar va hujjatlar bor.</div>
-            </div>
-
-            <div class="why-card">
-                <div class="why-icon" style="background:#F0FDF8">
-                    <svg viewBox="0 0 24 24" style="stroke:var(--green)">
-                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                    </svg>
-                </div>
-                <div class="why-title">12 oy kafolat va servis</div>
-                <div class="why-text">Toshkentda o'z servis markazimiz. Kafolat ta'miri, ehtiyot qismlar, texnik yordam — bir joyda.</div>
-            </div>
-
-            <div class="why-card">
-                <div class="why-icon" style="background:#FFF7ED">
-                    <svg viewBox="0 0 24 24" style="stroke:#F97316">
-                        <path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/>
-                        <rect x="9" y="11" width="14" height="10" rx="1"/>
-                        <path d="M12 16h3M12 19h2"/>
-                    </svg>
-                </div>
-                <div class="why-title">Tez yetkazib berish</div>
-                <div class="why-text">Toshkentda 24 soat ichida kuryerlik. Regionlarga 3–7 kun. Yirik buyurtmalar uchun alohida shartlar.</div>
-            </div>
-        </div>
+        @include('partials.about-section', ['content' => $content])
     </div>
 </section>
 

@@ -5,7 +5,7 @@
 
 <div class="page-header">
   <div>
-    <div class="page-title">Mahsulotlar</div>
+    <div class="page-title">Mahsulotlar <x-help-icon section="admin.products" /></div>
     <div class="page-subtitle">Jami {{ $products->total() }} ta mahsulot</div>
   </div>
   <a href="{{ route('admin.products.create') }}" class="btn btn-primary">
@@ -41,16 +41,29 @@
     <table>
       <thead>
         <tr>
+          <th style="width:56px"></th>
           <th style="width:140px">Model</th>
           <th>Nomi (UZ)</th>
           <th style="width:160px">Kategoriya</th>
-          <th style="width:130px">Slug</th>
+          <th style="width:64px;text-align:center">Fayllar</th>
           <th style="width:80px"></th>
         </tr>
       </thead>
       <tbody>
         @forelse($products as $product)
         <tr>
+          <td style="padding:8px 8px 8px 16px">
+            @if($product->photo)
+              <img src="{{ Storage::url($product->photo) }}"
+                   style="width:40px;height:40px;object-fit:contain;border-radius:8px;border:1px solid var(--line);background:var(--bg-soft);padding:3px">
+            @else
+              <div style="width:40px;height:40px;border-radius:8px;border:1px solid var(--line);background:var(--bg-soft);display:flex;align-items:center;justify-content:center">
+                <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--faint);fill:none;stroke-width:1.5">
+                  <rect x="4" y="7" width="16" height="12" rx="1"/><path d="M7 7V4h10v3"/>
+                </svg>
+              </div>
+            @endif
+          </td>
           <td>
             <span style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--ink);background:var(--bg-soft);border:1px solid var(--line);padding:3px 10px;border-radius:6px">
               {{ $product->model_number }}
@@ -69,8 +82,15 @@
               {{ $product->category?->translations->firstWhere('lang','uz')?->name ?? '—' }}
             </span>
           </td>
-          <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)">
-            {{ $product->slug }}
+          <td style="text-align:center">
+            @php $fileCount = $product->files_count ?? $product->files->count(); @endphp
+            @if($fileCount)
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;background:var(--green);color:#fff;padding:2px 8px;border-radius:10px">
+                {{ $fileCount }}
+              </span>
+            @else
+              <span style="color:var(--faint);font-size:12px">—</span>
+            @endif
           </td>
           <td>
             <div class="actions-cell">
@@ -89,7 +109,7 @@
         </tr>
         @empty
         <tr>
-          <td colspan="5" style="text-align:center;color:var(--muted);padding:48px 20px">
+          <td colspan="6" style="text-align:center;color:var(--muted);padding:48px 20px">
             @if(request('search') || request('category_id'))
               Filtr bo'yicha mahsulot topilmadi
             @else

@@ -18,6 +18,8 @@
 @php
     $retail    = $companyProduct->prices->firstWhere('type', 'retail');
     $wholesale = $companyProduct->prices->firstWhere('type', 'wholesale');
+    $variantParams = $companyProduct->product->category->parameters->filter(fn($p) => $p->pivot->is_variant);
+    $currentValues = $companyProduct->variantValues->keyBy('parameter_id');
 @endphp
 
 <div style="max-width:520px">
@@ -26,6 +28,22 @@
         @csrf @method('PUT')
 
         <div class="card" style="padding:20px;display:flex;flex-direction:column;gap:16px">
+
+            @foreach($variantParams as $param)
+            @php $selectedValueId = old("variant_values.{$param->id}", $currentValues->get($param->id)?->parameter_value_id); @endphp
+            <div class="form-group" style="margin:0">
+                <label class="form-label">{{ $param->translations->firstWhere('lang','uz')?->name ?? "Parametr #{$param->id}" }}</label>
+                <select name="variant_values[{{ $param->id }}]" class="form-input @error("variant_values.{$param->id}") is-invalid @enderror" required>
+                    <option value="">— Tanlang —</option>
+                    @foreach($param->values as $value)
+                    <option value="{{ $value->id }}" {{ (string) $selectedValueId === (string) $value->id ? 'selected' : '' }}>
+                        {{ $value->translations->firstWhere('lang','uz')?->name ?? "#{$value->id}" }}
+                    </option>
+                    @endforeach
+                </select>
+                @error("variant_values.{$param->id}")<div class="invalid-feedback">{{ $message }}</div>@enderror
+            </div>
+            @endforeach
 
             <div class="form-group" style="margin:0">
                 <label class="form-label">Valyuta</label>

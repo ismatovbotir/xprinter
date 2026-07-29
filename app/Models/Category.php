@@ -24,7 +24,7 @@ class Category extends Model
     public function parameters(): BelongsToMany
     {
         return $this->belongsToMany(Parameter::class, 'category_parameters')
-            ->withPivot('sort_order')
+            ->withPivot('sort_order', 'is_variant')
             ->orderByPivot('sort_order');
     }
 

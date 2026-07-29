@@ -19,26 +19,39 @@
     <form method="POST" action="{{ isset($parameter) ? route('admin.parameters.update', $parameter) : route('admin.parameters.store') }}">
       @csrf
       @if(isset($parameter)) @method('PUT') @endif
+      <input type="hidden" name="sync_categories" value="1">
+
+      <div class="form-group" style="margin-bottom:20px">
+        <label class="form-label">Turi</label>
+        <select name="type" class="form-input">
+          @php
+            $currentType = old('type', ($parameter ?? null)?->type ?? 'string');
+          @endphp
+          <option value="string" {{ $currentType === 'string' ? 'selected' : '' }}>Matn (string)</option>
+          <option value="integer" {{ $currentType === 'integer' ? 'selected' : '' }}>Son (integer)</option>
+          <option value="boolean" {{ $currentType === 'boolean' ? 'selected' : '' }}>Ha/Yo'q (boolean)</option>
+        </select>
+      </div>
 
       <div class="form-grid" style="grid-template-columns:1fr 1fr 1fr">
         <div class="form-group">
           <label class="form-label">O'zbekcha <span style="color:#D32F2F">*</span></label>
           <input type="text" name="name_uz" class="form-input {{ $errors->has('name_uz') ? 'is-error' : '' }}"
-                 value="{{ old('name_uz', $parameter?->translations->firstWhere('lang','uz')?->name) }}"
+                 value="{{ old('name_uz', ($parameter ?? null)?->translations->firstWhere('lang','uz')?->name) }}"
                  placeholder="Bosib chiqarish tezligi">
           @error('name_uz') <div class="form-error">{{ $message }}</div> @enderror
         </div>
         <div class="form-group">
           <label class="form-label">Ruscha <span style="color:#D32F2F">*</span></label>
           <input type="text" name="name_ru" class="form-input {{ $errors->has('name_ru') ? 'is-error' : '' }}"
-                 value="{{ old('name_ru', $parameter?->translations->firstWhere('lang','ru')?->name) }}"
+                 value="{{ old('name_ru', ($parameter ?? null)?->translations->firstWhere('lang','ru')?->name) }}"
                  placeholder="Скорость печати">
           @error('name_ru') <div class="form-error">{{ $message }}</div> @enderror
         </div>
         <div class="form-group">
           <label class="form-label">English <span style="color:#D32F2F">*</span></label>
           <input type="text" name="name_en" class="form-input {{ $errors->has('name_en') ? 'is-error' : '' }}"
-                 value="{{ old('name_en', $parameter?->translations->firstWhere('lang','en')?->name) }}"
+                 value="{{ old('name_en', ($parameter ?? null)?->translations->firstWhere('lang','en')?->name) }}"
                  placeholder="Print speed">
           @error('name_en') <div class="form-error">{{ $message }}</div> @enderror
         </div>

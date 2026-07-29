@@ -5,6 +5,8 @@ namespace App\Livewire\Admin;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductParameterValue;
+use App\Models\ProductPhoto;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
@@ -13,6 +15,8 @@ use Livewire\WithFileUploads;
 class ProductForm extends Component
 {
     use WithFileUploads;
+
+    public const MIN_PHOTOS = 4;
 
     public ?int $productId = null;
     public string $activeTab = 'basic';
@@ -34,9 +38,10 @@ class ProductForm extends Component
     // Parameters
     public array $selectedValues = [];
 
-    // Photo
-    public $photo;
-    public ?string $existingPhoto = null;
+    // Photos — at least MIN_PHOTOS required between existing + newly uploaded
+    /** @var array<int,\Livewire\Features\SupportFileUploads\TemporaryUploadedFile> */
+    public array $newPhotos = [];
+    public array $existingPhotos = [];
 
     public function mount(?Product $product = null): void
     {
@@ -46,7 +51,10 @@ class ProductForm extends Component
             $this->categoryId  = (string) $product->category_id;
             $this->slug        = $product->slug;
             $this->slugLocked  = true;
-            $this->existingPhoto = $product->photo ?? null;
+
+            $this->existingPhotos = $product->photos()->get()
+                ->map(fn(ProductPhoto $p) => ['id' => $p->id, 'url' => $p->url])
+                ->toArray();
 
             foreach ($product->translations as $t) {
                 $this->{'name' . ucfirst($t->lang)}        = $t->name ?? '';
@@ -64,10 +72,10 @@ class ProductForm extends Component
         }
     }
 
-    public function updatedNameUz(): void
+    public function updatedNameEn(): void
     {
         if (!$this->slugLocked && !$this->modelNumber) {
-            $this->slug = Str::slug($this->nameUz);
+            $this->slug = Str::slug($this->nameEn);
         }
     }
 
@@ -76,14 +84,35 @@ class ProductForm extends Component
         $this->selectedValues = [];
     }
 
-    public function unlockSlug(): void
-    {
-        $this->slugLocked = false;
-    }
-
     public function setTab(string $tab): void
     {
         $this->activeTab = $tab;
+    }
+
+    public function removeNewPhoto(int $index): void
+    {
+        unset($this->newPhotos[$index]);
+        $this->newPhotos = array_values($this->newPhotos);
+    }
+
+    public function removeExistingPhoto(int $photoId): void
+    {
+        $photo = ProductPhoto::find($photoId);
+
+        if ($photo && $photo->product_id === $this->productId) {
+            Storage::disk('public')->delete($photo->path);
+            $photo->delete();
+        }
+
+        $this->existingPhotos = array_values(array_filter(
+            $this->existingPhotos,
+            fn($p) => $p['id'] !== $photoId
+        ));
+    }
+
+    public function totalPhotoCount(): int
+    {
+        return count($this->existingPhotos) + count($this->newPhotos);
     }
 
     public function save(): void
@@ -103,19 +132,18 @@ class ProductForm extends Component
             'descriptionUz'  => ['nullable', 'string'],
             'descriptionRu'  => ['nullable', 'string'],
             'descriptionEn'  => ['nullable', 'string'],
-            'photo'          => ['nullable', 'image', 'max:2048'],
+            'newPhotos.*'    => ['nullable', 'image', 'max:2048'],
         ]);
 
-        $photoPath = $this->existingPhoto;
-        if ($this->photo) {
-            $photoPath = $this->photo->store('products', 'public');
+        if ($this->totalPhotoCount() < self::MIN_PHOTOS) {
+            $this->addError('newPhotos', 'Kamida ' . self::MIN_PHOTOS . ' ta rasm yuklang.');
+            return;
         }
 
         $data = [
             'category_id'  => $this->categoryId,
             'model_number' => $this->modelNumber,
             'slug'         => $this->slug,
-            'photo'        => $photoPath,
         ];
 
         if ($this->productId) {
@@ -131,6 +159,16 @@ class ProductForm extends Component
                 'description' => $this->{'description' . ucfirst($lang)},
             ]);
         }
+
+        $nextSort = $product->photos()->max('sort_order') + 1;
+        foreach ($this->newPhotos as $upload) {
+            $product->photos()->create([
+                'path'       => $upload->store('products', 'public'),
+                'sort_order' => $nextSort++,
+            ]);
+        }
+
+        $product->update(['photo' => $product->photos()->orderBy('sort_order')->value('path')]);
 
         // Sync parameter values
         ProductParameterValue::where('product_id', $product->id)->delete();

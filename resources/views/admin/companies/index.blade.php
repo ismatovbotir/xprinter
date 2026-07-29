@@ -5,7 +5,7 @@
 
 <div class="page-header">
   <div>
-    <div class="page-title">Kompaniyalar</div>
+    <div class="page-title">Kompaniyalar <x-help-icon section="admin.companies" /></div>
     <div class="page-subtitle">Jami {{ $companies->total() }} ta kompaniya</div>
   </div>
 </div>

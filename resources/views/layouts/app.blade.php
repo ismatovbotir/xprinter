@@ -6,8 +6,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 
     {{-- ── Primary ── --}}
-    <title>@yield('title', 'Xprinter.uz') — Rasmiy distribyutor Xprinter O'zbekistonda</title>
-    <meta name="description" content="@yield('description', 'Termoprinterlari Xprinter O\'zbekistonda — chek, etiket va mobil printerlar. Rasmiy distribyutor, 12 oy kafolat, Toshkentda servis markaz.')">
+    <title>@yield('title', 'Xprinter.uz') — Xprinter distribyutorlari va dilerlari O'zbekistonda</title>
+    <meta name="description" content="@yield('description', 'Termoprinterlari Xprinter O\'zbekistonda — chek, etiket va mobil printerlar. Rasmiy distribyutorlar va dilerlar tarmog\'i, 12 oy kafolat, Toshkentda servis markaz.')">
     <meta name="keywords" content="@yield('keywords', 'termoprinter toshkent, chek printer, etiket printer, xprinter uzbekistan, termoprinter narxi, receipt printer uzbekistan')">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ url()->current() }}">
@@ -15,8 +15,8 @@
     {{-- ── Open Graph ── --}}
     <meta property="og:site_name" content="Xprinter.uz">
     <meta property="og:type" content="@yield('og_type', 'website')">
-    <meta property="og:title" content="@yield('og_title', 'Xprinter.uz — Rasmiy distribyutor Xprinter O\'zbekistonda')">
-    <meta property="og:description" content="@yield('og_description', 'Termoprinterlari Xprinter O\'zbekistonda — chek, etiket va mobil printerlar. Rasmiy distribyutor, 12 oy kafolat.')">
+    <meta property="og:title" content="@yield('og_title', 'Xprinter.uz — distribyutorlar va dilerlar platformasi')">
+    <meta property="og:description" content="@yield('og_description', 'Termoprinterlari Xprinter O\'zbekistonda — chek, etiket va mobil printerlar. Rasmiy distribyutorlar va dilerlar tarmog\'i, 12 oy kafolat.')">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:image" content="@yield('og_image', url('/images/og-default.jpg'))">
     <meta property="og:image:width" content="1200">
@@ -31,10 +31,12 @@
     <meta name="twitter:description" content="@yield('og_description', 'Termoprinterlari Xprinter O\'zbekistonda.')">
     <meta name="twitter:image" content="@yield('og_image', url('/images/og-default.jpg'))">
 
-    {{-- ── Fonts ── --}}
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    {{-- ── Fonts (non-blocking) ── --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" />
+    <link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" /></noscript>
 
     @vite(['resources/css/public.css'])
     @stack('styles')
@@ -45,10 +47,10 @@
         "@@context": "https://schema.org",
         "@type": "LocalBusiness",
         "name": "Xprinter.uz",
-        "description": "O'zbekistonda Xprinter termoprinterlari rasmiy distribyutori. Chek, etiket va mobil printerlar.",
+        "description": "Xprinter termoprinterlari uchun O'zbekistondagi rasmiy distribyutorlar va dilerlar platformasi. Chek, etiket va mobil printerlar.",
         "url": "{{ url('/') }}",
-        "telephone": "+998901234567",
-        "email": "info@xprinter.uz",
+        "telephone": "{{ $siteSettings->phone ?: '+998901234567' }}",
+        "email": "{{ $siteSettings->email ?: 'info@xprinter.uz' }}",
         "logo": "{{ url('/images/logo.png') }}",
         "image": "{{ url('/images/og-default.jpg') }}",
         "priceRange": "$$",
@@ -59,6 +61,9 @@
             "addressCountry": "UZ",
             "addressLocality": "Toshkent",
             "addressRegion": "Toshkent shahri"
+            @if($siteSettings->address)
+            , "streetAddress": {!! json_encode($siteSettings->address) !!}
+            @endif
         },
         "geo": {
             "@type": "GeoCoordinates",
@@ -67,18 +72,54 @@
         },
         "openingHoursSpecification": {
             "@type": "OpeningHoursSpecification",
-            "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],
-            "opens": "09:00",
-            "closes": "18:00"
+            "dayOfWeek": {!! json_encode($siteSettings->work_days_schema ?: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']) !!},
+            "opens": "{{ $siteSettings->work_time_from ?: '09:00' }}",
+            "closes": "{{ $siteSettings->work_time_to ?: '18:00' }}"
         },
-        "sameAs": ["https://t.me/xprinter_uz"]
+        "sameAs": ["{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_uz' }}"]
     }
     </script>
 
     {{-- ── Page-specific schemas ── --}}
     @stack('schema')
+
+    {{-- ── Analytics ── --}}
+    @if($siteSettings->google_analytics_id)
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ $siteSettings->google_analytics_id }}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '{{ $siteSettings->google_analytics_id }}');
+    </script>
+    @endif
+
+    @if($siteSettings->yandex_metrica_id)
+    <script type="text/javascript">
+        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+        ym({{ (int) $siteSettings->yandex_metrica_id }}, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true
+        });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/{{ (int) $siteSettings->yandex_metrica_id }}" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    @endif
 </head>
 <body>
+
+@php
+    // On the homepage these scroll to the in-page sections; everywhere else they
+    // link to the dedicated pages, since those sections don't exist on other routes.
+    $isHome      = request()->routeIs('home');
+    $aboutHref   = $isHome ? '#about' : route('about');
+    $contactHref = $isHome ? '#contact' : route('contact');
+@endphp
 
 {{-- NAV --}}
 <nav class="pub-nav">
@@ -94,8 +135,8 @@
                    class="pub-nav-link {{ request()->routeIs('catalog*','product*') ? 'active' : '' }}">
                     Katalog
                 </a>
-                <a href="#about" class="pub-nav-link">Biz haqimizda</a>
-                <a href="#contact" class="pub-nav-link">Aloqa</a>
+                <a href="{{ $aboutHref }}" class="pub-nav-link {{ request()->routeIs('about') ? 'active' : '' }}">Biz haqimizda</a>
+                <a href="{{ $contactHref }}" class="pub-nav-link {{ request()->routeIs('contact') ? 'active' : '' }}">Aloqa</a>
             </div>
 
             <div class="pub-nav-actions">
@@ -118,7 +159,7 @@
                 <a href="{{ route('login') }}" class="pub-btn pub-btn-ghost" style="font-size:12px;padding:6px 14px">Kirish</a>
                 @endauth
 
-                <a href="https://t.me/xprinter_uz" target="_blank" class="pub-btn pub-btn-primary" style="font-size:12px;padding:6px 16px">
+                <a href="{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_uz' }}" target="_blank" class="pub-btn pub-btn-primary" style="font-size:12px;padding:6px 16px">
                     Telegram →
                 </a>
             </div>
@@ -138,7 +179,7 @@
                     <div class="pub-logo-mark"></div>
                     <span>XPRINTER<span style="color:var(--blue)">.UZ</span></span>
                 </a>
-                <p>Официальный дистрибьютор Xprinter в Узбекистане. Гарантия 12 месяцев, доставка по всей стране, сервис-центр в Ташкенте.</p>
+                <p>Платформа официальных дистрибьюторов и дилеров Xprinter в Узбекистане. Гарантия 12 месяцев, доставка по всей стране, сервисные центры у наших партнёров.</p>
             </div>
             <div class="pub-foot-col">
                 <h5>Katalog</h5>
@@ -152,23 +193,29 @@
             <div class="pub-foot-col">
                 <h5>Kompaniya</h5>
                 <ul>
-                    <li><a href="#about">Biz haqimizda</a></li>
-                    <li><a href="#contact">Aloqa</a></li>
+                    <li><a href="{{ $aboutHref }}">Biz haqimizda</a></li>
+                    <li><a href="{{ $contactHref }}">Aloqa</a></li>
                     <li><a href="{{ route('login') }}">Dilerlar uchun</a></li>
                 </ul>
             </div>
             <div class="pub-foot-col">
                 <h5>Aloqa</h5>
                 <ul>
-                    <li><a href="https://t.me/xprinter_uz">Telegram: @xprinter_uz</a></li>
-                    <li><a href="mailto:info@xprinter.uz">info@xprinter.uz</a></li>
-                    <li style="color:var(--muted);font-size:13px">Toshkent, O'zbekiston</li>
-                    <li style="color:var(--muted);font-size:13px">Dush–Shan 9:00–18:00</li>
+                    @if($siteSettings->phone)
+                    <li><a href="tel:{{ preg_replace('/\s+/', '', $siteSettings->phone) }}">{{ $siteSettings->phone }}</a></li>
+                    @endif
+                    <li><a href="{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_uz' }}">Telegram: {{ '@' . ($siteSettings->telegram ?: 'xprinter_uz') }}</a></li>
+                    @if($siteSettings->whatsapp_url)
+                    <li><a href="{{ $siteSettings->whatsapp_url }}">WhatsApp: {{ $siteSettings->whatsapp }}</a></li>
+                    @endif
+                    <li><a href="mailto:{{ $siteSettings->email ?: 'info@xprinter.uz' }}">{{ $siteSettings->email ?: 'info@xprinter.uz' }}</a></li>
+                    <li style="color:var(--muted);font-size:13px">{{ $siteSettings->address ?: "Toshkent, O'zbekiston" }}</li>
+                    <li style="color:var(--muted);font-size:13px">{{ $siteSettings->work_time_display ?: 'Dush–Shan 9:00–18:00' }}</li>
                 </ul>
             </div>
         </div>
         <div class="pub-foot-bottom">
-            <div>© {{ date('Y') }} Xprinter.uz — Официальный дистрибьютор Xprinter Group в Узбекистане</div>
+            <div>© {{ date('Y') }} Xprinter.uz — платформа дистрибьюторов и дилеров Xprinter Group в Узбекистане</div>
             <div style="text-transform:uppercase">ISO 9001:2015 · CE · FCC · RoHS</div>
         </div>
     </div>

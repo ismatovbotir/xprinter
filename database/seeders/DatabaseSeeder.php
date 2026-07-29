@@ -26,5 +26,7 @@ class DatabaseSeeder extends Seeder
         $this->call(UiTranslationSeeder::class);
         $this->call(UzbekistanSeeder::class);
         $this->call(CatalogSeeder::class);
+        $this->call(MarketplaceSeeder::class);
+        $this->call(HelpContentSeeder::class);
     }
 }

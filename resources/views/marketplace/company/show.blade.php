@@ -6,7 +6,7 @@
 
 <div class="page-header">
     <div>
-        <div class="page-title">Kompaniya profili</div>
+        <div class="page-title">Kompaniya profili <x-help-icon section="marketplace.company" /></div>
         <div class="page-subtitle">{{ $company->brand ?? $company->name }}</div>
     </div>
 </div>
@@ -241,14 +241,17 @@
     </div>
 </div>
 
+@php
+    $citiesByRegion = $regions->map(fn($r) => [
+        'id' => $r->id,
+        'cities' => $r->cities->map(fn($c) => [
+            'id' => $c->id,
+            'name' => $c->translations->where('lang', 'uz')->first()?->name ?? $c->translations->first()?->name,
+        ])->values(),
+    ])->keyBy('id');
+@endphp
 <script>
-const citiesByRegion = @json($regions->map(fn($r) => [
-    'id' => $r->id,
-    'cities' => $r->cities->map(fn($c) => [
-        'id' => $c->id,
-        'name' => $c->translations->where('lang', 'uz')->first()?->name ?? $c->translations->first()?->name,
-    ])->values(),
-])->keyBy('id'));
+const citiesByRegion = @json($citiesByRegion);
 
 function filterCities(regionId) {
     const select = document.getElementById('city_select');

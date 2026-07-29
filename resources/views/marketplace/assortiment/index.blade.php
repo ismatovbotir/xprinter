@@ -6,7 +6,7 @@
 
 <div class="page-header">
     <div>
-        <div class="page-title">Assortiment</div>
+        <div class="page-title">Assortiment <x-help-icon section="marketplace.assortiment" /></div>
         <div class="page-subtitle">{{ $company->brand ?? $company->name }} — mahsulotlar va narxlar</div>
     </div>
     <a href="{{ route('marketplace.assortiment.create') }}" class="btn btn-primary">
@@ -52,6 +52,15 @@
                     <td>
                         <div style="font-weight:600;color:var(--ink);font-size:14px">{{ $name }}</div>
                         <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:2px">{{ $item->product->model_number }}</div>
+                        @if($item->variantValues->isNotEmpty())
+                        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px">
+                            @foreach($item->variantValues as $variant)
+                            <span style="font-size:10px;font-weight:600;color:var(--blue-deep);background:var(--blue-soft);padding:2px 8px;border-radius:6px">
+                                {{ $variant->parameter->translations->firstWhere('lang','uz')?->name }}: {{ $variant->parameterValue->translations->firstWhere('lang','uz')?->name }}
+                            </span>
+                            @endforeach
+                        </div>
+                        @endif
                     </td>
                     <td style="color:var(--muted);font-size:13px">{{ $catName }}</td>
                     <td style="text-align:right">

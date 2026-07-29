@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class ProductController extends Controller
@@ -18,6 +19,7 @@ class ProductController extends Controller
         $categoryId = $request->input('category_id');
 
         $products = Product::with(['translations', 'category.translations'])
+            ->withCount('files')
             ->when($search, fn($q) =>
                 $q->where('model_number', 'like', "%{$search}%")
                   ->orWhereHas('translations', fn($t) =>
@@ -67,6 +69,9 @@ class ProductController extends Controller
             ]);
         }
 
+        Cache::forget('catalog.categories');
+        Cache::forget('home.featured');
+
         return redirect()->route('admin.products.index')
             ->with('success', "«{$request->model_number}» mahsuloti qo'shildi");
     }
@@ -107,6 +112,9 @@ class ProductController extends Controller
             );
         }
 
+        Cache::forget('catalog.categories');
+        Cache::forget('home.featured');
+
         return redirect()->route('admin.products.index')
             ->with('success', "«{$request->model_number}» yangilandi");
     }
@@ -115,6 +123,8 @@ class ProductController extends Controller
     {
         $name = $product->model_number;
         $product->delete();
+        Cache::forget('catalog.categories');
+        Cache::forget('home.featured');
 
         return redirect()->route('admin.products.index')
             ->with('success', "«{$name}» o'chirildi");

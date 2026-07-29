@@ -1,13 +1,20 @@
 <?php
 
+use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\FileController;
+use App\Http\Controllers\Admin\ProductFileController;
+use App\Http\Controllers\Admin\HelpController;
+use App\Http\Controllers\Admin\HomeContentController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\CountryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ParameterController;
+use App\Http\Controllers\Admin\ParameterValueController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RegionController;
+use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Marketplace\AssortimentController;
@@ -20,15 +27,20 @@ use App\Http\Controllers\Producer\PartnerController;
 use App\Http\Controllers\Producer\SerialController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 // ── Public ────────────────────────────────────────────────
-Route::get('/', HomeController::class)->name('home');
-Route::get('/catalog',                          [CatalogController::class, 'index'])->name('catalog');
-Route::get('/catalog/{slug}',                   [CatalogController::class, 'category'])->name('catalog.category');
-Route::get('/catalog/{category}/{slug}',        [CatalogController::class, 'show'])->name('products.show');
+Route::middleware('cache.headers:public;max_age=600;etag')->group(function () {
+    Route::get('/', HomeController::class)->name('home');
+    Route::get('/catalog',                   [CatalogController::class, 'index'])->name('catalog');
+    Route::get('/catalog/{slug}',            [CatalogController::class, 'category'])->name('catalog.category');
+    Route::get('/catalog/{category}/{slug}', [CatalogController::class, 'show'])->name('products.show');
+    Route::get('/about',                     [PageController::class, 'about'])->name('about');
+    Route::get('/contact',                   [PageController::class, 'contact'])->name('contact');
+});
 
 // ── Profile (all authenticated roles) ────────────────────
 Route::middleware('auth')->group(function () {
@@ -68,10 +80,21 @@ Route::prefix('admin')
 
         // Catalog
         Route::resource('categories', CategoryController::class);
-        Route::post(  'categories/{category}/parameters',             [CategoryController::class, 'attachParameter'])->name('categories.parameters.attach');
-        Route::delete('categories/{category}/parameters/{parameter}', [CategoryController::class, 'detachParameter'])->name('categories.parameters.detach');
+        Route::post(  'categories/{category}/parameters',                 [CategoryController::class, 'attachParameter'])->name('categories.parameters.attach');
+        Route::delete('categories/{category}/parameters/{parameter}',     [CategoryController::class, 'detachParameter'])->name('categories.parameters.detach');
+        Route::patch( 'categories/{category}/parameters/{parameter}/variant', [CategoryController::class, 'toggleParameterVariant'])->name('categories.parameters.toggle-variant');
         Route::resource('parameters', ParameterController::class);
+        Route::post(  'parameters/{parameter}/values',         [ParameterValueController::class, 'store'])->name('parameters.values.store');
+        Route::put(   'parameters/{parameter}/values/{value}', [ParameterValueController::class, 'update'])->name('parameters.values.update');
+        Route::delete('parameters/{parameter}/values/{value}', [ParameterValueController::class, 'destroy'])->name('parameters.values.destroy');
         Route::resource('products',   ProductController::class);
+
+        // File library
+        Route::resource('files', FileController::class);
+
+        // Link files to products
+        Route::post('products/{product}/files',           [ProductFileController::class, 'attach'])->name('products.files.attach');
+        Route::delete('products/{product}/files/{file}',  [ProductFileController::class, 'detach'])->name('products.files.detach');
 
         // Companies
         Route::get('companies/pending',             [CompanyController::class, 'pending'])->name('companies.pending');
@@ -87,6 +110,21 @@ Route::prefix('admin')
         Route::post('translations',         [TranslationController::class, 'store'])->name('translations.store');
         Route::post('translations/add-key', [TranslationController::class, 'addKey'])->name('translations.add-key');
         Route::delete('translations/key',   [TranslationController::class, 'destroyKey'])->name('translations.destroy-key');
+
+        // Banners
+        Route::resource('banners', BannerController::class);
+        Route::patch('banners/{banner}/toggle', [BannerController::class, 'toggle'])->name('banners.toggle');
+
+        // Help articles
+        Route::resource('help', HelpController::class);
+
+        // Homepage content
+        Route::get('homepage', [HomeContentController::class, 'edit'])->name('homepage.edit');
+        Route::put('homepage', [HomeContentController::class, 'update'])->name('homepage.update');
+
+        // Site settings (contacts, work time, analytics tokens)
+        Route::get('settings',  [SettingsController::class, 'edit'])->name('settings.edit');
+        Route::put('settings',  [SettingsController::class, 'update'])->name('settings.update');
     });
 
 // ── Marketplace ───────────────────────────────────────────

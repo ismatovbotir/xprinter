@@ -8,6 +8,7 @@ use App\Models\Parameter;
 use App\Models\ParameterValue;
 use App\Models\Product;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class CatalogSeeder extends Seeder
@@ -60,10 +61,11 @@ class CatalogSeeder extends Seeder
                     ['uz' => '127 mm/s', 'ru' => '127 мм/с', 'en' => '127 mm/s'],
                 ],
             ],
-            'dpi' => ['uz' => 'Ruxsat', 'ru' => 'Разрешение', 'en' => 'Resolution',
+            // Integer type — bare numeric values, no per-language variation needed.
+            'dpi' => ['uz' => 'Ruxsat', 'ru' => 'Разрешение', 'en' => 'Resolution', 'type' => 'integer',
                 'values' => [
-                    ['uz' => '203 DPI', 'ru' => '203 DPI', 'en' => '203 DPI'],
-                    ['uz' => '300 DPI', 'ru' => '300 DPI', 'en' => '300 DPI'],
+                    ['uz' => '203', 'ru' => '203', 'en' => '203'],
+                    ['uz' => '300', 'ru' => '300', 'en' => '300'],
                 ],
             ],
             'interface' => ['uz' => 'Interfeys', 'ru' => 'Интерфейс', 'en' => 'Interface',
@@ -82,18 +84,18 @@ class CatalogSeeder extends Seeder
                     ['uz' => 'Bluetooth', 'ru' => 'Bluetooth', 'en' => 'Bluetooth'],
                 ],
             ],
+            // Boolean type — values are auto-seeded (Ha/Yo'q), never listed here.
+            'autocutter' => ['uz' => 'Avtokesuvchi', 'ru' => 'Автообрезчик', 'en' => 'Auto-cutter', 'type' => 'boolean'],
         ];
 
         $result = [];
         foreach ($defs as $key => $def) {
-            $param = Parameter::firstOrCreate([]);
-            // use first param without translations as a placeholder approach
-            // Actually let's check if param with this translation exists
             $existing = Parameter::whereHas('translations', fn($q) =>
                 $q->where('lang', 'uz')->where('name', $def['uz'])
             )->first();
 
             $param = $existing ?? Parameter::create([]);
+            $param->update(['type' => $def['type'] ?? 'string']);
 
             foreach (['uz', 'ru', 'en'] as $lang) {
                 $param->translations()->updateOrCreate(['lang' => $lang], ['name' => $def[$lang]]);
@@ -101,7 +103,16 @@ class CatalogSeeder extends Seeder
 
             $result[$key] = ['param' => $param, 'values' => []];
 
-            foreach ($def['values'] as $valDef) {
+            if (($def['type'] ?? 'string') === 'boolean') {
+                $valueDefs = [
+                    ['uz' => 'Ha',   'ru' => 'Да',  'en' => 'Yes'],
+                    ['uz' => "Yo'q", 'ru' => 'Нет', 'en' => 'No'],
+                ];
+            } else {
+                $valueDefs = $def['values'] ?? [];
+            }
+
+            foreach ($valueDefs as $valDef) {
                 $existingVal = ParameterValue::where('parameter_id', $param->id)
                     ->whereHas('translations', fn($q) =>
                         $q->where('lang', 'uz')->where('name', $valDef['uz'])
@@ -123,18 +134,28 @@ class CatalogSeeder extends Seeder
     private function linkParameters(Category $receipt, Category $label, Category $mobile, Category $wristband, array $params): void
     {
         $links = [
-            $receipt->id   => ['paper_width', 'print_speed', 'interface', 'dpi'],
+            $receipt->id   => ['paper_width', 'print_speed', 'interface', 'dpi', 'autocutter'],
             $label->id     => ['paper_width', 'print_speed', 'interface', 'dpi'],
             $mobile->id    => ['paper_width', 'print_speed', 'connectivity'],
             $wristband->id => ['paper_width', 'dpi', 'interface'],
         ];
 
+        // Parameters the dealer picks per-listing — one Xprinter model number covers several
+        // physical variants (e.g. same XP-Q890K sold with different interfaces).
+        $variantKeys = [
+            $receipt->id => ['interface'],
+            $label->id   => ['interface'],
+        ];
+
         foreach ($links as $catId => $paramKeys) {
             foreach ($paramKeys as $order => $key) {
-                CategoryParameter::firstOrCreate([
-                    'category_id'  => $catId,
-                    'parameter_id' => $params[$key]['param']->id,
-                ], ['sort_order' => $order + 1]);
+                CategoryParameter::updateOrCreate(
+                    ['category_id' => $catId, 'parameter_id' => $params[$key]['param']->id],
+                    [
+                        'sort_order' => $order + 1,
+                        'is_variant' => in_array($key, $variantKeys[$catId] ?? [], true),
+                    ]
+                );
             }
         }
     }
@@ -155,7 +176,8 @@ class CatalogSeeder extends Seeder
                     $v('paper_width', '80 mm'),
                     $v('print_speed', '250 mm/s'),
                     $v('interface', 'USB + Serial + LAN'),
-                    $v('dpi', '203 DPI'),
+                    $v('dpi', '203'),
+                    $v('autocutter', 'Ha'),
                 ],
             ],
             [
@@ -168,7 +190,8 @@ class CatalogSeeder extends Seeder
                     $v('paper_width', '80 mm'),
                     $v('print_speed', '200 mm/s'),
                     $v('interface', 'USB + Serial + LAN'),
-                    $v('dpi', '203 DPI'),
+                    $v('dpi', '203'),
+                    $v('autocutter', 'Ha'),
                 ],
             ],
             [
@@ -181,7 +204,8 @@ class CatalogSeeder extends Seeder
                     $v('paper_width', '80 mm'),
                     $v('print_speed', '250 mm/s'),
                     $v('interface', 'USB + Ethernet'),
-                    $v('dpi', '203 DPI'),
+                    $v('dpi', '203'),
+                    $v('autocutter', 'Ha'),
                 ],
             ],
             [
@@ -194,7 +218,8 @@ class CatalogSeeder extends Seeder
                     $v('paper_width', '58 mm'),
                     $v('print_speed', '150 mm/s'),
                     $v('interface', 'USB'),
-                    $v('dpi', '203 DPI'),
+                    $v('dpi', '203'),
+                    $v('autocutter', "Yo'q"),
                 ],
             ],
             // ── Label ─────────────────────────────────────────────────
@@ -208,7 +233,7 @@ class CatalogSeeder extends Seeder
                     $v('paper_width', '4 inch (108 mm)'),
                     $v('print_speed', '127 mm/s'),
                     $v('interface', 'USB'),
-                    $v('dpi', '203 DPI'),
+                    $v('dpi', '203'),
                 ],
             ],
             [
@@ -221,7 +246,7 @@ class CatalogSeeder extends Seeder
                     $v('paper_width', '4 inch (108 mm)'),
                     $v('print_speed', '127 mm/s'),
                     $v('interface', 'USB + Ethernet'),
-                    $v('dpi', '203 DPI'),
+                    $v('dpi', '203'),
                 ],
             ],
             [
@@ -234,7 +259,7 @@ class CatalogSeeder extends Seeder
                     $v('paper_width', '3 inch (80 mm)'),
                     $v('print_speed', '127 mm/s'),
                     $v('interface', 'USB'),
-                    $v('dpi', '203 DPI'),
+                    $v('dpi', '203'),
                 ],
             ],
             [
@@ -247,7 +272,7 @@ class CatalogSeeder extends Seeder
                     $v('paper_width', '2 inch (57 mm)'),
                     $v('print_speed', '127 mm/s'),
                     $v('interface', 'USB'),
-                    $v('dpi', '203 DPI'),
+                    $v('dpi', '203'),
                 ],
             ],
             // ── Mobile ────────────────────────────────────────────────
@@ -284,7 +309,7 @@ class CatalogSeeder extends Seeder
                 'desc_en' => '2 inch, for medical and hospitality',
                 'params' => [
                     $v('paper_width', '2 inch (57 mm)'),
-                    $v('dpi', '203 DPI'),
+                    $v('dpi', '203'),
                     $v('interface', 'USB'),
                 ],
             ],
@@ -296,7 +321,7 @@ class CatalogSeeder extends Seeder
                 'desc_en' => '2 inch thermal wristband printer',
                 'params' => [
                     $v('paper_width', '2 inch (57 mm)'),
-                    $v('dpi', '300 DPI'),
+                    $v('dpi', '300'),
                     $v('interface', 'USB + Ethernet'),
                 ],
             ],
@@ -326,6 +351,59 @@ class CatalogSeeder extends Seeder
                     ]);
                 }
             }
+
+            $this->ensurePhotos($product);
         }
+    }
+
+    /**
+     * The product form requires at least 4 photos before it can be saved — without this,
+     * opening any seeded product in the admin panel to edit e.g. its description would
+     * immediately fail validation. Generates simple placeholder images so every seeded
+     * product already satisfies that minimum.
+     */
+    private function ensurePhotos(Product $product): void
+    {
+        if ($product->photos()->exists()) {
+            return;
+        }
+
+        if (!function_exists('imagecreatetruecolor')) {
+            return;
+        }
+
+        for ($i = 1; $i <= 4; $i++) {
+            $product->photos()->create([
+                'path'       => $this->placeholderImage($product->model_number, $i),
+                'sort_order' => $i,
+            ]);
+        }
+
+        $product->update(['photo' => $product->photos()->orderBy('sort_order')->value('path')]);
+    }
+
+    private function placeholderImage(string $modelNumber, int $index): string
+    {
+        $width = $height = 600;
+
+        $image = imagecreatetruecolor($width, $height);
+        imagefill($image, 0, 0, imagecolorallocate($image, 234, 242, 253));
+        imagerectangle($image, 16, 16, $width - 16, $height - 16, imagecolorallocate($image, 220, 233, 251));
+
+        $ink = imagecolorallocate($image, 10, 27, 61);
+        $label = "{$modelNumber} #{$index}";
+        $font = 5;
+        $textWidth = imagefontwidth($font) * strlen($label);
+        imagestring($image, $font, (int) (($width - $textWidth) / 2), (int) ($height / 2), $label, $ink);
+
+        ob_start();
+        imagepng($image);
+        $contents = ob_get_clean();
+        imagedestroy($image);
+
+        $path = 'products/' . Str::uuid() . '.png';
+        Storage::disk('public')->put($path, $contents);
+
+        return $path;
     }
 }

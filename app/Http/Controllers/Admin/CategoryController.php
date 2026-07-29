@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Concerns\GeneratesSlug;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Parameter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class CategoryController extends Controller
 {
+    use GeneratesSlug;
+
     public function index(Request $request): View
     {
         $categories = Category::with('translations')
@@ -36,13 +39,13 @@ class CategoryController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'slug'    => 'required|string|max:100|unique:categories,slug|regex:/^[a-z0-9-]+$/',
             'name_uz' => 'required|string|max:255',
             'name_ru' => 'required|string|max:255',
             'name_en' => 'required|string|max:255',
         ]);
 
-        $category = Category::create(['slug' => $request->slug]);
+        $slug = $this->generateUniqueSlug($request->name_en, 'categories');
+        $category = Category::create(['slug' => $slug]);
 
         foreach (['uz', 'ru', 'en'] as $lang) {
             $category->translations()->create([
@@ -51,13 +54,15 @@ class CategoryController extends Controller
             ]);
         }
 
+        Cache::forget('catalog.categories');
+
         return redirect()->route('admin.categories.index')
             ->with('success', "«{$request->name_uz}» kategoriyasi qo'shildi");
     }
 
     public function edit(Category $category): View
     {
-        $category->load('translations', 'parameters.translations');
+        $category->load('translations', 'parameters.translations', 'parameters.values.translations');
         $allParameters = Parameter::with('translations')->get();
         return view('admin.categories.form', compact('category', 'allParameters'));
     }
@@ -65,13 +70,10 @@ class CategoryController extends Controller
     public function update(Request $request, Category $category): RedirectResponse
     {
         $request->validate([
-            'slug'    => "required|string|max:100|unique:categories,slug,{$category->id}|regex:/^[a-z0-9-]+$/",
             'name_uz' => 'required|string|max:255',
             'name_ru' => 'required|string|max:255',
             'name_en' => 'required|string|max:255',
         ]);
-
-        $category->update(['slug' => $request->slug]);
 
         foreach (['uz', 'ru', 'en'] as $lang) {
             $category->translations()->updateOrCreate(
@@ -79,6 +81,8 @@ class CategoryController extends Controller
                 ['name' => $request->{"name_{$lang}"}]
             );
         }
+
+        Cache::forget('catalog.categories');
 
         return redirect()->route('admin.categories.index')
             ->with('success', "«{$request->name_uz}» yangilandi");
@@ -100,6 +104,19 @@ class CategoryController extends Controller
         return back()->with('success', 'Parametr biriktirildi');
     }
 
+    public function toggleParameterVariant(Category $category, Parameter $parameter): RedirectResponse
+    {
+        $pivot = $category->parameters()->where('parameter_id', $parameter->id)->first()?->pivot;
+
+        if ($pivot) {
+            $category->parameters()->updateExistingPivot($parameter->id, [
+                'is_variant' => !$pivot->is_variant,
+            ]);
+        }
+
+        return back()->with('success', 'Yangilandi');
+    }
+
     public function detachParameter(Category $category, Parameter $parameter): RedirectResponse
     {
         $category->parameters()->detach($parameter->id);
@@ -111,6 +128,7 @@ class CategoryController extends Controller
     {
         $name = $category->translations->firstWhere('lang', 'uz')?->name ?? $category->slug;
         $category->delete();
+        Cache::forget('catalog.categories');
 
         return redirect()->route('admin.categories.index')
             ->with('success', "«{$name}» o'chirildi");

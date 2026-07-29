@@ -41,4 +41,17 @@ class Product extends Model
     {
         return $this->hasMany(ProductSerial::class);
     }
+
+    public function photos(): HasMany
+    {
+        return $this->hasMany(ProductPhoto::class)->orderBy('sort_order');
+    }
+
+    public function files(): BelongsToMany
+    {
+        return $this->belongsToMany(\App\Models\File::class, 'product_file')
+            ->withPivot('type', 'language', 'sort_order')
+            ->orderByPivot('sort_order')
+            ->withTimestamps();
+    }
 }

@@ -7,15 +7,15 @@
 
     $metaTitle = $catName ?? 'Katalog';
     $metaDesc  = $catName
-        ? "Xprinter {$catName} O'zbekistonda — rasmiy distribyutordan sotib oling. 12 oy kafolat, Toshkentga yetkazib berish."
-        : "Xprinter termoprinterlari katalogi — chek, etiket va mobil printerlar. O'zbekistonda rasmiy distribyutor.";
+        ? "Xprinter {$catName} O'zbekistonda — rasmiy distribyutorlar tarmog'idan sotib oling. 12 oy kafolat, Toshkentga yetkazib berish."
+        : "Xprinter termoprinterlari katalogi — chek, etiket va mobil printerlar. O'zbekistondagi rasmiy distribyutorlar va dilerlar tarmog'i.";
     $metaKeys  = $catName
         ? "{$catName} toshkent, xprinter {$catName}, termoprinter narxi"
         : 'termoprinter katalog, chek printer, etiket printer, mobil printer, xprinter uzbekistan';
     $ogTitle   = ($catName ? $catName . ' — ' : '') . 'Xprinter.uz Katalog';
     $ogDesc    = $catName
-        ? "Xprinter {$catName} — O'zbekistonda rasmiy distribyutordan. 12 oy kafolat, tez yetkazib berish."
-        : "Xprinter termoprinterlari katalogi O'zbekistonda. Rasmiy distribyutor — chek, etiket va mobil printerlar.";
+        ? "Xprinter {$catName} — O'zbekistondagi rasmiy distribyutorlardan. 12 oy kafolat, tez yetkazib berish."
+        : "Xprinter termoprinterlari katalogi O'zbekistonda. Rasmiy distribyutorlar va dilerlar tarmog'i — chek, etiket va mobil printerlar.";
 @endphp
 @section('title',          $metaTitle)
 @section('description',    $metaDesc)
@@ -66,7 +66,15 @@
           <input type="text" name="search" value="{{ $search }}" placeholder="Model yoki nom...">
         </div>
 
-        <div class="cat-sidebar-title">Kategoriyalar</div>
+        <div class="cat-sidebar-title" style="margin-top:20px">Saralash</div>
+        @foreach(['newest' => "Yangi avval", 'name' => "Nomi bo'yicha", 'model' => 'Model raqami'] as $val => $label)
+        <label style="display:flex;align-items:center;gap:8px;padding:6px 0;cursor:pointer;font-size:13px;color:{{ request('sort','newest') === $val ? 'var(--blue)' : 'var(--ink-soft)' }};font-weight:{{ request('sort','newest') === $val ? '600' : '400' }}">
+          <input type="radio" name="sort" value="{{ $val }}" {{ request('sort','newest') === $val ? 'checked' : '' }} onchange="this.form.submit()" style="accent-color:var(--blue)">
+          {{ $label }}
+        </label>
+        @endforeach
+
+        <div class="cat-sidebar-title" style="margin-top:20px">Kategoriyalar</div>
 
         <a href="{{ route('catalog') }}"
            class="cat-filter-link {{ !$activeCategory ? 'active' : '' }}">

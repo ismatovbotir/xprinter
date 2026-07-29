@@ -72,7 +72,7 @@
         </div>
     </div>
 
-    <div class="card" style="margin-bottom:20px">
+    <div class="card" style="margin-bottom:16px">
         <div class="card-header"><div class="card-title">Faoliyat turi</div></div>
         <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
             @error('types')<div class="invalid-feedback" style="display:block;margin-bottom:8px">{{ $message }}</div>@enderror
@@ -97,9 +97,128 @@
         </div>
     </div>
 
+    {{-- Location --}}
+    <div class="card" style="margin-bottom:20px">
+        <div class="card-header"><div class="card-title">Joylashuv</div></div>
+        <div style="padding:20px;display:flex;flex-direction:column;gap:16px">
+
+            @php $countryCount = $countries->count(); @endphp
+
+            {{-- Country (hidden if only one) --}}
+            @if($countryCount > 1)
+            <div class="form-group">
+                <label class="form-label">Davlat <span style="color:var(--red)">*</span></label>
+                <select id="sel-country" class="form-input" onchange="filterRegions(this.value)">
+                    <option value="">— Tanlang —</option>
+                    @foreach($countries as $country)
+                    <option value="{{ $country->id }}" {{ old('country_id') == $country->id ? 'selected' : '' }}>
+                        {{ $country->translation?->name ?? $country->code }}
+                    </option>
+                    @endforeach
+                </select>
+            </div>
+            @else
+            <input type="hidden" id="sel-country" value="{{ $countries->first()?->id }}">
+            @endif
+
+            <div class="form-group">
+                <label class="form-label">Viloyat <span style="color:var(--red)">*</span></label>
+                <select id="sel-region" class="form-input" onchange="filterCities(this.value)" disabled>
+                    <option value="">— Avval davlat tanlang —</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Shahar / Tuman <span style="color:var(--red)">*</span></label>
+                <select id="sel-city" name="city_id" class="form-input {{ $errors->has('city_id') ? 'is-invalid' : '' }}" disabled>
+                    <option value="">— Avval viloyat tanlang —</option>
+                </select>
+                @error('city_id')<div class="invalid-feedback" style="display:block">{{ $message }}</div>@enderror
+            </div>
+
+        </div>
+    </div>
+
     <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;height:46px;font-size:14px">
         Yuborish — tasdiq kutish
     </button>
 </form>
+
+@php
+    $allRegionsData = $regions->map(fn($r) => [
+        'id'         => $r->id,
+        'country_id' => $r->country_id,
+        'name'       => $r->translation?->name ?? $r->translations->first()?->name ?? $r->id,
+    ]);
+    $allCitiesData = $cities->map(fn($c) => [
+        'id'        => $c->id,
+        'region_id' => $c->region_id,
+        'name'      => $c->translation?->name ?? $c->translations->first()?->name ?? $c->id,
+    ]);
+@endphp
+<script>
+var allRegions = @json($allRegionsData);
+
+var allCities = @json($allCitiesData);
+
+var oldRegion = {{ old('region_id', 'null') }};
+var oldCity   = {{ old('city_id',   'null') }};
+
+function filterRegions(countryId) {
+    var sel = document.getElementById('sel-region');
+    sel.innerHTML = '<option value="">— Tanlang —</option>';
+
+    var filtered = allRegions.filter(function(r) { return r.country_id == countryId; });
+    filtered.forEach(function(r) {
+        var opt = document.createElement('option');
+        opt.value = r.id;
+        opt.textContent = r.name;
+        if (r.id == oldRegion) opt.selected = true;
+        sel.appendChild(opt);
+    });
+
+    sel.disabled = filtered.length === 0;
+    filterCities(sel.value);
+}
+
+function filterCities(regionId) {
+    var sel = document.getElementById('sel-city');
+    sel.innerHTML = '<option value="">— Tanlang —</option>';
+
+    var filtered = allCities.filter(function(c) { return c.region_id == regionId; });
+    filtered.forEach(function(c) {
+        var opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.name;
+        if (c.id == oldCity) opt.selected = true;
+        sel.appendChild(opt);
+    });
+
+    sel.disabled = filtered.length === 0;
+}
+
+// Auto-init on page load (for old() repopulation after validation error)
+(function () {
+    var countrySel = document.getElementById('sel-country');
+    var initialCountry = countrySel.tagName === 'SELECT' ? countrySel.value : countrySel.value;
+
+    if (!initialCountry) {
+        // If only one country, auto-select it
+        @if($countryCount === 1)
+        initialCountry = '{{ $countries->first()?->id }}';
+        @endif
+    }
+
+    if (initialCountry) {
+        if (countrySel.tagName === 'SELECT') countrySel.value = initialCountry;
+        filterRegions(initialCountry);
+        if (oldRegion) {
+            document.getElementById('sel-region').value = oldRegion;
+            filterCities(oldRegion);
+            if (oldCity) document.getElementById('sel-city').value = oldCity;
+        }
+    }
+})();
+</script>
 
 @endsection

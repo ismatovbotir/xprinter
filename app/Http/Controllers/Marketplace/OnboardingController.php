@@ -3,7 +3,11 @@
 namespace App\Http\Controllers\Marketplace;
 
 use App\Http\Controllers\Controller;
+use App\Models\Address;
+use App\Models\City;
 use App\Models\Company;
+use App\Models\Country;
+use App\Models\Region;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -17,7 +21,11 @@ class OnboardingController extends Controller
             return redirect()->route('marketplace.pending');
         }
 
-        return view('marketplace.onboarding');
+        $countries = Country::with('translations')->get();
+        $regions   = Region::with('translations')->get();
+        $cities    = City::with('translations')->get();
+
+        return view('marketplace.onboarding', compact('countries', 'regions', 'cities'));
     }
 
     public function store(Request $request)
@@ -29,11 +37,12 @@ class OnboardingController extends Controller
         }
 
         $data = $request->validate([
-            'brand' => ['required', 'string', 'max:255'],
-            'inn'   => ['required', 'string', 'max:20', 'unique:companies,inn'],
-            'phone' => ['required', 'string', 'max:20'],
-            'types' => ['required', 'array', 'min:1'],
+            'brand'   => ['required', 'string', 'max:255'],
+            'inn'     => ['required', 'string', 'max:20', 'unique:companies,inn'],
+            'phone'   => ['required', 'string', 'max:20'],
+            'types'   => ['required', 'array', 'min:1'],
             'types.*' => ['in:retail,partner,service'],
+            'city_id' => ['required', 'exists:cities,id'],
         ]);
 
         $company = Company::create([
@@ -49,6 +58,12 @@ class OnboardingController extends Controller
         ]);
 
         $user->update(['company_id' => $company->id]);
+
+        Address::create([
+            'company_id' => $company->id,
+            'city_id'    => $data['city_id'],
+            'name'       => 'Asosiy manzil',
+        ]);
 
         return redirect()->route('marketplace.pending');
     }

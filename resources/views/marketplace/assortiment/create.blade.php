@@ -20,7 +20,17 @@
     {{-- Left: catalog browse --}}
     <div style="display:flex;flex-direction:column;gap:16px">
         @forelse($categories as $category)
-        @php $catName = $category->translations->firstWhere('lang', 'uz')?->name ?? $category->translations->first()?->name; @endphp
+        @php
+            $catName = $category->translations->firstWhere('lang', 'uz')?->name ?? $category->translations->first()?->name;
+            $variantParams = $category->parameters->filter(fn($p) => $p->pivot->is_variant)->map(fn($p) => [
+                'id'     => $p->id,
+                'name'   => $p->translations->firstWhere('lang', 'uz')?->name ?? "Parametr #{$p->id}",
+                'values' => $p->values->map(fn($v) => [
+                    'id'   => $v->id,
+                    'name' => $v->translations->firstWhere('lang', 'uz')?->name ?? "#{$v->id}",
+                ])->values(),
+            ])->values();
+        @endphp
         <div class="card">
             <div class="card-header">
                 <div class="card-title">{{ $catName }}</div>
@@ -30,8 +40,9 @@
                 @php $pName = $product->translation?->name ?? $product->model_number; @endphp
                 <label style="display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);cursor:pointer" id="label-{{ $product->id }}">
                     <input type="radio" name="product_id" value="{{ $product->id }}" form="add-form"
+                           data-variant-params='{{ json_encode($variantParams) }}'
                            style="width:16px;height:16px;accent-color:var(--blue);flex-shrink:0"
-                           onchange="selectProduct({{ $product->id }}, '{{ addslashes($pName) }}', '{{ $product->model_number }}')">
+                           onchange="selectProduct(this, {{ Js::from($pName) }}, {{ Js::from($product->model_number) }})">
                     <div style="flex:1;min-width:0">
                         <div style="font-weight:600;color:var(--ink);font-size:14px">{{ $pName }}</div>
                         <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-top:2px">{{ $product->model_number }}</div>
@@ -62,6 +73,8 @@
                 </div>
 
                 <div style="display:flex;flex-direction:column;gap:14px">
+                    <div id="variant-fields" style="display:flex;flex-direction:column;gap:14px"></div>
+
                     <div class="form-group" style="margin:0">
                         <label class="form-label">Valyuta</label>
                         <select name="currency" class="form-input">
@@ -112,11 +125,49 @@
 </div>
 
 <script>
-function selectProduct(id, name, model) {
-    document.getElementById('selected_product_id').value = id;
+function selectProduct(radio, name, model) {
+    document.getElementById('selected_product_id').value = radio.value;
     document.getElementById('selected-label').innerHTML =
         '<div style="font-weight:600;color:var(--ink);font-size:15px">' + name + '</div>' +
         '<div style="font-family:\'JetBrains Mono\',monospace;font-size:11px;color:var(--muted);margin-top:3px">' + model + '</div>';
+
+    renderVariantFields(JSON.parse(radio.dataset.variantParams || '[]'));
+}
+
+function renderVariantFields(params) {
+    const container = document.getElementById('variant-fields');
+    container.innerHTML = '';
+
+    params.forEach(function (param) {
+        const wrap = document.createElement('div');
+        wrap.className = 'form-group';
+        wrap.style.margin = '0';
+
+        const label = document.createElement('label');
+        label.className = 'form-label';
+        label.textContent = param.name;
+        wrap.appendChild(label);
+
+        const select = document.createElement('select');
+        select.name = 'variant_values[' + param.id + ']';
+        select.className = 'form-input';
+        select.required = true;
+
+        const empty = document.createElement('option');
+        empty.value = '';
+        empty.textContent = '— Tanlang —';
+        select.appendChild(empty);
+
+        param.values.forEach(function (value) {
+            const opt = document.createElement('option');
+            opt.value = value.id;
+            opt.textContent = value.name;
+            select.appendChild(opt);
+        });
+
+        wrap.appendChild(select);
+        container.appendChild(wrap);
+    });
 }
 </script>
 

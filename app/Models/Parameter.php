@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Parameter extends Model
 {
-    protected $fillable = [];
+    public const TYPES = ['string', 'integer', 'boolean'];
+
+    protected $fillable = ['type'];
 
     public function values(): HasMany
     {
@@ -18,7 +20,7 @@ class Parameter extends Model
 
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class, 'category_parameters')->withPivot('sort_order');
+        return $this->belongsToMany(Category::class, 'category_parameters')->withPivot('sort_order', 'is_variant');
     }
 
     public function translation(): HasOne

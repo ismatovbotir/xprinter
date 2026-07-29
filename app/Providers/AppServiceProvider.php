@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\SiteSetting;
 use App\Models\UiTranslation;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,6 +15,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadUiTranslations();
+        $this->shareSiteSettings();
     }
 
     private function loadUiTranslations(): void
@@ -32,5 +35,16 @@ class AppServiceProvider extends ServiceProvider
             }
             app('translator')->addLines($lines, $lang);
         }
+    }
+
+    private function shareSiteSettings(): void
+    {
+        try {
+            $settings = SiteSetting::current();
+        } catch (\Throwable) {
+            return;
+        }
+
+        View::share('siteSettings', $settings);
     }
 }

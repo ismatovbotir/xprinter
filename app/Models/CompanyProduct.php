@@ -29,6 +29,11 @@ class CompanyProduct extends Model
         return $this->hasMany(Price::class);
     }
 
+    public function variantValues(): HasMany
+    {
+        return $this->hasMany(CompanyProductParameterValue::class);
+    }
+
     public function retailPrice()
     {
         return $this->prices()->where('type', 'retail')->first();

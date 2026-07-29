@@ -22,6 +22,11 @@ class ParameterValue extends Model
         return $this->belongsToMany(Product::class, 'product_parameter_values');
     }
 
+    public function companyProductSelections(): HasMany
+    {
+        return $this->hasMany(CompanyProductParameterValue::class);
+    }
+
     public function translation(): HasOne
     {
         return $this->hasOne(ParameterValueTranslation::class)->where('lang', app()->getLocale());

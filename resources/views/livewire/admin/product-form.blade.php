@@ -43,21 +43,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" style="display:flex;align-items:center;justify-content:space-between">
-                        <span>Slug <span style="color:var(--red)">*</span></span>
-                        @if($slugLocked)
-                        <button type="button" wire:click="unlockSlug"
-                                style="font-size:11px;color:var(--blue);background:none;border:none;cursor:pointer;font-family:'Manrope',sans-serif">
-                            ✏ O'zgartirish
-                        </button>
-                        @endif
-                    </label>
+                    <label class="form-label">Slug <span style="color:var(--red)">*</span></label>
                     <div style="position:relative">
                         <input type="text" wire:model.live="slug"
                                class="form-input {{ $errors->has('slug') || $this->slugExists ? 'is-invalid' : '' }}"
                                placeholder="xp-q890k"
-                               {{ $slugLocked ? 'readonly' : '' }}
-                               style="{{ $slugLocked ? 'background:var(--bg-soft);color:var(--muted)' : '' }}">
+                               readonly
+                               style="background:var(--bg-soft);color:var(--muted)">
                         @if($slug && !$this->slugExists && !$errors->has('slug'))
                         <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--green);font-size:12px">✓ Mavjud emas</span>
                         @endif
@@ -66,7 +58,7 @@
                     @if($this->slugExists && !$errors->has('slug'))
                     <div class="invalid-feedback" style="display:block">Bu slug allaqachon ishlatilmoqda</div>
                     @endif
-                    <div style="font-size:11px;color:var(--faint);margin-top:4px">Model raqamidan avtomatik yaratiladi. URL da ishlatiladi.</div>
+                    <div style="font-size:11px;color:var(--faint);margin-top:4px">Model raqamidan avtomatik yaratiladi, o'zgartirib bo'lmaydi.</div>
                 </div>
 
             </div>
@@ -155,28 +147,55 @@
     {{-- ═══ TAB: Photo ═══ --}}
     <div style="{{ $activeTab === 'photo' ? '' : 'display:none' }}">
         <div class="card" style="padding:24px">
-            @if($existingPhoto)
+
+            @php $totalPhotos = count($existingPhotos) + count($newPhotos); @endphp
+            <div style="font-size:13px;margin-bottom:16px;color:{{ $totalPhotos < \App\Livewire\Admin\ProductForm::MIN_PHOTOS ? 'var(--red)' : 'var(--green)' }}">
+                {{ $totalPhotos }} / {{ \App\Livewire\Admin\ProductForm::MIN_PHOTOS }} ta rasm — kamida {{ \App\Livewire\Admin\ProductForm::MIN_PHOTOS }} ta rasm talab qilinadi
+            </div>
+
+            @if(count($existingPhotos))
             <div style="margin-bottom:16px">
-                <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Joriy rasm</div>
-                <img src="{{ Storage::url($existingPhoto) }}" style="width:200px;height:200px;object-fit:contain;border:1px solid var(--line);border-radius:12px;padding:8px">
+                <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Joriy rasmlar</div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap">
+                    @foreach($existingPhotos as $p)
+                    <div style="position:relative">
+                        <img src="{{ $p['url'] }}" style="width:120px;height:120px;object-fit:contain;border:1px solid var(--line);border-radius:12px;padding:6px">
+                        <button type="button" wire:click="removeExistingPhoto({{ $p['id'] }})"
+                                style="position:absolute;top:-8px;right:-8px;width:24px;height:24px;border-radius:50%;background:var(--red);color:#fff;border:2px solid #fff;cursor:pointer;font-size:14px;line-height:1">
+                            ×
+                        </button>
+                    </div>
+                    @endforeach
+                </div>
             </div>
             @endif
 
-            @if($photo)
+            @if(count($newPhotos))
             <div style="margin-bottom:16px">
-                <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Yangi rasm (preview)</div>
-                <img src="{{ $photo->temporaryUrl() }}" style="width:200px;height:200px;object-fit:contain;border:1.5px solid var(--blue);border-radius:12px;padding:8px">
+                <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Yangi rasmlar (preview)</div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap">
+                    @foreach($newPhotos as $index => $upload)
+                    <div style="position:relative">
+                        <img src="{{ $upload->temporaryUrl() }}" style="width:120px;height:120px;object-fit:contain;border:1.5px solid var(--blue);border-radius:12px;padding:6px">
+                        <button type="button" wire:click="removeNewPhoto({{ $index }})"
+                                style="position:absolute;top:-8px;right:-8px;width:24px;height:24px;border-radius:50%;background:var(--red);color:#fff;border:2px solid #fff;cursor:pointer;font-size:14px;line-height:1">
+                            ×
+                        </button>
+                    </div>
+                    @endforeach
+                </div>
             </div>
             @endif
 
             <div class="form-group">
-                <label class="form-label">Rasm yuklash (JPG, PNG, WebP — max 2MB)</label>
-                <input type="file" wire:model="photo" accept="image/*"
-                       class="form-input {{ $errors->has('photo') ? 'is-invalid' : '' }}">
-                @error('photo')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                <label class="form-label">Rasm qo'shish (JPG, PNG, WebP — har biri max 2MB)</label>
+                <input type="file" wire:model="newPhotos" accept="image/*" multiple
+                       class="form-input {{ $errors->has('newPhotos') || $errors->has('newPhotos.*') ? 'is-invalid' : '' }}">
+                @error('newPhotos')<div class="invalid-feedback" style="display:block">{{ $message }}</div>@enderror
+                @error('newPhotos.*')<div class="invalid-feedback" style="display:block">{{ $message }}</div>@enderror
             </div>
 
-            <div wire:loading wire:target="photo" style="margin-top:8px;font-size:13px;color:var(--blue)">
+            <div wire:loading wire:target="newPhotos" style="margin-top:8px;font-size:13px;color:var(--blue)">
                 Yuklanmoqda...
             </div>
         </div>

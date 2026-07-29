@@ -34,7 +34,7 @@
     </div>
     <div class="stat-label">Kutilayotganlar</div>
     <div class="stat-value">{{ $stats['companies_pending'] }}</div>
-    <div class="stat-delta warn">● Ko'rib chiqish kerak</div>
+    <div class="stat-delta pending">● Ko'rib chiqish kerak</div>
   </div>
 
   <div class="stat-card">
@@ -157,17 +157,20 @@
         </div>
       </div>
       <div style="display:flex;gap:5px;flex-shrink:0">
-        <form method="POST" action="{{ route('admin.companies.approve', $company) }}">
+        <form method="POST" action="{{ route('admin.companies.approve', $company) }}"
+              onsubmit="return confirm('Ushbu kompaniyani tasdiqlaysizmi?');">
           @csrf @method('PATCH')
           <button type="submit" class="action-btn" title="Tasdiqlash"
                   style="background:#E0FAF3;border-color:#B2EFD8">
             <svg viewBox="0 0 24 24" style="stroke:var(--green)"><polyline points="20 6 9 17 4 12"/></svg>
           </button>
         </form>
-        <form method="POST" action="{{ route('admin.companies.reject', $company) }}">
+        <form method="POST" action="{{ route('admin.companies.reject', $company) }}"
+              onsubmit="return confirm('Ushbu kompaniyani rad etaysizmi?');">
           @csrf @method('PATCH')
-          <button type="submit" class="action-btn danger" title="Rad etish">
-            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <button type="submit" class="action-btn" title="Rad etish"
+                  style="background:#FFEBEE;border-color:#FFCDD2">
+            <svg viewBox="0 0 24 24" style="stroke:var(--red)"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
         </form>
       </div>
