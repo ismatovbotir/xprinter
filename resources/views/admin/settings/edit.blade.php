@@ -44,8 +44,8 @@
         <div class="form-group">
           <label class="form-label">Telegram</label>
           <input type="text" name="telegram" class="form-input @error('telegram') error @enderror"
-                 value="{{ old('telegram', $settings->telegram) }}" placeholder="xprinter_uz">
-          <span class="form-hint">@ belgisisiz username, masalan: xprinter_uz</span>
+                 value="{{ old('telegram', $settings->telegram) }}" placeholder="xprinter_telegram_bot">
+          <span class="form-hint">@ belgisisiz username, masalan: xprinter_telegram_bot</span>
           @error('telegram') <span class="form-error">{{ $message }}</span> @enderror
         </div>
         <div class="form-group">

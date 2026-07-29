@@ -91,7 +91,7 @@
                     <a href="{{ route('catalog') }}" class="pub-btn pub-btn-primary" style="padding:13px 26px;font-size:14px">
                         Katalogni ko'rish →
                     </a>
-                    <a href="https://t.me/xprinter_uz" target="_blank" class="pub-btn pub-btn-ghost" style="padding:13px 22px;font-size:14px">
+                    <a href="https://t.me/xprinter_telegram_bot" target="_blank" class="pub-btn pub-btn-ghost" style="padding:13px 22px;font-size:14px">
                         <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2"><path d="M21 5L2 12.5l7 1M21 5l-2.5 15L9 13.5M21 5L9 13.5m0 0V19l3.3-3"/></svg>
                         Telegram
                     </a>
@@ -377,7 +377,7 @@
             </p>
 
             <div class="home-cta-btns">
-                <a href="https://t.me/xprinter_uz" target="_blank" class="cta-tg">
+                <a href="https://t.me/xprinter_telegram_bot" target="_blank" class="cta-tg">
                     <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2">
                         <path d="M21 5L2 12.5l7 1M21 5l-2.5 15L9 13.5M21 5L9 13.5m0 0V19l3.3-3"/>
                     </svg>

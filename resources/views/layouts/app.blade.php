@@ -76,7 +76,7 @@
             "opens": "{{ $siteSettings->work_time_from ?: '09:00' }}",
             "closes": "{{ $siteSettings->work_time_to ?: '18:00' }}"
         },
-        "sameAs": ["{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_uz' }}"]
+        "sameAs": ["{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_telegram_bot' }}"]
     }
     </script>
 
@@ -159,7 +159,7 @@
                 <a href="{{ route('login') }}" class="pub-btn pub-btn-ghost" style="font-size:12px;padding:6px 14px">Kirish</a>
                 @endauth
 
-                <a href="{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_uz' }}" target="_blank" class="pub-btn pub-btn-primary" style="font-size:12px;padding:6px 16px">
+                <a href="{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_telegram_bot' }}" target="_blank" class="pub-btn pub-btn-primary" style="font-size:12px;padding:6px 16px">
                     Telegram →
                 </a>
             </div>
@@ -204,7 +204,7 @@
                     @if($siteSettings->phone)
                     <li><a href="tel:{{ preg_replace('/\s+/', '', $siteSettings->phone) }}">{{ $siteSettings->phone }}</a></li>
                     @endif
-                    <li><a href="{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_uz' }}">Telegram: {{ '@' . ($siteSettings->telegram ?: 'xprinter_uz') }}</a></li>
+                    <li><a href="{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_telegram_bot' }}">Telegram: {{ '@' . ($siteSettings->telegram ?: 'xprinter_telegram_bot') }}</a></li>
                     @if($siteSettings->whatsapp_url)
                     <li><a href="{{ $siteSettings->whatsapp_url }}">WhatsApp: {{ $siteSettings->whatsapp }}</a></li>
                     @endif

@@ -162,7 +162,7 @@
 
       {{-- CTA --}}
       <div class="prod-detail-cta">
-        <a href="https://t.me/xprinter_uz" target="_blank" class="pub-btn pub-btn-primary">
+        <a href="https://t.me/xprinter_telegram_bot" target="_blank" class="pub-btn pub-btn-primary">
           Narx so'rash (Telegram)
         </a>
         <a href="tel:+998000000000" class="pub-btn pub-btn-ghost">

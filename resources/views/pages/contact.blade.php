@@ -34,12 +34,12 @@
       </a>
       @endif
 
-      <a href="{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_uz' }}" target="_blank" class="why-card" style="text-decoration:none">
+      <a href="{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_telegram_bot' }}" target="_blank" class="why-card" style="text-decoration:none">
         <div class="why-icon" style="background:#F0FDF8">
           <svg viewBox="0 0 24 24" style="stroke:var(--green)"><path d="M21 5L2 12.5l7 1M21 5l-2.5 15L9 13.5M21 5L9 13.5m0 0V19l3.3-3"/></svg>
         </div>
         <div class="why-title">Telegram</div>
-        <div class="why-text">{{ '@' . ($siteSettings->telegram ?: 'xprinter_uz') }}</div>
+        <div class="why-text">{{ '@' . ($siteSettings->telegram ?: 'xprinter_telegram_bot') }}</div>
       </a>
 
       @if($siteSettings->whatsapp_url)
