@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('parameter_value_id')->constrained();
             $table->timestamps();
 
-            $table->unique(['company_product_id', 'parameter_id']);
+            $table->unique(['company_product_id', 'parameter_id'], 'cppv_company_product_parameter_unique');
         });
     }
 
