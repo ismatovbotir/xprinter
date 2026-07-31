@@ -44,8 +44,8 @@
         <div class="form-group">
           <label class="form-label">Telegram</label>
           <input type="text" name="telegram" class="form-input @error('telegram') error @enderror"
-                 value="{{ old('telegram', $settings->telegram) }}" placeholder="xprinter_telegram_bot">
-          <span class="form-hint">@ belgisisiz username, masalan: xprinter_telegram_bot</span>
+                 value="{{ old('telegram', $settings->telegram) }}" placeholder="xprinter_admin_bot">
+          <span class="form-hint">@ belgisisiz username, masalan: xprinter_admin_bot</span>
           @error('telegram') <span class="form-error">{{ $message }}</span> @enderror
         </div>
         <div class="form-group">
@@ -97,6 +97,23 @@
     </div>
   </div>
 
+  {{-- Telegram bot --}}
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Telegram bot</div>
+    </div>
+    <div style="padding:24px">
+      <p style="font-size:13px;color:var(--muted);line-height:1.6;margin:0 0 16px">
+        Bot tokeni <code>.env</code> faylidagi <code>TELEGRAM_BOT_TOKEN</code> qiymatidan olinadi — bu yerda kiritish shart emas.
+        Webhookni o'rnatish tugmasi tokenni tekshiradi va Telegram serveriga qayd qilishga urinadi.
+      </p>
+      <button type="button" id="tgWebhookBtn" class="btn btn-secondary" onclick="setTelegramWebhook()">
+        <svg viewBox="0 0 24 24"><path d="M21 5L2 12.5l7 1M21 5l-2.5 15L9 13.5M21 5L9 13.5m0 0V19l3.3-3"/></svg>
+        Webhookni sozlash
+      </button>
+    </div>
+  </div>
+
   {{-- Analytics --}}
   <div class="card">
     <div class="card-header">
@@ -131,5 +148,105 @@
   </div>
 
 </form>
+
+{{-- Telegram webhook result modal --}}
+<div id="tgWebhookModalOverlay" class="tg-modal-overlay" onclick="if(event.target===this) this.style.display='none'">
+  <div class="tg-modal-box">
+    <div class="tg-modal-header">
+      <span id="tgWebhookModalTitle">Natija</span>
+      <button type="button" class="tg-modal-close" onclick="document.getElementById('tgWebhookModalOverlay').style.display='none'">&times;</button>
+    </div>
+    <div class="tg-modal-content" id="tgWebhookModalContent"></div>
+  </div>
+</div>
+
+<style>
+  .tg-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 27, 61, 0.45);
+    backdrop-filter: blur(2px);
+    z-index: 9998;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .tg-modal-box {
+    background: #fff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 440px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 64px rgba(10, 27, 61, 0.18);
+  }
+  .tg-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .tg-modal-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 0 4px;
+  }
+  .tg-modal-close:hover { color: var(--ink); }
+  .tg-modal-content {
+    padding: 20px;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    word-break: break-word;
+  }
+</style>
+
+<script>
+  function setTelegramWebhook() {
+    const btn = document.getElementById('tgWebhookBtn');
+    const overlay = document.getElementById('tgWebhookModalOverlay');
+    const title = document.getElementById('tgWebhookModalTitle');
+    const content = document.getElementById('tgWebhookModalContent');
+
+    btn.disabled = true;
+    const originalHtml = btn.innerHTML;
+    btn.innerHTML = 'Tekshirilmoqda...';
+
+    fetch(@json(route('admin.settings.telegram-webhook')), {
+      method: 'POST',
+      headers: {
+        'X-CSRF-TOKEN': @json(csrf_token()),
+        'Accept': 'application/json',
+      },
+    })
+      .then(res => res.json())
+      .then(data => {
+        title.textContent = data.ok ? "Muvaffaqiyatli" : "Xatolik";
+        title.style.color = data.ok ? 'var(--green)' : '#dc2626';
+        content.textContent = data.message;
+        overlay.style.display = 'flex';
+      })
+      .catch(() => {
+        title.textContent = "Xatolik";
+        title.style.color = '#dc2626';
+        content.textContent = "So'rov yuborishda xatolik yuz berdi. Qayta urinib ko'ring.";
+        overlay.style.display = 'flex';
+      })
+      .finally(() => {
+        btn.disabled = false;
+        btn.innerHTML = originalHtml;
+      });
+  }
+</script>
 
 @endsection

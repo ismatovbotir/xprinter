@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ClientMessageController;
 use App\Http\Controllers\Admin\FileController;
 use App\Http\Controllers\Admin\ProductFileController;
 use App\Http\Controllers\Admin\HelpController;
@@ -29,18 +30,27 @@ use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TelegramAppController;
+use App\Http\Controllers\TelegramWebhookController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 // ── Public ────────────────────────────────────────────────
-Route::middleware('cache.headers:public;max_age=600;etag')->group(function () {
-    Route::get('/', HomeController::class)->name('home');
-    Route::get('/catalog',                   [CatalogController::class, 'index'])->name('catalog');
-    Route::get('/catalog/{slug}',            [CatalogController::class, 'category'])->name('catalog.category');
-    Route::get('/catalog/{category}/{slug}', [CatalogController::class, 'show'])->name('products.show');
-    Route::get('/about',                     [PageController::class, 'about'])->name('about');
-    Route::get('/contact',                   [PageController::class, 'contact'])->name('contact');
-});
+// No browser-level page caching here on purpose: every one of these pages renders
+// session-dependent content (locale, logged-in nav state), so a shared/public
+// Cache-Control would serve visitors a stale language or wrong auth state for
+// up to max-age after switching. The expensive parts (category/product queries)
+// are already cached server-side via Cache::remember() in the controllers.
+Route::get('/', HomeController::class)->name('home');
+Route::get('/catalog',                   [CatalogController::class, 'index'])->name('catalog');
+Route::get('/catalog/{slug}',            [CatalogController::class, 'category'])->name('catalog.category');
+Route::get('/catalog/{category}/{slug}', [CatalogController::class, 'show'])->name('products.show');
+Route::get('/about',                     [PageController::class, 'about'])->name('about');
+Route::get('/contact',                   [PageController::class, 'contact'])->name('contact');
+
+// ── Telegram bot ──────────────────────────────────────────
+Route::post('/telegram/webhook', [TelegramWebhookController::class, 'handle'])->name('telegram.webhook');
+Route::get('/telegram/app',      [TelegramAppController::class, 'index'])->name('telegram.app');
 
 // ── Profile (all authenticated roles) ────────────────────
 Route::middleware('auth')->group(function () {
@@ -125,6 +135,12 @@ Route::prefix('admin')
         // Site settings (contacts, work time, analytics tokens)
         Route::get('settings',  [SettingsController::class, 'edit'])->name('settings.edit');
         Route::put('settings',  [SettingsController::class, 'update'])->name('settings.update');
+        Route::post('settings/telegram-webhook', [SettingsController::class, 'setTelegramWebhook'])->name('settings.telegram-webhook');
+
+        // Telegram client messages (support inbox)
+        Route::get('messages',           [ClientMessageController::class, 'index'])->name('messages.index');
+        Route::get('messages/{user}',    [ClientMessageController::class, 'show'])->name('messages.show');
+        Route::post('messages/{user}',   [ClientMessageController::class, 'reply'])->name('messages.reply');
     });
 
 // ── Marketplace ───────────────────────────────────────────

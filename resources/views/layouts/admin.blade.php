@@ -1213,6 +1213,19 @@
                 @endif
             </a>
 
+            <a href="{{ route('admin.messages.index') }}" @class(['nav-item', 'active' => request()->routeIs('admin.messages.*')])>
+                <div class="nav-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                </div>
+                Xabarlar
+                @php($unreadMessagesCount = \App\Models\ClientMessage::where('sender', 'client')->where('is_read', false)->count())
+                @if($unreadMessagesCount)
+                <span class="nav-badge">{{ $unreadMessagesCount }}</span>
+                @endif
+            </a>
+
             <a href="{{ route('admin.help.index') }}" @class(['nav-item', 'active' => request()->routeIs('admin.help.*')])>
                 <div class="nav-icon">
                     <svg viewBox="0 0 24 24">

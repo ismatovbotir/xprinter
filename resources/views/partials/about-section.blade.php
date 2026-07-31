@@ -2,9 +2,9 @@
     $aboutCards = collect($content->aboutCardList())->filter(fn($c) => !empty($c['title']))->values();
     if ($aboutCards->isEmpty()) {
         $aboutCards = collect([
-            ['title' => "Distribyutorlar va dilerlar tarmog'i", 'text' => "Xprinter Group mahsulotlarini O'zbekiston bo'ylab sotuvchi rasmiy distribyutorlar va reseller kompaniyalar shu platformada birlashgan."],
-            ['title' => '12 oy kafolat va servis', 'text' => "Tanlagan hamkoringiz — tarmoqdagi servis markazlari orqali kafolat ta'miri, ehtiyot qismlar va texnik yordam ko'rsatadi."],
-            ['title' => 'Tez yetkazib berish', 'text' => "Toshkentda 24 soat ichida, regionlarga 3–7 kun ichida — sizga eng yaqin distribyutor orqali yetkazib beriladi."],
+            ['title' => __('about_page.card1_title'), 'text' => __('about_page.card1_text')],
+            ['title' => __('about_page.card2_title'), 'text' => __('about_page.card2_text')],
+            ['title' => __('about_page.card3_title'), 'text' => __('about_page.card3_text')],
         ]);
     }
 
@@ -17,9 +17,9 @@
 @endphp
 
 <div class="section-header">
-    <div class="section-tag">{{ $content->about_tag ?: '// Nega biz' }}</div>
-    <div class="section-title">{{ $content->about_title ?: "Xprinter.uz — distribyutorlar tarmog'i" }}</div>
-    <div class="section-sub">{{ $content->about_subtitle ?: "Xprinter Group mahsulotlarini O'zbekiston bo'ylab sotadigan rasmiy distribyutorlar va reseller kompaniyalar platformasi." }}</div>
+    <div class="section-tag">{{ $content->about_tag ?: __('about_page.why_tag') }}</div>
+    <div class="section-title">{{ $content->about_title ?: __('about_page.why_title') }}</div>
+    <div class="section-sub">{{ $content->about_subtitle ?: __('about_page.why_subtitle') }}</div>
 </div>
 
 <div class="why-grid">

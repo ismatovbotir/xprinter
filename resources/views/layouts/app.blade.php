@@ -76,7 +76,7 @@
             "opens": "{{ $siteSettings->work_time_from ?: '09:00' }}",
             "closes": "{{ $siteSettings->work_time_to ?: '18:00' }}"
         },
-        "sameAs": ["{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_telegram_bot' }}"]
+        "sameAs": ["{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_admin_bot' }}"]
     }
     </script>
 
@@ -133,10 +133,10 @@
             <div class="pub-nav-links" style="display:flex;gap:4px">
                 <a href="{{ route('catalog') }}"
                    class="pub-nav-link {{ request()->routeIs('catalog*','product*') ? 'active' : '' }}">
-                    Katalog
+                    {{ __('nav.catalog') }}
                 </a>
-                <a href="{{ $aboutHref }}" class="pub-nav-link {{ request()->routeIs('about') ? 'active' : '' }}">Biz haqimizda</a>
-                <a href="{{ $contactHref }}" class="pub-nav-link {{ request()->routeIs('contact') ? 'active' : '' }}">Aloqa</a>
+                <a href="{{ $aboutHref }}" class="pub-nav-link {{ request()->routeIs('about') ? 'active' : '' }}">{{ __('nav.about') }}</a>
+                <a href="{{ $contactHref }}" class="pub-nav-link {{ request()->routeIs('contact') ? 'active' : '' }}">{{ __('nav.contact') }}</a>
             </div>
 
             <div class="pub-nav-actions">
@@ -153,13 +153,13 @@
 
                 @auth
                 <a href="{{ auth()->user()->redirectPath() }}" class="pub-btn pub-btn-ghost" style="font-size:12px;padding:6px 14px">
-                    Kabinet
+                    {{ __('nav.cabinet') }}
                 </a>
                 @else
-                <a href="{{ route('login') }}" class="pub-btn pub-btn-ghost" style="font-size:12px;padding:6px 14px">Kirish</a>
+                <a href="{{ route('login') }}" class="pub-btn pub-btn-ghost" style="font-size:12px;padding:6px 14px">{{ __('nav.login') }}</a>
                 @endauth
 
-                <a href="{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_telegram_bot' }}" target="_blank" class="pub-btn pub-btn-primary" style="font-size:12px;padding:6px 16px">
+                <a href="{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_admin_bot' }}" target="_blank" class="pub-btn pub-btn-primary" style="font-size:12px;padding:6px 16px">
                     Telegram →
                 </a>
             </div>
@@ -179,43 +179,43 @@
                     <div class="pub-logo-mark"></div>
                     <span>XPRINTER<span style="color:var(--blue)">.UZ</span></span>
                 </a>
-                <p>Платформа официальных дистрибьюторов и дилеров Xprinter в Узбекистане. Гарантия 12 месяцев, доставка по всей стране, сервисные центры у наших партнёров.</p>
+                <p>{{ __('footer.tagline') }}</p>
             </div>
             <div class="pub-foot-col">
-                <h5>Katalog</h5>
+                <h5>{{ __('footer.catalog_heading') }}</h5>
                 <ul>
-                    <li><a href="{{ route('catalog') }}">Barcha mahsulotlar</a></li>
-                    <li><a href="{{ route('catalog.category', 'receipt-printers') }}">Chek printerlari</a></li>
-                    <li><a href="{{ route('catalog.category', 'label-printers') }}">Etiket printerlari</a></li>
-                    <li><a href="{{ route('catalog.category', 'mobile-printers') }}">Mobil printerlar</a></li>
+                    <li><a href="{{ route('catalog') }}">{{ __('footer.all_products') }}</a></li>
+                    <li><a href="{{ route('catalog.category', 'receipt-printers') }}">{{ __('footer.receipt_printers') }}</a></li>
+                    <li><a href="{{ route('catalog.category', 'label-printers') }}">{{ __('footer.label_printers') }}</a></li>
+                    <li><a href="{{ route('catalog.category', 'mobile-printers') }}">{{ __('footer.mobile_printers') }}</a></li>
                 </ul>
             </div>
             <div class="pub-foot-col">
-                <h5>Kompaniya</h5>
+                <h5>{{ __('footer.company_heading') }}</h5>
                 <ul>
-                    <li><a href="{{ $aboutHref }}">Biz haqimizda</a></li>
-                    <li><a href="{{ $contactHref }}">Aloqa</a></li>
-                    <li><a href="{{ route('login') }}">Dilerlar uchun</a></li>
+                    <li><a href="{{ $aboutHref }}">{{ __('nav.about') }}</a></li>
+                    <li><a href="{{ $contactHref }}">{{ __('nav.contact') }}</a></li>
+                    <li><a href="{{ route('login') }}">{{ __('footer.dealers_cta') }}</a></li>
                 </ul>
             </div>
             <div class="pub-foot-col">
-                <h5>Aloqa</h5>
+                <h5>{{ __('footer.contact_heading') }}</h5>
                 <ul>
                     @if($siteSettings->phone)
                     <li><a href="tel:{{ preg_replace('/\s+/', '', $siteSettings->phone) }}">{{ $siteSettings->phone }}</a></li>
                     @endif
-                    <li><a href="{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_telegram_bot' }}">Telegram: {{ '@' . ($siteSettings->telegram ?: 'xprinter_telegram_bot') }}</a></li>
+                    <li><a href="{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_admin_bot' }}">Telegram: {{ '@' . ($siteSettings->telegram ?: 'xprinter_admin_bot') }}</a></li>
                     @if($siteSettings->whatsapp_url)
                     <li><a href="{{ $siteSettings->whatsapp_url }}">WhatsApp: {{ $siteSettings->whatsapp }}</a></li>
                     @endif
                     <li><a href="mailto:{{ $siteSettings->email ?: 'info@xprinter.uz' }}">{{ $siteSettings->email ?: 'info@xprinter.uz' }}</a></li>
-                    <li style="color:var(--muted);font-size:13px">{{ $siteSettings->address ?: "Toshkent, O'zbekiston" }}</li>
-                    <li style="color:var(--muted);font-size:13px">{{ $siteSettings->work_time_display ?: 'Dush–Shan 9:00–18:00' }}</li>
+                    <li style="color:var(--muted);font-size:13px">{{ $siteSettings->address ?: __('footer.address_fallback') }}</li>
+                    <li style="color:var(--muted);font-size:13px">{{ $siteSettings->work_time_display ?: __('footer.hours_fallback') }}</li>
                 </ul>
             </div>
         </div>
         <div class="pub-foot-bottom">
-            <div>© {{ date('Y') }} Xprinter.uz — платформа дистрибьюторов и дилеров Xprinter Group в Узбекистане</div>
+            <div>© {{ date('Y') }} Xprinter.uz — {{ __('footer.copyright') }}</div>
             <div style="text-transform:uppercase">ISO 9001:2015 · CE · FCC · RoHS</div>
         </div>
     </div>

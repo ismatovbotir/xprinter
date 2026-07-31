@@ -60,22 +60,22 @@
 
             {{-- Left --}}
             @php
-                $badges = array_filter($content->badges()) ?: ['12 oy rasmiy kafolat', "Tasdiqlangan distribyutorlar", '24 soat ichida yetkazib berish'];
+                $badges = array_filter($content->badges()) ?: [__('home.badge_warranty'), __('home.badge_distributors'), __('home.badge_delivery')];
             @endphp
             <div class="hero-left">
                 <div class="hero-tag">
                     <span class="hero-tag-dot"></span>
-                    {{ $content->hero_tag ?: "Distribyutorlar va dilerlar platformasi · O'zbekiston" }}
+                    {{ $content->hero_tag ?: __('home.hero_tag') }}
                 </div>
 
                 <h1 class="hero-headline">
                     {{ $content->hero_line1 ?: 'Xprinter' }}<br>
-                    <em>{{ $content->hero_line2 ?: 'termoprinterlar' }}</em><br>
-                    {{ $content->hero_line3 ?: "O'zbekistonda" }}
+                    <em>{{ $content->hero_line2 ?: __('home.hero_line2') }}</em><br>
+                    {{ $content->hero_line3 ?: __('home.hero_line3') }}
                 </h1>
 
                 <p class="hero-sub">
-                    {{ $content->hero_subtitle ?: "Chek, etiket va mobil printerlar — O'zbekistondagi rasmiy distribyutorlar va dilerlar tarmog'idan, rasmiy kafolat va servis bilan." }}
+                    {{ $content->hero_subtitle ?: __('home.hero_subtitle') }}
                 </p>
 
                 <div class="hero-attrs">
@@ -89,11 +89,11 @@
 
                 <div class="hero-btns">
                     <a href="{{ route('catalog') }}" class="pub-btn pub-btn-primary" style="padding:13px 26px;font-size:14px">
-                        Katalogni ko'rish →
+                        {{ __('home.cta_catalog') }}
                     </a>
-                    <a href="https://t.me/xprinter_telegram_bot" target="_blank" class="pub-btn pub-btn-ghost" style="padding:13px 22px;font-size:14px">
+                    <a href="https://t.me/xprinter_admin_bot" target="_blank" class="pub-btn pub-btn-ghost" style="padding:13px 22px;font-size:14px">
                         <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2"><path d="M21 5L2 12.5l7 1M21 5l-2.5 15L9 13.5M21 5L9 13.5m0 0V19l3.3-3"/></svg>
-                        Telegram
+                        {{ __('home.telegram_btn') }}
                     </a>
                 </div>
             </div>
@@ -141,7 +141,7 @@
                 </div>
 
                 <div class="spec-footer">
-                    <span class="spec-footer-label">Boshqa modellar</span>
+                    <span class="spec-footer-label">{{ __('home.other_models') }}</span>
                     <div class="spec-pills">
                         <span class="spec-pill">XP-428B</span>
                         <span class="spec-pill">XP-365B</span>
@@ -160,10 +160,10 @@
     $stats = collect($content->statList())->filter(fn($s) => !empty($s['value']))->values();
     if ($stats->isEmpty()) {
         $stats = collect([
-            ['value' => '5',    'suffix' => '+', 'label' => "Yil O'zbekiston bozorida"],
-            ['value' => '1000', 'suffix' => '+', 'label' => "Muvaffaqiyatli o'rnatish"],
-            ['value' => '24',   'suffix' => 'h', 'label' => 'Toshkentda yetkazib berish'],
-            ['value' => '12',   'suffix' => '',  'label' => 'Oy rasmiy kafolat'],
+            ['value' => '5',    'suffix' => '+', 'label' => __('home.stat_years')],
+            ['value' => '1000', 'suffix' => '+', 'label' => __('home.stat_installs')],
+            ['value' => '24',   'suffix' => 'h', 'label' => __('home.stat_delivery')],
+            ['value' => '12',   'suffix' => '',  'label' => __('home.stat_warranty')],
         ]);
     }
 @endphp
@@ -184,9 +184,9 @@
 <section class="section">
     <div class="container">
         <div class="section-header">
-            <div class="section-tag">// Kategoriyalar</div>
-            <div class="section-title">Mahsulot turlari</div>
-            <div class="section-sub">Chek printerlaridan tortib tibbiy bilakuzuk printerlarigacha — har bir vazifa uchun to'g'ri model.</div>
+            <div class="section-tag">{{ __('home.categories_tag') }}</div>
+            <div class="section-title">{{ __('home.categories_title') }}</div>
+            <div class="section-sub">{{ __('home.categories_sub') }}</div>
         </div>
 
         <div class="home-cat-grid">
@@ -220,7 +220,7 @@
                 <div class="home-cat-name">{{ $catName }}</div>
 
                 <div class="home-cat-meta">
-                    <span class="home-cat-count">{{ $cat->products_count }} ta model</span>
+                    <span class="home-cat-count">{{ __('home.models_count', ['count' => $cat->products_count]) }}</span>
                     <span class="cat-arrow">→</span>
                 </div>
             </a>
@@ -235,11 +235,11 @@
     <div class="container">
         <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:44px;flex-wrap:wrap;gap:16px">
             <div>
-                <div class="section-tag">// Ommabop modellar</div>
-                <div class="section-title">Eng ko'p sotiladi</div>
+                <div class="section-tag">{{ __('home.popular_tag') }}</div>
+                <div class="section-title">{{ __('home.popular_title') }}</div>
             </div>
             <a href="{{ route('catalog') }}" class="pub-btn pub-btn-ghost" style="font-size:13px;padding:9px 20px">
-                Barcha modellar →
+                {{ __('home.view_all') }}
             </a>
         </div>
 
@@ -271,7 +271,7 @@
                     <div class="prod-card-model">{{ $product->model_number }}</div>
                 </div>
                 <div class="prod-card-footer">
-                    <span style="font-size:12px;color:var(--muted)">Batafsil</span>
+                    <span style="font-size:12px;color:var(--muted)">{{ __('home.details') }}</span>
                     <div class="prod-card-arrow">→</div>
                 </div>
             </a>
@@ -292,9 +292,9 @@
 <section class="section" style="padding-top:0">
     <div class="container">
         <div class="section-header">
-            <div class="section-tag">// Qo'llanish sohalari</div>
-            <div class="section-title">Kim uchun?</div>
-            <div class="section-sub">Xprinter printerlari Uzbekiston bo'ylab turli sohalarda ishlatiladi.</div>
+            <div class="section-tag">{{ __('home.scenarios_tag') }}</div>
+            <div class="section-title">{{ __('home.scenarios_title') }}</div>
+            <div class="section-sub">{{ __('home.scenarios_sub') }}</div>
         </div>
 
         <div class="scenario-grid">
@@ -302,7 +302,7 @@
                 <div class="scenario-icon">
                     <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 </div>
-                <div class="scenario-name">Do'kon / Supermarket</div>
+                <div class="scenario-name">{{ __('home.scenario_shop') }}</div>
                 <div class="scenario-models">XP-Q890K · XP-365B</div>
             </div>
 
@@ -310,15 +310,15 @@
                 <div class="scenario-icon">
                     <svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
                 </div>
-                <div class="scenario-name">Kafe / Restoran</div>
-                <div class="scenario-models">XP-58IIH (kassa) · XP-Q809K (oshxona)</div>
+                <div class="scenario-name">{{ __('home.scenario_cafe') }}</div>
+                <div class="scenario-models">XP-58IIH {{ __('home.cafe_kitchen_note') }}</div>
             </div>
 
             <div class="scenario-card">
                 <div class="scenario-icon">
                     <svg viewBox="0 0 24 24"><path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><path d="M8 9V7a4 4 0 0 1 8 0v2"/><line x1="12" y1="13" x2="12" y2="17"/></svg>
                 </div>
-                <div class="scenario-name">Dorixona</div>
+                <div class="scenario-name">{{ __('home.scenario_pharmacy') }}</div>
                 <div class="scenario-models">XP-Q890K · XP-428B</div>
             </div>
 
@@ -326,7 +326,7 @@
                 <div class="scenario-icon">
                     <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 4v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
                 </div>
-                <div class="scenario-name">Marketplace sotuvchi</div>
+                <div class="scenario-name">{{ __('home.scenario_marketplace') }}</div>
                 <div class="scenario-models">XP-428B · XP-490B</div>
             </div>
 
@@ -334,7 +334,7 @@
                 <div class="scenario-icon">
                     <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
                 </div>
-                <div class="scenario-name">Tibbiyot / Klinika</div>
+                <div class="scenario-name">{{ __('home.scenario_medical') }}</div>
                 <div class="scenario-models">XP-D281B · XP-365B</div>
             </div>
 
@@ -342,7 +342,7 @@
                 <div class="scenario-icon">
                     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 </div>
-                <div class="scenario-name">Kuryer yetkazib berish</div>
+                <div class="scenario-name">{{ __('home.scenario_courier') }}</div>
                 <div class="scenario-models">DX5 · MP3 · XP-P816</div>
             </div>
         </div>
@@ -353,13 +353,13 @@
 <div class="certs-bar">
     <div class="container">
         <div class="certs-inner">
-            <span class="certs-label">Sertifikatlar:</span>
+            <span class="certs-label">{{ __('home.certs_label') }}</span>
             <span class="cert-pill">ISO 9001:2015</span>
             <span class="cert-pill">CE</span>
             <span class="cert-pill">FCC</span>
             <span class="cert-pill">RoHS</span>
             <span class="cert-pill">Xprinter Group · 2006</span>
-            <span class="cert-pill">200+ mamlakat</span>
+            <span class="cert-pill">{{ __('home.certs_countries') }}</span>
         </div>
     </div>
 </div>
@@ -368,41 +368,41 @@
 <section class="home-cta">
     <div class="container">
         <div class="home-cta-inner">
-            <div class="home-cta-tag">// Aloqa</div>
+            <div class="home-cta-tag">{{ __('home.cta_tag') }}</div>
             <h2 class="home-cta-title">
-                Savol yoki<br>buyurtma?
+                {{ __('home.cta_title_line1') }}<br>{{ __('home.cta_title_line2') }}
             </h2>
             <p class="home-cta-sub">
-                Menejerimiz siz uchun to'g'ri modelni tanlashga, narx va yetkazib berish shartlarini kelishishga yordam beradi.
+                {{ __('home.cta_sub') }}
             </p>
 
             <div class="home-cta-btns">
-                <a href="https://t.me/xprinter_telegram_bot" target="_blank" class="cta-tg">
+                <a href="{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_admin_bot' }}" target="_blank" class="cta-tg">
                     <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2">
                         <path d="M21 5L2 12.5l7 1M21 5l-2.5 15L9 13.5M21 5L9 13.5m0 0V19l3.3-3"/>
                     </svg>
-                    Telegram orqali yozing
+                    {{ __('home.cta_telegram_btn') }}
                 </a>
-                <a href="tel:+998901234567" class="cta-phone">
+                <a href="tel:{{ $siteSettings->phone ? preg_replace('/\s+/', '', $siteSettings->phone) : '+998901234567' }}" class="cta-phone">
                     <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2">
                         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.72a16 16 0 0 0 6.06 6.06l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.72 2.02z"/>
                     </svg>
-                    Qo'ng'iroq qilish
+                    {{ __('home.cta_phone_btn') }}
                 </a>
             </div>
 
             <div class="cta-contacts">
                 <span class="cta-contact">
                     <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                    info@xprinter.uz
+                    {{ $siteSettings->email ?: 'info@xprinter.uz' }}
                 </span>
                 <span class="cta-contact">
                     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    Dush–Shan 9:00–18:00
+                    {{ $siteSettings->work_time_display ?: __('footer.hours_fallback') }}
                 </span>
                 <span class="cta-contact">
                     <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    Toshkent, O'zbekiston
+                    {{ $siteSettings->address ?: __('footer.address_fallback') }}
                 </span>
             </div>
         </div>
