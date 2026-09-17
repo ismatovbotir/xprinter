@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}" />
 
+    {{-- ── Favicon ── --}}
+    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
+
     {{-- ── Primary ── --}}
     <title>@yield('title', 'Xprinter.uz') — Xprinter distribyutorlari va dilerlari O'zbekistonda</title>
     <meta name="description" content="@yield('description', 'Termoprinterlari Xprinter O\'zbekistonda — chek, etiket va mobil printerlar. Rasmiy distribyutorlar va dilerlar tarmog\'i, 12 oy kafolat, Toshkentda servis markaz.')">

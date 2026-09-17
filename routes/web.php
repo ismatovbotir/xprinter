@@ -29,6 +29,7 @@ use App\Http\Controllers\Producer\SerialController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TelegramAppController;
 use App\Http\Controllers\TelegramWebhookController;
@@ -47,6 +48,7 @@ Route::get('/catalog/{slug}',            [CatalogController::class, 'category'])
 Route::get('/catalog/{category}/{slug}', [CatalogController::class, 'show'])->name('products.show');
 Route::get('/about',                     [PageController::class, 'about'])->name('about');
 Route::get('/contact',                   [PageController::class, 'contact'])->name('contact');
+Route::get('/sitemap.xml',               [SitemapController::class, 'index'])->name('sitemap');
 
 // ── Telegram bot ──────────────────────────────────────────
 Route::post('/telegram/webhook', [TelegramWebhookController::class, 'handle'])->name('telegram.webhook');
