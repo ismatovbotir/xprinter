@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('client_messages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('admin_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('admin_id')->nullable()->constrained('users')->nullOnDelete();
             $table->enum('sender', ['client', 'admin']);
             $table->text('body');
             $table->boolean('is_read')->default(false);
