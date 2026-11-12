@@ -14,10 +14,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role'             => \App\Http\Middleware\RoleMiddleware::class,
             'company.approved' => \App\Http\Middleware\CompanyApproved::class,
+            '2fa'              => \App\Http\Middleware\TwoFactorVerified::class,
         ]);
 
         $middleware->web(append: [
             \App\Http\Middleware\SetLocale::class,
+            \App\Http\Middleware\SecurityHeaders::class,
         ]);
 
         $middleware->validateCsrfTokens(except: [

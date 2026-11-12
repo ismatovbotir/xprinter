@@ -1290,6 +1290,19 @@
                 Tarjimalar
             </a>
 
+            <a href="{{ route('admin.activity.index') }}" @class([
+                'nav-item',
+                'active' => request()->routeIs('admin.activity.*'),
+            ])>
+                <div class="nav-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 8v4l3 3" />
+                        <circle cx="12" cy="12" r="9" />
+                    </svg>
+                </div>
+                Audit log
+            </a>
+
         </nav>
 
         {{-- User footer --}}

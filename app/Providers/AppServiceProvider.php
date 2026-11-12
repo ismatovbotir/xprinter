@@ -7,6 +7,7 @@ use App\Models\UiTranslation;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Validation\Rules\Password;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,8 +15,21 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->configurePasswordPolicy();
         $this->loadUiTranslations();
         $this->shareSiteSettings();
+    }
+
+    /** One password policy for register, team invites, admin-created users and resets. */
+    private function configurePasswordPolicy(): void
+    {
+        Password::defaults(function () {
+            $rule = Password::min(8)->letters()->numbers();
+
+            return $this->app->isProduction()
+                ? $rule->uncompromised()
+                : $rule;
+        });
     }
 
     private function loadUiTranslations(): void

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ChatbotController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\Admin\RegionController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\TranslationController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\Marketplace\AssortimentController;
 use App\Http\Controllers\Marketplace\CompanyController as MarketplaceCompanyController;
 use App\Http\Controllers\Marketplace\DashboardController as MarketplaceDashboard;
@@ -55,13 +57,23 @@ Route::get('/partners/{slug}',           [PartnerDirectoryController::class, 'sh
 Route::get('/sitemap.xml',               [SitemapController::class, 'index'])->name('sitemap');
 
 // ── Telegram bot ──────────────────────────────────────────
-Route::post('/telegram/webhook', [TelegramWebhookController::class, 'handle'])->name('telegram.webhook');
+Route::post('/telegram/webhook', [TelegramWebhookController::class, 'handle'])->name('telegram.webhook')->middleware('throttle:120,1');
 Route::get('/telegram/app',      [TelegramAppController::class, 'index'])->name('telegram.app');
 
-// ── Profile (all authenticated roles) ────────────────────
+// ── Two-factor challenge (auth only — must stay outside the 2fa middleware) ──
 Route::middleware('auth')->group(function () {
+    Route::get('two-factor/challenge',  [TwoFactorController::class, 'challenge'])->name('two-factor.challenge');
+    Route::post('two-factor/challenge', [TwoFactorController::class, 'verify'])->name('two-factor.verify')->middleware('throttle:5,1');
+});
+
+// ── Profile (all authenticated roles) ────────────────────
+Route::middleware(['auth', '2fa'])->group(function () {
     Route::get('profile',  [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile',  [ProfileController::class, 'update'])->name('profile.update');
+
+    Route::get('two-factor',    [TwoFactorController::class, 'setup'])->name('two-factor.setup');
+    Route::post('two-factor',   [TwoFactorController::class, 'confirm'])->name('two-factor.confirm')->middleware('throttle:5,1');
+    Route::delete('two-factor', [TwoFactorController::class, 'destroy'])->name('two-factor.destroy');
 });
 
 // ── Auth ──────────────────────────────────────────────────
@@ -81,13 +93,16 @@ Route::get('/lang/{lang}', function (string $lang) {
 // ── Admin ─────────────────────────────────────────────────
 Route::prefix('admin')
     ->name('admin.')
-    ->middleware(['auth', 'role:admin'])
+    ->middleware(['auth', 'role:admin', '2fa'])
     ->group(function () {
 
         Route::get('/', DashboardController::class)->name('dashboard');
 
         // Profile (redirects to shared profile route)
         Route::get('/profile', fn() => redirect()->route('profile.edit'))->name('profile');
+
+        // Audit log
+        Route::get('activity', [ActivityController::class, 'index'])->name('activity.index');
 
         // Geography
         Route::resource('countries',  CountryController::class);
@@ -164,14 +179,14 @@ Route::prefix('admin')
 
 // ── Marketplace ───────────────────────────────────────────
 // Onboarding (owner without a company yet)
-Route::prefix('marketplace')->name('marketplace.')->middleware(['auth', 'role:owner'])->group(function () {
+Route::prefix('marketplace')->name('marketplace.')->middleware(['auth', 'role:owner', '2fa'])->group(function () {
     Route::get('onboarding',  [OnboardingController::class, 'show'])->name('onboarding');
     Route::post('onboarding', [OnboardingController::class, 'store'])->name('onboarding.store');
     Route::get('pending',     fn() => view('marketplace.pending'))->name('pending');
 });
 
 // Marketplace main (owner + user, company must be approved)
-Route::prefix('marketplace')->name('marketplace.')->middleware(['auth', 'role:owner,user', 'company.approved'])->group(function () {
+Route::prefix('marketplace')->name('marketplace.')->middleware(['auth', 'role:owner,user', '2fa', 'company.approved'])->group(function () {
     Route::get('/', MarketplaceDashboard::class)->name('dashboard');
 
     // Assortiment (owner + user)
@@ -198,7 +213,7 @@ Route::prefix('marketplace')->name('marketplace.')->middleware(['auth', 'role:ow
 });
 
 // ── Producer ──────────────────────────────────────────────
-Route::prefix('producer')->name('producer.')->middleware(['auth', 'role:producer'])->group(function () {
+Route::prefix('producer')->name('producer.')->middleware(['auth', 'role:producer', '2fa'])->group(function () {
     Route::get('/', ProducerDashboard::class)->name('dashboard');
 
     // Serials

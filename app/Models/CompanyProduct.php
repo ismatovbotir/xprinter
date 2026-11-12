@@ -5,14 +5,27 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class CompanyProduct extends Model
 {
+    use LogsActivity;
+
     protected $fillable = ['company_id', 'product_id', 'is_available', 'quantity'];
 
     protected $casts = [
         'is_available' => 'boolean',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('assortiment')
+            ->logOnly(['company_id', 'product_id', 'is_available', 'quantity'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     public function company(): BelongsTo
     {

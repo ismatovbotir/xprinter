@@ -38,19 +38,22 @@ class TeamController extends Controller
         $company = $this->ownerCompany();
 
         $data = $request->validate([
-            'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'email', 'max:255', 'unique:users,email'],
-            'password' => ['required', Password::min(8)->letters()->numbers(), 'confirmed'],
-            'lang'     => ['required', 'in:uz,ru,en'],
+            'name'          => ['required', 'string', 'max:255'],
+            'email'         => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password'      => ['required', Password::defaults(), 'confirmed'],
+            'lang'          => ['required', 'in:uz,ru,en'],
+            'permissions'   => ['nullable', 'array'],
+            'permissions.*' => ['in:' . implode(',', array_keys(User::PERMISSIONS))],
         ]);
 
         User::create([
-            'name'       => $data['name'],
-            'email'      => $data['email'],
-            'password'   => Hash::make($data['password']),
-            'role'       => 'user',
-            'company_id' => $company->id,
-            'lang'       => $data['lang'],
+            'name'        => $data['name'],
+            'email'       => $data['email'],
+            'password'    => Hash::make($data['password']),
+            'role'        => 'user',
+            'company_id'  => $company->id,
+            'lang'        => $data['lang'],
+            'permissions' => array_values($data['permissions'] ?? []),
         ]);
 
         return redirect()->route('marketplace.team.index')

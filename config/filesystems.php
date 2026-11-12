@@ -47,6 +47,23 @@ return [
             'report' => false,
         ],
 
+        // Backup archives (spatie/laravel-backup). Local by default; point BACKUP_DISK_DRIVER
+        // at an S3-compatible bucket in production so backups survive a lost server.
+        'backups' => [
+            'driver' => env('BACKUP_DISK_DRIVER', 'local'),
+            'root' => env('BACKUP_DISK_DRIVER', 'local') === 'local'
+                ? storage_path('app/backups')
+                : env('BACKUP_S3_ROOT', 'backups'),
+            'key' => env('BACKUP_S3_KEY', env('AWS_ACCESS_KEY_ID')),
+            'secret' => env('BACKUP_S3_SECRET', env('AWS_SECRET_ACCESS_KEY')),
+            'region' => env('BACKUP_S3_REGION', env('AWS_DEFAULT_REGION', 'us-east-1')),
+            'bucket' => env('BACKUP_S3_BUCKET', env('AWS_BUCKET')),
+            'endpoint' => env('BACKUP_S3_ENDPOINT', env('AWS_ENDPOINT')),
+            'use_path_style_endpoint' => env('BACKUP_S3_PATH_STYLE', true),
+            'throw' => false,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

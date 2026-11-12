@@ -118,6 +118,8 @@
     </div>
   </div>
 
+  @include('profile._two-factor')
+
 </div>
 
 @endsection

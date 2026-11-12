@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property string $id
@@ -22,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Company extends Model
 {
-    use HasUuids;
+    use HasUuids, LogsActivity;
 
     protected $fillable = [
         'name', 'brand', 'inn', 'phone', 'legal_form', 'logo', 'slug',
@@ -32,6 +34,15 @@ class Company extends Model
     protected $casts = [
         'types' => 'array',
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('companies')
+            ->logOnly(['name', 'brand', 'inn', 'status', 'vat_status', 'manufacturer_status', 'types', 'admin_note'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     public function users(): HasMany
     {

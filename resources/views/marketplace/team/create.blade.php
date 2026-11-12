@@ -57,9 +57,24 @@
                 @error('lang') <span class="form-error">{{ $message }}</span> @enderror
             </div>
 
+            <div class="form-group" style="margin-bottom:16px">
+                <label class="form-label">Huquqlar</label>
+                <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
+                    @foreach(\App\Models\User::PERMISSIONS as $key => $label)
+                        <label style="display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--ink-soft);cursor:pointer">
+                            <input type="checkbox" name="permissions[]" value="{{ $key }}"
+                                   @checked(in_array($key, old('permissions', ['manage_prices']), true))>
+                            {{ $label }}
+                        </label>
+                    @endforeach
+                </div>
+                @error('permissions') <span class="form-error">{{ $message }}</span> @enderror
+                @error('permissions.*') <span class="form-error">{{ $message }}</span> @enderror
+            </div>
+
             <div style="background:var(--bg-soft);border-radius:10px;padding:12px 14px;margin-bottom:20px;font-size:13px;color:var(--muted);line-height:1.5">
                 Operator <strong style="color:var(--ink)">{{ $company->brand ?? $company->name }}</strong> kompaniyasi nomidan ishlaydi.
-                U mahsulotlar va narxlarni boshqara oladi, lekin kompaniya sozlamalarini o'zgartira olmaydi.
+                Faqat belgilangan bo'limlarni boshqara oladi, kompaniya sozlamalarini o'zgartira olmaydi.
             </div>
 
             <div style="display:flex;gap:10px">
