@@ -19,12 +19,13 @@ class CatalogController extends Controller
         $sort   = $request->input('sort', 'newest');
 
         $products = Product::with(['translations', 'category.translations'])
-            ->when($search, fn($q) =>
-                $q->where('model_number', 'like', "%{$search}%")
+            // Grouped so the OR doesn't escape the category filter.
+            ->when($search, fn($q) => $q->where(fn($w) =>
+                $w->where('model_number', 'like', "%{$search}%")
                   ->orWhereHas('translations', fn($t) =>
                       $t->where('name', 'like', "%{$search}%")
                   )
-            )
+            ))
             ->when($sort === 'model',  fn($q) => $q->orderBy('model_number'))
             ->when($sort === 'name',   fn($q) => $q->orderByRaw(
                 'COALESCE((SELECT name FROM product_translations WHERE product_id = products.id AND lang = ? LIMIT 1), model_number)',
@@ -49,12 +50,13 @@ class CatalogController extends Controller
 
         $products = Product::with(['translations', 'category.translations'])
             ->where('category_id', $activeCategory->id)
-            ->when($search, fn($q) =>
-                $q->where('model_number', 'like', "%{$search}%")
+            // Grouped so the OR doesn't escape the category filter.
+            ->when($search, fn($q) => $q->where(fn($w) =>
+                $w->where('model_number', 'like', "%{$search}%")
                   ->orWhereHas('translations', fn($t) =>
                       $t->where('name', 'like', "%{$search}%")
                   )
-            )
+            ))
             ->when($sort === 'model',  fn($q) => $q->orderBy('model_number'))
             ->when($sort === 'name',   fn($q) => $q->orderByRaw(
                 'COALESCE((SELECT name FROM product_translations WHERE product_id = products.id AND lang = ? LIMIT 1), model_number)',
@@ -84,6 +86,12 @@ class CatalogController extends Controller
             ->limit(3)
             ->get();
 
-        return view('catalog.show', compact('product', 'related'));
+        // Verified companies that list this model as available (no prices — they differ per seller).
+        $sellers = PartnerDirectoryController::publicQuery()
+            ->whereHas('companyProducts', fn ($q) => $q->where('product_id', $product->id)->where('is_available', true))
+            ->limit(6)
+            ->get();
+
+        return view('catalog.show', compact('product', 'related', 'sellers'));
     }
 }

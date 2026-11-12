@@ -6,7 +6,7 @@
 <div class="page-header">
   <div>
     <div class="page-title">Bosh sahifa</div>
-    <div class="page-subtitle">Sayt bosh sahifasidagi matnlar (hero, "Biz haqimizda" va statistika)</div>
+    <div class="page-subtitle">Sayt bosh sahifasidagi matnlar, hero karusel mahsulotlari, qo'llanilish sohalari va statistika</div>
   </div>
   <a href="{{ route('home') }}" target="_blank" class="btn btn-ghost">
     <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
@@ -71,6 +71,63 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  {{-- Product showcase --}}
+  @php
+    $productSelect = function (string $name, $selected) use ($products) {
+        $html = '<select name="' . e($name) . '" class="form-input"><option value="">— tanlanmagan —</option>';
+        foreach ($products as $group => $items) {
+            $html .= '<optgroup label="' . e($group) . '">';
+            foreach ($items as $p) {
+                $html .= '<option value="' . $p->id . '"' . ((int) $selected === $p->id ? ' selected' : '') . '>'
+                    . e($p->model_number) . '</option>';
+            }
+            $html .= '</optgroup>';
+        }
+        return $html . '</select>';
+    };
+    $heroIds     = old('hero_products', $content->heroProductIds());
+    $scenarioIds = old('scenario_products', $content->scenarioProductIds());
+  @endphp
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Hero karusel — mahsulotlar</div>
+      <div style="font-size:12px;color:var(--muted)">O'ngdagi kartada navbat bilan almashadi, telefonda surib ko'riladi (max {{ \App\Models\HomeContent::HERO_MAX }})</div>
+    </div>
+    <div style="padding:24px">
+      <div class="form-grid" style="grid-template-columns:1fr 1fr;gap:10px">
+        @for($i = 0; $i < \App\Models\HomeContent::HERO_MAX; $i++)
+        <div class="form-group" style="margin:0">
+          <label class="form-label">{{ $i + 1 }}-slayd</label>
+          {!! $productSelect('hero_products[]', $heroIds[$i] ?? null) !!}
+        </div>
+        @endfor
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-top:12px">
+        Xususiyatlar (kenglik, tezlik, DPI…) va "sotuvda" holati mahsulot ma'lumotlaridan avtomatik olinadi.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">"Qo'llanilish sohalari" — modellar</div>
+      <div style="font-size:12px;color:var(--muted)">Har bir soha uchun {{ \App\Models\HomeContent::SCENARIO_MAX }} tagacha model</div>
+    </div>
+    <div style="padding:24px;display:flex;flex-direction:column;gap:14px">
+      @foreach(\App\Models\HomeContent::SCENARIOS as $key => $titleKey)
+      <div>
+        <label class="form-label">{{ __($titleKey) }}</label>
+        <div class="form-grid" style="grid-template-columns:repeat({{ \App\Models\HomeContent::SCENARIO_MAX }}, 1fr);gap:8px">
+          @for($i = 0; $i < \App\Models\HomeContent::SCENARIO_MAX; $i++)
+            {!! $productSelect("scenario_products[{$key}][]", $scenarioIds[$key][$i] ?? null) !!}
+          @endfor
+        </div>
+      </div>
+      @endforeach
     </div>
   </div>
 

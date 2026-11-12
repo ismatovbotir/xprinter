@@ -71,6 +71,7 @@ class ProductController extends Controller
 
         Cache::forget('catalog.categories');
         Cache::forget('home.featured');
+        \App\Http\Controllers\HomeController::forgetShowcase();
 
         return redirect()->route('admin.products.index')
             ->with('success', "«{$request->model_number}» mahsuloti qo'shildi");
@@ -114,6 +115,7 @@ class ProductController extends Controller
 
         Cache::forget('catalog.categories');
         Cache::forget('home.featured');
+        \App\Http\Controllers\HomeController::forgetShowcase();
 
         return redirect()->route('admin.products.index')
             ->with('success', "«{$request->model_number}» yangilandi");
@@ -125,6 +127,7 @@ class ProductController extends Controller
         $product->delete();
         Cache::forget('catalog.categories');
         Cache::forget('home.featured');
+        \App\Http\Controllers\HomeController::forgetShowcase();
 
         return redirect()->route('admin.products.index')
             ->with('success', "«{$name}» o'chirildi");

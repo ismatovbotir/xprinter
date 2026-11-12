@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ChatbotController;
 use App\Http\Controllers\Admin\ClientMessageController;
 use App\Http\Controllers\Admin\FileController;
 use App\Http\Controllers\Admin\ProductFileController;
@@ -29,6 +30,7 @@ use App\Http\Controllers\Producer\SerialController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\PartnerDirectoryController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TelegramAppController;
@@ -48,6 +50,8 @@ Route::get('/catalog/{slug}',            [CatalogController::class, 'category'])
 Route::get('/catalog/{category}/{slug}', [CatalogController::class, 'show'])->name('products.show');
 Route::get('/about',                     [PageController::class, 'about'])->name('about');
 Route::get('/contact',                   [PageController::class, 'contact'])->name('contact');
+Route::get('/partners',                  [PartnerDirectoryController::class, 'index'])->name('partners.index');
+Route::get('/partners/{slug}',           [PartnerDirectoryController::class, 'show'])->name('partners.show');
 Route::get('/sitemap.xml',               [SitemapController::class, 'index'])->name('sitemap');
 
 // ── Telegram bot ──────────────────────────────────────────
@@ -143,6 +147,19 @@ Route::prefix('admin')
         Route::get('messages',           [ClientMessageController::class, 'index'])->name('messages.index');
         Route::get('messages/{user}',    [ClientMessageController::class, 'show'])->name('messages.show');
         Route::post('messages/{user}',   [ClientMessageController::class, 'reply'])->name('messages.reply');
+
+        // Chatbot: unanswered questions + knowledge the admin teaches the bot
+        Route::prefix('chatbot')->name('chatbot.')->controller(ChatbotController::class)->group(function () {
+            Route::get('/',                              'index')->name('index');
+            Route::get('questions/{question}',           'showQuestion')->name('questions.show');
+            Route::post('questions/{question}',          'answerQuestion')->name('questions.answer');
+            Route::delete('questions/{question}',        'destroyQuestion')->name('questions.destroy');
+            Route::get('knowledge/create',               'createKnowledge')->name('knowledge.create');
+            Route::post('knowledge',                     'storeKnowledge')->name('knowledge.store');
+            Route::get('knowledge/{knowledge}/edit',     'editKnowledge')->name('knowledge.edit');
+            Route::put('knowledge/{knowledge}',          'updateKnowledge')->name('knowledge.update');
+            Route::delete('knowledge/{knowledge}',       'destroyKnowledge')->name('knowledge.destroy');
+        });
     });
 
 // ── Marketplace ───────────────────────────────────────────

@@ -67,34 +67,37 @@
 
 @section('content')
 
+@php
+  $productName = $trans?->name ?? $product->model_number;
+  $mainPhoto   = $product->photos->first()?->url ?? ($product->photo ? Storage::url($product->photo) : null);
+@endphp
+
 <div class="container">
   <div class="prod-detail">
 
     {{-- LEFT: Image --}}
-    <div>
+    <div class="prod-gallery">
       <div class="prod-detail-img" id="prod-main-img">
-        @if($product->photos->isNotEmpty())
-          <img src="{{ $product->photos->first()->url }}" alt="{{ $trans?->name }}">
-        @elseif($product->photo)
-          <img src="{{ Storage::url($product->photo) }}" alt="{{ $trans?->name }}">
+        @if($mainPhoto)
+          <img src="{{ $mainPhoto }}" alt="{{ $productName }}" width="600" height="600" fetchpriority="high" decoding="async">
         @else
           <div class="prod-detail-img-placeholder">
-            <svg viewBox="0 0 24 24">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
               <rect x="4" y="7" width="16" height="12" rx="1"/>
               <path d="M7 7V4h10v3M8 11h8M8 14h8"/>
             </svg>
-            <span style="font-size:12px;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em">{{ $product->model_number }}</span>
+            <span class="prod-detail-img-model">{{ $product->model_number }}</span>
           </div>
         @endif
       </div>
 
       @if($product->photos->count() > 1)
-      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+      <div class="prod-thumbs">
         @foreach($product->photos as $photo)
-        <button type="button" onclick="document.querySelector('#prod-main-img img').src = this.dataset.src"
-                data-src="{{ $photo->url }}"
-                style="width:64px;height:64px;padding:0;border:1.5px solid var(--line);border-radius:10px;overflow:hidden;cursor:pointer;background:#fff">
-          <img src="{{ $photo->url }}" alt="" style="width:100%;height:100%;object-fit:contain">
+        <button type="button" class="prod-thumb {{ $loop->first ? 'active' : '' }}" data-src="{{ $photo->url }}"
+                aria-label="{{ __('product.photo_n', ['n' => $loop->iteration]) }}"
+                aria-pressed="{{ $loop->first ? 'true' : 'false' }}">
+          <img src="{{ $photo->url }}" alt="" width="64" height="64" loading="lazy" decoding="async">
         </button>
         @endforeach
       </div>
@@ -105,17 +108,17 @@
     <div class="prod-detail-body">
 
       {{-- Breadcrumb --}}
-      <div class="prod-breadcrumb">
-        <a href="{{ route('home') }}">Bosh sahifa</a>
-        <span>/</span>
-        <a href="{{ route('catalog') }}">Katalog</a>
+      <nav class="prod-breadcrumb" aria-label="{{ __('product.breadcrumb') }}">
+        <a href="{{ route('home') }}">{{ __('product.home') }}</a>
+        <span aria-hidden="true">/</span>
+        <a href="{{ route('catalog') }}">{{ __('nav.catalog') }}</a>
         @if($catTrans && $product->category)
-        <span>/</span>
+        <span aria-hidden="true">/</span>
         <a href="{{ route('catalog.category', $product->category->slug) }}">{{ $catTrans->name }}</a>
         @endif
-        <span>/</span>
-        <span style="color:var(--ink-soft)">{{ $product->model_number }}</span>
-      </div>
+        <span aria-hidden="true">/</span>
+        <span class="prod-breadcrumb-current" aria-current="page">{{ $product->model_number }}</span>
+      </nav>
 
       {{-- Category + model --}}
       @if($catTrans)
@@ -123,8 +126,8 @@
       @endif
 
       <div>
-        <div class="prod-detail-name">{{ $trans?->name ?? $product->model_number }}</div>
-        <div class="prod-detail-model" style="margin-top:6px">{{ $product->model_number }}</div>
+        <h1 class="prod-detail-name">{{ $productName }}</h1>
+        <div class="prod-detail-model">{{ $product->model_number }}</div>
       </div>
 
       {{-- Description --}}
@@ -132,20 +135,49 @@
       <div class="prod-detail-desc">{{ $trans->description }}</div>
       @endif
 
+      {{-- CTA --}}
+      <div class="prod-detail-cta">
+        <a href="{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_admin_bot' }}" target="_blank" rel="noopener" class="pub-btn pub-btn-primary pub-btn-lg">
+          {{ __('product.ask_price') }}
+        </a>
+        @if($siteSettings->phone)
+        <a href="tel:{{ preg_replace('/\s+/', '', $siteSettings->phone) }}" class="pub-btn pub-btn-ghost pub-btn-lg">
+          {{ __('home.cta_phone_btn') }}
+        </a>
+        @endif
+        @if($product->files->isNotEmpty())
+        <a href="#downloads" class="pub-btn pub-btn-ghost pub-btn-lg">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          {{ __('product.downloads') }}
+        </a>
+        @endif
+      </div>
+
+      {{-- Warranty note --}}
+      <dl class="prod-facts">
+        @foreach([['warranty_val', 'warranty_label'], ['delivery_val', 'delivery_label'], ['parts_val', 'parts_label']] as [$val, $lbl])
+        <div class="prod-fact">
+          <dt class="prod-fact-label">{{ __("product.$lbl") }}</dt>
+          <dd class="prod-fact-val">{{ __("product.$val") }}</dd>
+        </div>
+        @endforeach
+      </dl>
+
       {{-- Parameters --}}
       @if($paramGroups->isNotEmpty())
-      <div class="prod-params">
-        <div class="prod-params-title">Texnik xususiyatlar</div>
+      <section class="prod-params" aria-labelledby="prod-specs-title">
+        <h2 class="prod-params-title" id="prod-specs-title">{{ __('product.specs') }}</h2>
+        <dl>
         @foreach($paramGroups as $parameterId => $values)
         @php
           $param      = $values->first()->parameter;
           $paramName  = $param?->translations->firstWhere('lang', $locale)?->name
                      ?? $param?->translations->firstWhere('lang', 'uz')?->name
-                     ?? "Parametr #{$parameterId}";
+                     ?? "#{$parameterId}";
         @endphp
         <div class="prod-param-row">
-          <div class="prod-param-key">{{ $paramName }}</div>
-          <div class="prod-param-val">
+          <dt class="prod-param-key">{{ $paramName }}</dt>
+          <dd class="prod-param-val">
             @foreach($values as $val)
             @php
               $valName = $val->translations->firstWhere('lang', $locale)?->name
@@ -154,31 +186,12 @@
             @endphp
             <span class="prod-param-tag">{{ $valName }}</span>
             @endforeach
-          </div>
+          </dd>
         </div>
         @endforeach
-      </div>
+        </dl>
+      </section>
       @endif
-
-      {{-- CTA --}}
-      <div class="prod-detail-cta">
-        <a href="https://t.me/xprinter_admin_bot" target="_blank" class="pub-btn pub-btn-primary">
-          Narx so'rash (Telegram)
-        </a>
-        <a href="tel:+998000000000" class="pub-btn pub-btn-ghost">
-          Qo'ng'iroq qilish
-        </a>
-      </div>
-
-      {{-- Warranty note --}}
-      <div style="display:flex;gap:24px;flex-wrap:wrap">
-        @foreach([['12 oy', "Rasmiy kafolat O'zbekistonda"], ['1 kun', "Toshkent bo'yicha yetkazish"], ['Mavjud', 'Ehtiyot qismlar']] as [$val, $lbl])
-        <div style="display:flex;flex-direction:column;gap:2px">
-          <div style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:600;color:var(--ink)">{{ $val }}</div>
-          <div style="font-size:11px;color:var(--muted)">{{ $lbl }}</div>
-        </div>
-        @endforeach
-      </div>
 
     </div>
   </div>
@@ -186,60 +199,71 @@
   {{-- Downloads --}}
   @php
     $filesByType = $product->files->groupBy(fn($f) => $f->pivot->type);
-    $typeLabels  = ['driver'=>'Driver','manual'=>'Manual','spec'=>'Spetsifikatsiya','firmware'=>'Firmware','utility'=>'Utility','other'=>'Boshqa'];
+    $typeLabels  = ['driver'=>'Driver','manual'=>'Manual','spec'=>'Spec','firmware'=>'Firmware','utility'=>'Utility','other'=>'Other'];
     $langLabels  = ['uz'=>'UZ','ru'=>'RU','en'=>'EN'];
   @endphp
   @if($filesByType->isNotEmpty())
-  <div style="padding-bottom:48px">
-    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:20px">
-      Yuklab olish
-    </div>
-    <div style="display:flex;flex-direction:column;gap:8px">
+  <section class="prod-section" id="downloads" aria-labelledby="downloads-title">
+    <h2 class="prod-section-title" id="downloads-title">{{ __('product.downloads') }}</h2>
+    <ul class="prod-files">
       @foreach($filesByType as $type => $files)
         @foreach($files as $file)
-        <a href="{{ $file->url }}" target="_blank" rel="noopener"
-           style="display:flex;align-items:center;gap:16px;padding:14px 18px;border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--ink);background:var(--surface);transition:border-color 0.15s,box-shadow 0.15s"
-           onmouseover="this.style.borderColor='var(--blue)';this.style.boxShadow='0 4px 16px rgba(0,102,255,0.08)'"
-           onmouseout="this.style.borderColor='var(--line)';this.style.boxShadow='none'">
-          <div style="width:40px;height:40px;border-radius:10px;background:var(--bg-soft);display:flex;align-items:center;justify-content:center;flex-shrink:0">
-            <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--blue);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round">
+        <li>
+        <a href="{{ $file->url }}" target="_blank" rel="noopener" class="prod-file">
+          <div class="prod-file-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
               <polyline points="14 2 14 8 20 8"/>
               <line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/>
             </svg>
           </div>
-          <div style="flex:1;min-width:0">
-            <div style="font-weight:600;font-size:14px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ $file->name }}</div>
-            <div style="font-size:12px;color:var(--muted);margin-top:2px">
-              @if($file->version)<span style="margin-right:8px">v{{ $file->version }}</span>@endif
+          <div class="prod-file-info">
+            <div class="prod-file-name">{{ $file->name }}</div>
+            <div class="prod-file-meta">
+              @if($file->version)<span>v{{ $file->version }}</span>@endif
               {{ $file->size_formatted }}
             </div>
           </div>
-          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-            <span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:0.08em;background:var(--blue-soft);color:var(--blue-deep);padding:3px 8px;border-radius:6px">
-              {{ $typeLabels[$type] ?? strtoupper($type) }}
-            </span>
-            <span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:0.08em;background:var(--bg-soft);color:var(--muted);padding:3px 8px;border-radius:6px;border:1px solid var(--line)">
-              {{ $langLabels[$file->pivot->language] ?? strtoupper($file->pivot->language) }}
-            </span>
-            <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--muted);fill:none;stroke-width:2;flex-shrink:0">
+          <div class="prod-file-tags">
+            <span class="prod-file-type">{{ $typeLabels[$type] ?? strtoupper($type) }}</span>
+            <span class="prod-file-lang">{{ $langLabels[$file->pivot->language] ?? strtoupper($file->pivot->language) }}</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
               <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
             </svg>
           </div>
         </a>
+        </li>
         @endforeach
       @endforeach
-    </div>
-  </div>
+    </ul>
+  </section>
   @endif
+
+  {{-- Who sells this model --}}
+  <section class="prod-section" aria-labelledby="sellers-title">
+    <h2 class="prod-section-title" id="sellers-title">{{ __('partners.sellers_title', ['count' => $sellers->count()]) }}</h2>
+    @if($sellers->isEmpty())
+      <p class="partner-muted">{{ __('partners.sellers_empty') }} <a href="{{ route('partners.index') }}">{{ __('partners.title') }} →</a></p>
+    @else
+      <div class="partner-grid">
+        @foreach($sellers as $partner)
+          @include('partners._card', ['partner' => $partner])
+        @endforeach
+      </div>
+      <p class="partner-sellers-more"><a href="{{ route('partners.index') }}">{{ __('partners.all_partners') }} →</a></p>
+    @endif
+  </section>
+
+  {{-- B2B: invite dealers / service centers --}}
+  <div class="prod-section">
+    @include('partials.dealer-cta', ['title' => __('product.dealer_title'), 'text' => __('product.dealer_text')])
+  </div>
 
   {{-- Related products --}}
   @if($related->isNotEmpty())
-  <div style="padding-bottom:64px">
-    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:20px">
-      O'xshash mahsulotlar
-    </div>
+  <section class="prod-section" aria-labelledby="related-title">
+    <h2 class="prod-section-title" id="related-title">{{ __('product.related') }}</h2>
     <div class="prod-grid">
       @foreach($related as $rel)
       @php
@@ -249,9 +273,10 @@
       <a href="{{ route('products.show', [$rel->category->slug, $rel->slug]) }}" class="prod-card">
         <div class="prod-card-img">
           @if($rel->photo)
-            <img src="{{ Storage::url($rel->photo) }}" alt="{{ $relTrans?->name }}">
+            <img src="{{ Storage::url($rel->photo) }}" alt="{{ $relTrans?->name ?? $rel->model_number }}"
+                 width="400" height="300" loading="lazy" decoding="async">
           @else
-            <svg viewBox="0 0 24 24" style="width:48px;height:48px;stroke:var(--line-hi);fill:none;stroke-width:1.2">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
               <rect x="4" y="7" width="16" height="12" rx="1"/><path d="M7 7V4h10v3"/>
             </svg>
           @endif
@@ -260,19 +285,35 @@
           @if($relCatTrans)
           <div class="prod-card-cat">{{ $relCatTrans->name }}</div>
           @endif
-          <div class="prod-card-name">{{ $relTrans?->name ?? $rel->model_number }}</div>
+          <h3 class="prod-card-name">{{ $relTrans?->name ?? $rel->model_number }}</h3>
           <div class="prod-card-model">{{ $rel->model_number }}</div>
         </div>
         <div class="prod-card-footer">
-          <span style="font-size:12px;color:var(--muted)">Batafsil →</span>
-          <div class="prod-card-arrow">→</div>
+          <span class="prod-card-more">{{ __('home.details') }}</span>
+          <div class="prod-card-arrow" aria-hidden="true">→</div>
         </div>
       </a>
       @endforeach
     </div>
-  </div>
+  </section>
   @endif
 
 </div>
+
+@push('scripts')
+<script>
+  // Gallery: swap main image from thumbnails
+  document.querySelectorAll('.prod-thumb').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var main = document.querySelector('#prod-main-img img');
+      if (main) main.src = btn.dataset.src;
+      document.querySelectorAll('.prod-thumb').forEach(function (b) {
+        b.classList.toggle('active', b === btn);
+        b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+      });
+    });
+  });
+</script>
+@endpush
 
 @endsection

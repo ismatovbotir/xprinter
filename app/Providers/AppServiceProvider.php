@@ -39,12 +39,18 @@ class AppServiceProvider extends ServiceProvider
 
     private function shareSiteSettings(): void
     {
-        try {
-            $settings = SiteSetting::current();
-        } catch (\Throwable) {
-            return;
-        }
+        // Resolved lazily on first render (not at boot), so it also works when the
+        // database isn't ready yet at boot time — fresh installs, migrations, tests.
+        View::composer('*', function ($view) {
+            static $settings;
 
-        View::share('siteSettings', $settings);
+            try {
+                $settings ??= SiteSetting::current();
+            } catch (\Throwable) {
+                return;
+            }
+
+            $view->with('siteSettings', $settings);
+        });
     }
 }

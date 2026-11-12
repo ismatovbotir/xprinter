@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\AnswerTelegramMessage;
 use App\Models\ClientMessage;
 use App\Models\User;
 use App\Services\TelegramBotService;
@@ -13,6 +14,7 @@ use Illuminate\Support\Str;
 class TelegramWebhookController extends Controller
 {
     private const REGISTRATION_TTL_MINUTES = 60 * 24;
+    private const ADMIN_TAKEOVER_MINUTES = 30;
 
     public function __construct(private TelegramBotService $bot) {}
 
@@ -87,13 +89,21 @@ class TelegramWebhookController extends Controller
             return;
         }
 
-        ClientMessage::create([
+        $message = ClientMessage::create([
             'user_id' => $user->id,
             'sender'  => 'client',
             'body'    => $text,
         ]);
 
-        $this->bot->sendMessage($chatId, "Xabaringiz qabul qilindi. Administratsiya tez orada javob beradi.");
+        // An admin is talking to this client right now — stay quiet and let the human answer.
+        $adminActive = ClientMessage::where('user_id', $user->id)
+            ->where('sender', 'admin')
+            ->where('created_at', '>=', now()->subMinutes(self::ADMIN_TAKEOVER_MINUTES))
+            ->exists();
+
+        if (!$adminActive) {
+            AnswerTelegramMessage::dispatchSync($user, $message);
+        }
     }
 
     private function handleRegistrationStep(int $chatId, array $state, string $text): void
@@ -170,7 +180,7 @@ class TelegramWebhookController extends Controller
     {
         $this->bot->sendWebAppButton(
             $chatId,
-            "Katalogni ko'rish uchun tugmani bosing. Savol yoki so'rovingiz bo'lsa shu yerga yozing — administratsiya javob beradi.",
+            "Katalogni ko'rish uchun tugmani bosing. Savol yoki so'rovingiz bo'lsa shu yerga yozing — yordamchi bot javob beradi, kerak bo'lsa administratorga uzatadi.",
             "🛍 Katalogni ochish",
             route('telegram.app')
         );

@@ -15,6 +15,7 @@ class SitemapController extends Controller
             $urls = [
                 ['loc' => route('home'), 'priority' => '1.0', 'changefreq' => 'daily'],
                 ['loc' => route('catalog'), 'priority' => '0.9', 'changefreq' => 'daily'],
+                ['loc' => route('partners.index'), 'priority' => '0.8', 'changefreq' => 'weekly'],
                 ['loc' => route('about'), 'priority' => '0.5', 'changefreq' => 'monthly'],
                 ['loc' => route('contact'), 'priority' => '0.5', 'changefreq' => 'monthly'],
             ];
@@ -32,6 +33,15 @@ class SitemapController extends Controller
                     'loc'        => route('products.show', ['category' => $product->category->slug, 'slug' => $product->slug]),
                     'lastmod'    => $product->updated_at?->toAtomString(),
                     'priority'   => '0.7',
+                    'changefreq' => 'weekly',
+                ];
+            }
+
+            foreach (\App\Models\Company::where('status', 'approved')->whereNotNull('slug')->get(['slug', 'updated_at']) as $company) {
+                $urls[] = [
+                    'loc'        => route('partners.show', $company->slug),
+                    'lastmod'    => $company->updated_at?->toAtomString(),
+                    'priority'   => '0.6',
                     'changefreq' => 'weekly',
                 ];
             }

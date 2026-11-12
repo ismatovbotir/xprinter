@@ -68,6 +68,30 @@ class Company extends Model
         return \in_array($this->manufacturer_status, ['authorized_partner', 'authorized_distributor'], true);
     }
 
+    /** Public-facing name: the brand the dealer chose, falling back to the legal name. */
+    public function displayName(): string
+    {
+        return $this->brand ?: $this->name;
+    }
+
+    /** "Toshkent, Toshkent shahri" style labels of the company's cities, current locale. */
+    public function cityLabels(): array
+    {
+        $lang = app()->getLocale();
+
+        return $this->addresses
+            ->map(function (Address $a) use ($lang) {
+                $city   = $a->city?->translations->firstWhere('lang', $lang)?->name ?? $a->city?->translations->first()?->name;
+                $region = $a->city?->region?->translations->firstWhere('lang', $lang)?->name;
+
+                return $city ? ($region && $region !== $city ? "{$city}, {$region}" : $city) : null;
+            })
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+    }
+
     public function serials(): HasMany
     {
         return $this->hasMany(ProductSerial::class);

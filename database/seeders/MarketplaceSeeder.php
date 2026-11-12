@@ -76,9 +76,10 @@ class MarketplaceSeeder extends Seeder
     private function seedAssortment(Company $company): void
     {
         $items = [
-            ['model' => 'XP-Q890K', 'retail' => 2_450_000, 'wholesale' => 2_150_000, 'interface' => 'USB + Serial + LAN'],
-            ['model' => 'XP-428B',  'retail' => 3_200_000, 'wholesale' => 2_850_000, 'interface' => 'USB'],
-            ['model' => 'MP3',      'retail' => 1_800_000, 'wholesale' => 1_550_000, 'interface' => null],
+            // Prices in line with OLX.uz (Nov 2026).
+            ['model' => 'XP-365B',  'retail' => 550_000, 'wholesale' => 480_000, 'interface' => 'USB'],
+            ['model' => 'XP-T80A',  'retail' => 490_000, 'wholesale' => 430_000, 'interface' => 'USB + LAN'],
+            ['model' => 'XP-P502A', 'retail' => 260_000, 'wholesale' => 220_000, 'interface' => null],
         ];
 
         foreach ($items as $item) {

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\HomeController;
 use App\Models\HomeContent;
+use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -14,7 +16,11 @@ class HomeContentController extends Controller
     {
         $content = HomeContent::current();
 
-        return view('admin.homepage.edit', compact('content'));
+        $products = Product::with(['translations', 'category.translations'])
+            ->orderBy('category_id')->orderBy('model_number')->get()
+            ->groupBy(fn($p) => $p->category?->translations->firstWhere('lang', 'uz')?->name ?? 'Boshqa');
+
+        return view('admin.homepage.edit', compact('content', 'products'));
     }
 
     public function update(Request $request): RedirectResponse
@@ -40,7 +46,19 @@ class HomeContentController extends Controller
             'card_titles.*'    => 'nullable|string|max:100',
             'card_texts'       => 'nullable|array',
             'card_texts.*'     => 'nullable|string|max:300',
+            'hero_products'    => 'nullable|array|max:' . HomeContent::HERO_MAX,
+            'hero_products.*'  => 'nullable|integer|exists:products,id',
+            'scenario_products'     => 'nullable|array',
+            'scenario_products.*'   => 'nullable|array|max:' . HomeContent::SCENARIO_MAX,
+            'scenario_products.*.*' => 'nullable|integer|exists:products,id',
         ]);
+
+        $ids = fn($list) => collect($list)->filter()->map(fn($id) => (int) $id)->unique()->values()->all();
+
+        $scenarios = [];
+        foreach (array_keys(HomeContent::SCENARIOS) as $key) {
+            $scenarios[$key] = $ids($request->input("scenario_products.$key", []));
+        }
 
         $stats = [];
         foreach ($request->input('stat_values', []) as $i => $value) {
@@ -71,9 +89,12 @@ class HomeContentController extends Controller
             'about_title'    => $request->about_title,
             'about_subtitle' => $request->about_subtitle,
             'about_cards'    => $aboutCards,
+            'hero_products'     => $ids($request->input('hero_products', [])),
+            'scenario_products' => $scenarios,
         ]);
 
         HomeContent::forgetCache();
+        HomeController::forgetShowcase();
 
         return redirect()->route('admin.homepage.edit')
             ->with('success', 'Bosh sahifa tarkibi saqlandi');

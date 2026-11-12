@@ -1,0 +1,25 @@
+model;category;paper_width;print_speed;dpi;interface;connectivity;autocutter;use_case;notes
+XP-58IIH;receipt;58 mm;;203;USB;;no;cafe, small shop;
+XP-58IIT;receipt;58 mm;90 mm/s;203;USB;;no;shop, pharmacy, wholesale;
+XP-58IIA;receipt;58 mm;;203;USB;;;shop, pharmacy;verify: autocutter?
+XP-58IIL;receipt;58 mm;;203;USB + LAN;;;cafe, network POS;verify: interface (L = LAN?)
+XP-T80;receipt;80 mm;;203;USB;;yes;store, restaurant;
+XP-T80A;receipt;80 mm;;203;USB + LAN;;yes;supermarket, restaurant;
+XP-T80Q;receipt;80 mm;;203;USB;;yes;store, cafe;
+XP-Q80A;receipt;80 mm;;203;USB;;yes;store, pharmacy;
+XP-K200L;receipt;80 mm;;203;USB + LAN;;yes;supermarket, restaurant;
+XP-N160II;receipt;80 mm;160 mm/s;203;USB;;yes;store, POS;
+XP-V320L;receipt;80 mm;;203;USB + LAN;;yes;store, restaurant;
+XP-Q838L;receipt;80 mm;;203;USB + LAN;;yes;store, restaurant;verify: category + specs
+XP-365B;label;3 inch (80 mm);127 mm/s;203;USB;;;Uzum / Yandex Market sellers, price tags;verify: Bluetooth variant
+XP-370B;label;3 inch (80 mm);;203;USB;;;store, warehouse, marketplace;verify: specs
+XP-303B;label;;;203;USB;;;small labels, price tags;verify: paper width + specs
+XP-421B;label;4 inch (108 mm);;203;USB + LAN;;;warehouse, logistics, marketplace;
+XP-470B;label;4 inch (108 mm);;203;USB;;;marketplace, TradePOS;
+XP-Q371U;label;3 inch (80 mm);;203;USB;;;store, barcodes;verify: specs
+XP-H400E;label;4 inch (108 mm);;300;USB + Ethernet;;;industry, warehouse, long-lasting labels;
+XP-H500B;label;4 inch (108 mm);;203;USB;;;industry, warehouse;
+XP-P502A;mobile;58 mm;;;;Bluetooth;;courier, Paynet, mobile sales;
+XP-P201A;mobile;58 mm;;;;Bluetooth;;courier, delivery;verify: specs (seen only in bundle listing)
+XP-P326B;mobile;3 inch (80 mm);;;;Bluetooth;;mobile labels, warehouse;verify: specs (seen only in bundle listing)
+XP-P801A;mobile;80 mm;;;;Bluetooth;;courier, mobile sales;verify: specs (seen only in bundle listing)

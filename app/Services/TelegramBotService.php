@@ -34,6 +34,12 @@ class TelegramBotService
     }
 
     /** Asks the user to share their own phone number via Telegram's native contact button. */
+    /** Shows "typing…" in the chat while a slow reply (e.g. the chatbot) is being prepared. */
+    public function sendTyping(int|string $chatId): void
+    {
+        $this->call('sendChatAction', ['chat_id' => $chatId, 'action' => 'typing']);
+    }
+
     public function requestContact(int|string $chatId, string $text): void
     {
         $this->sendMessage($chatId, $text, [

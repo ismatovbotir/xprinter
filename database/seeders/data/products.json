@@ -1,0 +1,682 @@
+[
+  {
+    "model": "XP-58IIH",
+    "category": "receipt",
+    "specs": {
+      "paper_width": "58 mm",
+      "dpi": "203",
+      "interface": "USB",
+      "autocutter": "no"
+    },
+    "uz": {
+      "name": "Chek printeri XP-58IIH",
+      "description": "58 mm chek printeri — kafe, kichik do'kon va xizmat ko'rsatish nuqtalari uchun ixcham va arzon yechim. USB orqali kassa dasturiga ulanadi."
+    },
+    "ru": {
+      "name": "Принтер чеков XP-58IIH",
+      "description": "Принтер чеков 58 мм — компактное и недорогое решение для кафе, небольших магазинов и точек обслуживания. Подключается к кассовой программе по USB."
+    },
+    "en": {
+      "name": "Receipt Printer XP-58IIH",
+      "description": "58 mm receipt printer — a compact, budget solution for cafes, small shops and service points. Connects to the POS software via USB."
+    },
+    "olx": {
+      "min": 191605,
+      "max": 191605,
+      "listings": 1
+    },
+    "use_case": "cafe, small shop",
+    "verify": ""
+  },
+  {
+    "model": "XP-58IIT",
+    "category": "receipt",
+    "specs": {
+      "paper_width": "58 mm",
+      "print_speed": "90 mm/s",
+      "dpi": "203",
+      "interface": "USB",
+      "autocutter": "no"
+    },
+    "uz": {
+      "name": "Chek printeri XP-58IIT",
+      "description": "58 mm termoprinter — do'kon, dorixona va to'lov nuqtalari uchun eng ommabop chek printerlaridan biri. Ixcham korpus, USB ulanish, oson qog'oz almashtirish."
+    },
+    "ru": {
+      "name": "Принтер чеков XP-58IIT",
+      "description": "Термопринтер 58 мм — один из самых популярных принтеров чеков для магазинов, аптек и пунктов оплаты. Компактный корпус, USB, простая замена чековой ленты."
+    },
+    "en": {
+      "name": "Receipt Printer XP-58IIT",
+      "description": "58 mm thermal printer — one of the most popular receipt printers for shops, pharmacies and payment points. Compact body, USB, easy paper loading."
+    },
+    "olx": {
+      "min": 191500,
+      "max": 300000,
+      "listings": 3
+    },
+    "use_case": "shop, pharmacy, wholesale",
+    "verify": ""
+  },
+  {
+    "model": "XP-58IIA",
+    "category": "receipt",
+    "specs": {
+      "paper_width": "58 mm",
+      "dpi": "203",
+      "interface": "USB"
+    },
+    "uz": {
+      "name": "Chek printeri XP-58IIA",
+      "description": "58 mm chek printeri do'kon va dorixonalar uchun. USB orqali ulanadi, onlayn-kassa va fiskal dasturlar bilan ishlaydi."
+    },
+    "ru": {
+      "name": "Принтер чеков XP-58IIA",
+      "description": "Принтер чеков 58 мм для магазинов и аптек. Подключение по USB, работает с онлайн-кассами и фискальными программами."
+    },
+    "en": {
+      "name": "Receipt Printer XP-58IIA",
+      "description": "58 mm receipt printer for shops and pharmacies. USB connection, works with online cash registers and fiscal software."
+    },
+    "olx": {
+      "min": 275000,
+      "max": 275000,
+      "listings": 1
+    },
+    "use_case": "shop, pharmacy",
+    "verify": "autocutter?"
+  },
+  {
+    "model": "XP-58IIL",
+    "category": "receipt",
+    "specs": {
+      "paper_width": "58 mm",
+      "dpi": "203",
+      "interface": "USB + LAN"
+    },
+    "uz": {
+      "name": "Chek printeri XP-58IIL",
+      "description": "58 mm chek printeri tarmoq (LAN) orqali ulanish imkoniyati bilan — bir nechta kassa yoki planshetdan chop etish uchun qulay."
+    },
+    "ru": {
+      "name": "Принтер чеков XP-58IIL",
+      "description": "Принтер чеков 58 мм с подключением по сети (LAN) — удобно печатать с нескольких касс или планшетов."
+    },
+    "en": {
+      "name": "Receipt Printer XP-58IIL",
+      "description": "58 mm receipt printer with network (LAN) connection — convenient for printing from several registers or tablets."
+    },
+    "olx": {
+      "min": null,
+      "max": null,
+      "listings": 1
+    },
+    "use_case": "cafe, network POS",
+    "verify": "interface (L = LAN?)"
+  },
+  {
+    "model": "XP-T80",
+    "category": "receipt",
+    "specs": {
+      "paper_width": "80 mm",
+      "dpi": "203",
+      "interface": "USB",
+      "autocutter": "yes"
+    },
+    "uz": {
+      "name": "Chek printeri XP-T80",
+      "description": "80 mm chek printeri avtokesuvchi bilan — do'kon va restoran kassalari uchun ishonchli model. R-Keeper, iiko, Jowi va boshqa POS tizimlari bilan ishlaydi."
+    },
+    "ru": {
+      "name": "Принтер чеков XP-T80",
+      "description": "Принтер чеков 80 мм с автообрезчиком — надёжная модель для касс магазинов и ресторанов. Работает с R-Keeper, iiko, Jowi и другими POS-системами."
+    },
+    "en": {
+      "name": "Receipt Printer XP-T80",
+      "description": "80 mm receipt printer with auto-cutter — a reliable model for store and restaurant registers. Works with R-Keeper, iiko, Jowi and other POS systems."
+    },
+    "olx": {
+      "min": 455061,
+      "max": 455061,
+      "listings": 1
+    },
+    "use_case": "store, restaurant",
+    "verify": ""
+  },
+  {
+    "model": "XP-T80A",
+    "category": "receipt",
+    "specs": {
+      "paper_width": "80 mm",
+      "dpi": "203",
+      "interface": "USB + LAN",
+      "autocutter": "yes"
+    },
+    "uz": {
+      "name": "Chek printeri XP-T80A",
+      "description": "80 mm chek printeri USB + LAN interfeysi va avtokesuvchi bilan. Supermarket kassalari va restoran oshxonasi uchun — tarmoq orqali bir nechta kassadan chop etadi."
+    },
+    "ru": {
+      "name": "Принтер чеков XP-T80A",
+      "description": "Принтер чеков 80 мм с интерфейсами USB + LAN и автообрезчиком. Для касс супермаркетов и кухни ресторана — печать с нескольких касс по сети."
+    },
+    "en": {
+      "name": "Receipt Printer XP-T80A",
+      "description": "80 mm receipt printer with USB + LAN and auto-cutter. For supermarket registers and restaurant kitchens — prints from several registers over the network."
+    },
+    "olx": {
+      "min": 467037,
+      "max": 490987,
+      "listings": 3
+    },
+    "use_case": "supermarket, restaurant",
+    "verify": ""
+  },
+  {
+    "model": "XP-T80Q",
+    "category": "receipt",
+    "specs": {
+      "paper_width": "80 mm",
+      "dpi": "203",
+      "interface": "USB",
+      "autocutter": "yes"
+    },
+    "uz": {
+      "name": "Chek printeri XP-T80Q",
+      "description": "80 mm chek printeri avtokesuvchi bilan — do'kon va kafelar uchun tezkor va tejamkor model."
+    },
+    "ru": {
+      "name": "Принтер чеков XP-T80Q",
+      "description": "Принтер чеков 80 мм с автообрезчиком — быстрая и экономичная модель для магазинов и кафе."
+    },
+    "en": {
+      "name": "Receipt Printer XP-T80Q",
+      "description": "80 mm receipt printer with auto-cutter — a fast, economical model for shops and cafes."
+    },
+    "olx": {
+      "min": 410000,
+      "max": 410000,
+      "listings": 1
+    },
+    "use_case": "store, cafe",
+    "verify": ""
+  },
+  {
+    "model": "XP-Q80A",
+    "category": "receipt",
+    "specs": {
+      "paper_width": "80 mm",
+      "dpi": "203",
+      "interface": "USB",
+      "autocutter": "yes"
+    },
+    "uz": {
+      "name": "Chek printeri XP-Q80A",
+      "description": "80 mm chek printeri avtomatik kesuvchi bilan. Kunlik ko'p chek chiqaradigan do'kon va dorixonalar uchun mustahkam model."
+    },
+    "ru": {
+      "name": "Принтер чеков XP-Q80A",
+      "description": "Принтер чеков 80 мм с автоматической обрезкой. Надёжная модель для магазинов и аптек с большим потоком чеков."
+    },
+    "en": {
+      "name": "Receipt Printer XP-Q80A",
+      "description": "80 mm receipt printer with automatic cutter. A durable model for shops and pharmacies with high receipt volume."
+    },
+    "olx": {
+      "min": 500000,
+      "max": 718518,
+      "listings": 2
+    },
+    "use_case": "store, pharmacy",
+    "verify": ""
+  },
+  {
+    "model": "XP-K200L",
+    "category": "receipt",
+    "specs": {
+      "paper_width": "80 mm",
+      "dpi": "203",
+      "interface": "USB + LAN",
+      "autocutter": "yes"
+    },
+    "uz": {
+      "name": "Chek printeri XP-K200L",
+      "description": "80 mm chek printeri USB + LAN bilan — supermarketlar, restoranlar va yuqori yuklamali kassalar uchun. Avtokesuvchi va tarmoq orqali ulanish."
+    },
+    "ru": {
+      "name": "Принтер чеков XP-K200L",
+      "description": "Принтер чеков 80 мм с USB + LAN — для супермаркетов, ресторанов и касс с высокой нагрузкой. Автообрезчик и подключение по сети."
+    },
+    "en": {
+      "name": "Receipt Printer XP-K200L",
+      "description": "80 mm receipt printer with USB + LAN — for supermarkets, restaurants and high-load registers. Auto-cutter and network connection."
+    },
+    "olx": {
+      "min": 479012,
+      "max": 1000000,
+      "listings": 3
+    },
+    "use_case": "supermarket, restaurant",
+    "verify": ""
+  },
+  {
+    "model": "XP-N160II",
+    "category": "receipt",
+    "specs": {
+      "paper_width": "80 mm",
+      "print_speed": "160 mm/s",
+      "dpi": "203",
+      "interface": "USB",
+      "autocutter": "yes"
+    },
+    "uz": {
+      "name": "Chek printeri XP-N160II",
+      "description": "80 mm POS-printer avtokesuvchi bilan — kichik va o'rta do'konlar uchun narx va sifat muvozanati."
+    },
+    "ru": {
+      "name": "Принтер чеков XP-N160II",
+      "description": "POS-принтер 80 мм с автообрезчиком — баланс цены и качества для небольших и средних магазинов."
+    },
+    "en": {
+      "name": "Receipt Printer XP-N160II",
+      "description": "80 mm POS printer with auto-cutter — balance of price and quality for small and mid-size shops."
+    },
+    "olx": {
+      "min": 359259,
+      "max": 359259,
+      "listings": 1
+    },
+    "use_case": "store, POS",
+    "verify": ""
+  },
+  {
+    "model": "XP-V320L",
+    "category": "receipt",
+    "specs": {
+      "paper_width": "80 mm",
+      "dpi": "203",
+      "interface": "USB + LAN",
+      "autocutter": "yes"
+    },
+    "uz": {
+      "name": "Chek printeri XP-V320L",
+      "description": "80 mm chek printeri USB + LAN interfeysi bilan — kassa va oshxona printeri sifatida ishlatiladi."
+    },
+    "ru": {
+      "name": "Принтер чеков XP-V320L",
+      "description": "Принтер чеков 80 мм с интерфейсами USB + LAN — используется как кассовый и кухонный принтер."
+    },
+    "en": {
+      "name": "Receipt Printer XP-V320L",
+      "description": "80 mm receipt printer with USB + LAN — used as a register and kitchen printer."
+    },
+    "olx": {
+      "min": 320000,
+      "max": 320000,
+      "listings": 1
+    },
+    "use_case": "store, restaurant",
+    "verify": ""
+  },
+  {
+    "model": "XP-Q838L",
+    "category": "receipt",
+    "specs": {
+      "paper_width": "80 mm",
+      "dpi": "203",
+      "interface": "USB + LAN",
+      "autocutter": "yes"
+    },
+    "uz": {
+      "name": "Chek printeri XP-Q838L",
+      "description": "80 mm chek printeri tarmoq ulanishi bilan — do'kon va restoranlar uchun."
+    },
+    "ru": {
+      "name": "Принтер чеков XP-Q838L",
+      "description": "Принтер чеков 80 мм с сетевым подключением — для магазинов и ресторанов."
+    },
+    "en": {
+      "name": "Receipt Printer XP-Q838L",
+      "description": "80 mm receipt printer with network connection — for shops and restaurants."
+    },
+    "olx": {
+      "min": 419136,
+      "max": 419136,
+      "listings": 1
+    },
+    "use_case": "store, restaurant",
+    "verify": "category + specs"
+  },
+  {
+    "model": "XP-365B",
+    "category": "label",
+    "specs": {
+      "paper_width": "3 inch (80 mm)",
+      "print_speed": "127 mm/s",
+      "dpi": "203",
+      "interface": "USB"
+    },
+    "uz": {
+      "name": "Etiketka printeri XP-365B",
+      "description": "Eng ommabop etiketka printeri — Uzum, Yandex Market va Wildberries sotuvchilari uchun shtrix-kod, QR va narx yorliqlarini chop etadi. 20–80 mm etiketka va cheklar bilan ishlaydi."
+    },
+    "ru": {
+      "name": "Принтер этикеток XP-365B",
+      "description": "Самый популярный принтер этикеток — печатает штрихкоды, QR и ценники для продавцов Uzum, Yandex Market и Wildberries. Работает с этикетками 20–80 мм и чеками."
+    },
+    "en": {
+      "name": "Label Printer XP-365B",
+      "description": "The most popular label printer — prints barcodes, QR codes and price tags for Uzum, Yandex Market and Wildberries sellers. Works with 20–80 mm labels and receipts."
+    },
+    "olx": {
+      "min": 400000,
+      "max": 750000,
+      "listings": 20
+    },
+    "use_case": "Uzum / Yandex Market sellers, price tags",
+    "verify": "Bluetooth variant"
+  },
+  {
+    "model": "XP-370B",
+    "category": "label",
+    "specs": {
+      "paper_width": "3 inch (80 mm)",
+      "dpi": "203",
+      "interface": "USB"
+    },
+    "uz": {
+      "name": "Etiketka printeri XP-370B",
+      "description": "80 mm etiketka printeri — shtrix-kod, stiker va narx yorliqlari uchun. Do'kon, ombor va marketpleys sotuvchilari uchun."
+    },
+    "ru": {
+      "name": "Принтер этикеток XP-370B",
+      "description": "Принтер этикеток 80 мм — для штрихкодов, наклеек и ценников. Для магазинов, складов и продавцов маркетплейсов."
+    },
+    "en": {
+      "name": "Label Printer XP-370B",
+      "description": "80 mm label printer — for barcodes, stickers and price tags. For shops, warehouses and marketplace sellers."
+    },
+    "olx": {
+      "min": 766419,
+      "max": 1150000,
+      "listings": 5
+    },
+    "use_case": "store, warehouse, marketplace",
+    "verify": "specs"
+  },
+  {
+    "model": "XP-303B",
+    "category": "label",
+    "specs": {
+      "dpi": "203",
+      "interface": "USB"
+    },
+    "uz": {
+      "name": "Etiketka printeri XP-303B",
+      "description": "Ixcham termal etiketka printeri — narx yorliqlari va kichik etiketkalar uchun."
+    },
+    "ru": {
+      "name": "Принтер этикеток XP-303B",
+      "description": "Компактный термопринтер этикеток — для ценников и небольших этикеток."
+    },
+    "en": {
+      "name": "Label Printer XP-303B",
+      "description": "Compact thermal label printer — for price tags and small labels."
+    },
+    "olx": {
+      "min": 350000,
+      "max": 350000,
+      "listings": 1
+    },
+    "use_case": "small labels, price tags",
+    "verify": "paper width + specs"
+  },
+  {
+    "model": "XP-421B",
+    "category": "label",
+    "specs": {
+      "paper_width": "4 inch (108 mm)",
+      "dpi": "203",
+      "interface": "USB + LAN"
+    },
+    "uz": {
+      "name": "Etiketka printeri XP-421B",
+      "description": "4 dyuymli (108 mm) etiketka printeri USB + LAN bilan — ombor, logistika va marketpleys yetkazib berish yorliqlari uchun (100×150 mm)."
+    },
+    "ru": {
+      "name": "Принтер этикеток XP-421B",
+      "description": "Принтер этикеток 4 дюйма (108 мм) с USB + LAN — для склада, логистики и этикеток выдачи маркетплейсов (100×150 мм)."
+    },
+    "en": {
+      "name": "Label Printer XP-421B",
+      "description": "4 inch (108 mm) label printer with USB + LAN — for warehouses, logistics and marketplace shipping labels (100×150 mm)."
+    },
+    "olx": {
+      "min": 1160000,
+      "max": 1160000,
+      "listings": 1
+    },
+    "use_case": "warehouse, logistics, marketplace",
+    "verify": ""
+  },
+  {
+    "model": "XP-470B",
+    "category": "label",
+    "specs": {
+      "paper_width": "4 inch (108 mm)",
+      "dpi": "203",
+      "interface": "USB"
+    },
+    "uz": {
+      "name": "Etiketka printeri XP-470B",
+      "description": "4 dyuymli etiketka printeri — shtrix-kod, yetkazib berish yorliqlari va cheklar uchun. Marketpleys sotuvchilari va omborlar uchun qulay."
+    },
+    "ru": {
+      "name": "Принтер этикеток XP-470B",
+      "description": "Принтер этикеток 4 дюйма — для штрихкодов, транспортных этикеток и чеков. Удобен продавцам маркетплейсов и складам."
+    },
+    "en": {
+      "name": "Label Printer XP-470B",
+      "description": "4 inch label printer — for barcodes, shipping labels and receipts. Handy for marketplace sellers and warehouses."
+    },
+    "olx": {
+      "min": 1300000,
+      "max": 1300000,
+      "listings": 1
+    },
+    "use_case": "marketplace, TradePOS",
+    "verify": ""
+  },
+  {
+    "model": "XP-Q371U",
+    "category": "label",
+    "specs": {
+      "paper_width": "3 inch (80 mm)",
+      "dpi": "203",
+      "interface": "USB"
+    },
+    "uz": {
+      "name": "Etiketka printeri XP-Q371U",
+      "description": "Shtrix-kod va QR etiketka printeri — kassa yonida narx va mahsulot yorliqlarini chop etish uchun."
+    },
+    "ru": {
+      "name": "Принтер этикеток XP-Q371U",
+      "description": "Принтер этикеток для штрихкодов и QR — печать ценников и товарных этикеток прямо у кассы."
+    },
+    "en": {
+      "name": "Label Printer XP-Q371U",
+      "description": "Barcode and QR label printer — prints price and product labels right at the register."
+    },
+    "olx": {
+      "min": 598765,
+      "max": 598765,
+      "listings": 1
+    },
+    "use_case": "store, barcodes",
+    "verify": "specs"
+  },
+  {
+    "model": "XP-H400E",
+    "category": "label",
+    "specs": {
+      "paper_width": "4 inch (108 mm)",
+      "dpi": "300",
+      "interface": "USB + Ethernet"
+    },
+    "uz": {
+      "name": "Termotransfer printer XP-H400E",
+      "description": "Termotransfer etiketka printeri, 300 dpi — riboon bilan uzoq saqlanadigan, aniq etiketkalar: ishlab chiqarish, ombor, dorixona va kiyim yorliqlari."
+    },
+    "ru": {
+      "name": "Термотрансферный принтер XP-H400E",
+      "description": "Термотрансферный принтер этикеток 300 dpi — с риббоном печатает стойкие и чёткие этикетки: производство, склад, аптека, бирки одежды."
+    },
+    "en": {
+      "name": "Thermal Transfer Printer XP-H400E",
+      "description": "Thermal transfer label printer, 300 dpi — with ribbon prints durable, sharp labels: manufacturing, warehouse, pharmacy, garment tags."
+    },
+    "olx": {
+      "min": 2395060,
+      "max": 2395060,
+      "listings": 1
+    },
+    "use_case": "industry, warehouse, long-lasting labels",
+    "verify": ""
+  },
+  {
+    "model": "XP-H500B",
+    "category": "label",
+    "specs": {
+      "paper_width": "4 inch (108 mm)",
+      "dpi": "203",
+      "interface": "USB"
+    },
+    "uz": {
+      "name": "Termotransfer printer XP-H500B",
+      "description": "Termotransfer etiketka printeri 4 dyuym — riboon bilan yoki to'g'ridan-to'g'ri termal chop etadi. Katta hajmdagi ombor va ishlab chiqarish etiketkalari uchun."
+    },
+    "ru": {
+      "name": "Термотрансферный принтер XP-H500B",
+      "description": "Термотрансферный принтер этикеток 4 дюйма — печать с риббоном или прямая термопечать. Для больших объёмов на складе и производстве."
+    },
+    "en": {
+      "name": "Thermal Transfer Printer XP-H500B",
+      "description": "4 inch thermal transfer label printer — prints with ribbon or direct thermal. For high-volume warehouse and production labels."
+    },
+    "olx": {
+      "min": 2275307,
+      "max": 2275307,
+      "listings": 1
+    },
+    "use_case": "industry, warehouse",
+    "verify": ""
+  },
+  {
+    "model": "XP-P502A",
+    "category": "mobile",
+    "specs": {
+      "paper_width": "58 mm",
+      "connectivity": "Bluetooth"
+    },
+    "uz": {
+      "name": "Mobil printer XP-P502A",
+      "description": "Portativ 58 mm Bluetooth chek printeri — kuryerlar, Paynet nuqtalari va safardagi savdo uchun. Telefon va planshetdan chop etadi, akkumulyator bilan ishlaydi."
+    },
+    "ru": {
+      "name": "Мобильный принтер XP-P502A",
+      "description": "Портативный Bluetooth-принтер чеков 58 мм — для курьеров, точек Paynet и выездной торговли. Печать с телефона и планшета, работает от аккумулятора."
+    },
+    "en": {
+      "name": "Mobile Printer XP-P502A",
+      "description": "Portable 58 mm Bluetooth receipt printer — for couriers, Paynet points and mobile sales. Prints from a phone or tablet, battery powered."
+    },
+    "olx": {
+      "min": 251481,
+      "max": 251481,
+      "listings": 1
+    },
+    "use_case": "courier, Paynet, mobile sales",
+    "verify": ""
+  },
+  {
+    "model": "XP-P201A",
+    "category": "mobile",
+    "specs": {
+      "paper_width": "58 mm",
+      "connectivity": "Bluetooth"
+    },
+    "uz": {
+      "name": "Mobil printer XP-P201A",
+      "description": "Ixcham 58 mm mobil chek printeri, Bluetooth orqali telefonga ulanadi — yetkazib berish va kuryerlar uchun."
+    },
+    "ru": {
+      "name": "Мобильный принтер XP-P201A",
+      "description": "Компактный мобильный принтер чеков 58 мм, подключается к телефону по Bluetooth — для доставки и курьеров."
+    },
+    "en": {
+      "name": "Mobile Printer XP-P201A",
+      "description": "Compact 58 mm mobile receipt printer, connects to a phone via Bluetooth — for delivery and couriers."
+    },
+    "olx": {
+      "min": null,
+      "max": null,
+      "listings": 0
+    },
+    "use_case": "courier, delivery",
+    "verify": "specs (seen only in bundle listing)"
+  },
+  {
+    "model": "XP-P326B",
+    "category": "mobile",
+    "specs": {
+      "paper_width": "3 inch (80 mm)",
+      "connectivity": "Bluetooth"
+    },
+    "uz": {
+      "name": "Mobil printer XP-P326B",
+      "description": "Portativ Bluetooth etiketka printeri — ombor, inventarizatsiya va safarda narx yorliqlarini chop etish uchun."
+    },
+    "ru": {
+      "name": "Мобильный принтер XP-P326B",
+      "description": "Портативный Bluetooth-принтер этикеток — для склада, инвентаризации и печати ценников на выезде."
+    },
+    "en": {
+      "name": "Mobile Printer XP-P326B",
+      "description": "Portable Bluetooth label printer — for warehouses, inventory and printing price tags on the go."
+    },
+    "olx": {
+      "min": null,
+      "max": null,
+      "listings": 0
+    },
+    "use_case": "mobile labels, warehouse",
+    "verify": "specs (seen only in bundle listing)"
+  },
+  {
+    "model": "XP-P801A",
+    "category": "mobile",
+    "specs": {
+      "paper_width": "80 mm",
+      "connectivity": "Bluetooth"
+    },
+    "uz": {
+      "name": "Mobil printer XP-P801A",
+      "description": "Portativ 80 mm Bluetooth chek printeri — keng chek kerak bo'lgan kuryerlar va safardagi savdo uchun."
+    },
+    "ru": {
+      "name": "Мобильный принтер XP-P801A",
+      "description": "Портативный Bluetooth-принтер чеков 80 мм — для курьеров и выездной торговли, где нужен широкий чек."
+    },
+    "en": {
+      "name": "Mobile Printer XP-P801A",
+      "description": "Portable 80 mm Bluetooth receipt printer — for couriers and mobile sales that need a wide receipt."
+    },
+    "olx": {
+      "min": null,
+      "max": null,
+      "listings": 0
+    },
+    "use_case": "courier, mobile sales",
+    "verify": "specs (seen only in bundle listing)"
+  }
+]

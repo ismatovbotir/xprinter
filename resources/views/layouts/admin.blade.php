@@ -1230,6 +1230,20 @@
                 @endif
             </a>
 
+            <a href="{{ route('admin.chatbot.index') }}" @class(['nav-item', 'active' => request()->routeIs('admin.chatbot.*')])>
+                <div class="nav-icon">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="3" y="8" width="18" height="12" rx="2"/>
+                        <path d="M12 8V4M8 14h.01M16 14h.01"/>
+                    </svg>
+                </div>
+                Chatbot
+                @php($openBotQuestions = \App\Models\ChatbotQuestion::where('status', 'open')->count())
+                @if($openBotQuestions)
+                <span class="nav-badge">{{ $openBotQuestions }}</span>
+                @endif
+            </a>
+
             <a href="{{ route('admin.help.index') }}" @class(['nav-item', 'active' => request()->routeIs('admin.help.*')])>
                 <div class="nav-icon">
                     <svg viewBox="0 0 24 24">

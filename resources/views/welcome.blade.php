@@ -88,68 +88,85 @@
                 </div>
 
                 <div class="hero-btns">
-                    <a href="{{ route('catalog') }}" class="pub-btn pub-btn-primary" style="padding:13px 26px;font-size:14px">
+                    <a href="{{ route('catalog') }}" class="pub-btn pub-btn-primary pub-btn-lg">
                         {{ __('home.cta_catalog') }}
                     </a>
-                    <a href="https://t.me/xprinter_admin_bot" target="_blank" class="pub-btn pub-btn-ghost" style="padding:13px 22px;font-size:14px">
-                        <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2"><path d="M21 5L2 12.5l7 1M21 5l-2.5 15L9 13.5M21 5L9 13.5m0 0V19l3.3-3"/></svg>
-                        {{ __('home.telegram_btn') }}
+                    @guest
+                    <a href="{{ route('register') }}" class="pub-btn pub-btn-ghost pub-btn-lg">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+                        {{ __('home.cta_dealer') }}
                     </a>
+                    @else
+                    <a href="{{ auth()->user()->redirectPath() }}" class="pub-btn pub-btn-ghost pub-btn-lg">{{ __('nav.cabinet') }}</a>
+                    @endguest
                 </div>
             </div>
 
-            {{-- Right: spec terminal card --}}
-            <div class="hero-spec">
+            {{-- Right: product carousel (products picked in Admin → Bosh sahifa). Swipe / arrows / pills. --}}
+            @if(count($heroSlides))
+            <div class="hero-spec" data-hero-carousel aria-roledescription="carousel" aria-label="{{ __('home.hero_models') }}">
                 <div class="hero-spec-bar">
-                    <div class="spec-bar-dots">
+                    <div class="spec-bar-dots" aria-hidden="true">
                         <span style="background:#FF5F56"></span>
                         <span style="background:#FEBC2E"></span>
                         <span style="background:#28C840"></span>
                     </div>
                     <span class="spec-bar-path">xprinter.uz › catalog › product.scan</span>
+                    @if(count($heroSlides) > 1)
+                    <div class="spec-nav">
+                        <button type="button" class="spec-nav-btn" data-prev aria-label="‹">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+                        </button>
+                        <button type="button" class="spec-nav-btn" data-next aria-label="›">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                        </button>
+                    </div>
+                    @endif
                 </div>
 
-                <div>
-                    <div class="spec-row">
-                        <span class="spec-key">MODEL</span>
-                        <span class="spec-val blue">XP-Q890K</span>
-                    </div>
-                    <div class="spec-row">
-                        <span class="spec-key">TYPE</span>
-                        <span class="spec-val">RECEIPT PRINTER</span>
-                    </div>
-                    <div class="spec-row">
-                        <span class="spec-key">WIDTH</span>
-                        <span class="spec-val">80 mm</span>
-                    </div>
-                    <div class="spec-row">
-                        <span class="spec-key">SPEED</span>
-                        <span class="spec-val">250 mm/s</span>
-                    </div>
-                    <div class="spec-row">
-                        <span class="spec-key">DPI</span>
-                        <span class="spec-val">203 dpi</span>
-                    </div>
-                    <div class="spec-row">
-                        <span class="spec-key">INTERFACE</span>
-                        <span class="spec-val">USB · LAN · BT</span>
-                    </div>
-                    <div class="spec-row">
-                        <span class="spec-key">STATUS</span>
-                        <span class="spec-val green">● IN STOCK</span>
-                    </div>
+                <div class="spec-track" data-track tabindex="0">
+                    @foreach($heroSlides as $i => $slide)
+                    <a href="{{ $slide['url'] }}" class="spec-slide" role="group" aria-roledescription="slide"
+                       aria-label="{{ $i + 1 }} / {{ count($heroSlides) }}: {{ $slide['model'] }}">
+                        <div class="spec-row">
+                            <span class="spec-key">MODEL</span>
+                            <span class="spec-val blue">{{ $slide['model'] }}</span>
+                        </div>
+                        @if($slide['type'])
+                        <div class="spec-row">
+                            <span class="spec-key">TYPE</span>
+                            <span class="spec-val">{{ $slide['type'] }}</span>
+                        </div>
+                        @endif
+                        @foreach($slide['specs'] as $key => $value)
+                        <div class="spec-row">
+                            <span class="spec-key">{{ $key }}</span>
+                            <span class="spec-val">{{ $value }}</span>
+                        </div>
+                        @endforeach
+                        <div class="spec-row">
+                            <span class="spec-key">STATUS</span>
+                            @if($slide['sellers'])
+                            <span class="spec-val green">{{ __('home.hero_in_stock', ['n' => $slide['sellers']]) }}</span>
+                            @else
+                            <span class="spec-val">{{ __('home.hero_on_request') }}</span>
+                            @endif
+                        </div>
+                    </a>
+                    @endforeach
                 </div>
 
                 <div class="spec-footer">
-                    <span class="spec-footer-label">{{ __('home.other_models') }}</span>
+                    <span class="spec-footer-label">{{ __('home.hero_models') }}</span>
                     <div class="spec-pills">
-                        <span class="spec-pill">XP-428B</span>
-                        <span class="spec-pill">XP-365B</span>
-                        <span class="spec-pill">DX5</span>
-                        <span class="spec-pill">XP-58IIH</span>
+                        @foreach($heroSlides as $i => $slide)
+                        <button type="button" class="spec-pill{{ $i === 0 ? ' is-active' : '' }}" data-goto="{{ $i }}"
+                                aria-current="{{ $i === 0 ? 'true' : 'false' }}">{{ $slide['model'] }}</button>
+                        @endforeach
                     </div>
                 </div>
             </div>
+            @endif
 
         </div>
     </div>
@@ -180,12 +197,65 @@
     </div>
 </div>
 
+{{-- ═══════════════ FOR DEALERS & SERVICE CENTERS (B2B) ═══════════════ --}}
+<section class="section dealers" id="dealers" aria-labelledby="dealers-title">
+    <div class="container">
+        <div class="dealers-inner">
+            <div class="dealers-intro">
+                <div class="section-tag">{{ __('home.dealers_tag') }}</div>
+                <h2 class="section-title" id="dealers-title">{{ __('home.dealers_title') }}</h2>
+                <p class="section-sub">{{ __('home.dealers_sub') }}</p>
+
+                <div class="dealer-benefits">
+                    @foreach([
+                        ['benefit1', '<rect x="3" y="4" width="18" height="16" rx="2"/><line x1="7" y1="9" x2="17" y2="9"/><line x1="7" y1="13" x2="14" y2="13"/>'],
+                        ['benefit2', '<line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>'],
+                        ['benefit3', '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>'],
+                        ['benefit4', '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/>'],
+                    ] as [$key, $icon])
+                    <div class="dealer-benefit">
+                        <div class="dealer-benefit-icon"><svg viewBox="0 0 24 24" aria-hidden="true">{!! $icon !!}</svg></div>
+                        <div>
+                            <h3 class="dealer-benefit-title">{{ __("home.{$key}_title") }}</h3>
+                            <p class="dealer-benefit-text">{{ __("home.{$key}_text") }}</p>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="dealer-steps">
+                <h3 class="dealer-steps-title">{{ __('home.steps_title') }}</h3>
+                <ol class="dealer-steps-list">
+                    @foreach([1, 2, 3] as $n)
+                    <li class="dealer-step">
+                        <span class="dealer-step-num" aria-hidden="true">0{{ $n }}</span>
+                        <div>
+                            <div class="dealer-step-title">{{ __("home.step{$n}_title") }}</div>
+                            <div class="dealer-step-text">{{ __("home.step{$n}_text") }}</div>
+                        </div>
+                    </li>
+                    @endforeach
+                </ol>
+                @guest
+                <a href="{{ route('register') }}" class="pub-btn pub-btn-primary pub-btn-lg pub-btn-block">{{ __('home.cta_dealer') }} →</a>
+                @else
+                <a href="{{ auth()->user()->redirectPath() }}" class="pub-btn pub-btn-primary pub-btn-lg pub-btn-block">{{ __('nav.cabinet') }} →</a>
+                @endguest
+                <a href="{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_admin_bot' }}" target="_blank" rel="noopener" class="dealer-steps-link">
+                    {{ __('home.dealers_question') }}
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
 {{-- ═══════════════ CATEGORIES ═══════════════ --}}
 <section class="section">
     <div class="container">
         <div class="section-header">
             <div class="section-tag">{{ __('home.categories_tag') }}</div>
-            <div class="section-title">{{ __('home.categories_title') }}</div>
+            <h2 class="section-title">{{ __('home.categories_title') }}</h2>
             <div class="section-sub">{{ __('home.categories_sub') }}</div>
         </div>
 
@@ -198,7 +268,7 @@
                         ?? $cat->slug;
             @endphp
             <a href="{{ route('catalog.category', $cat->slug) }}" class="home-cat-card">
-                <div class="home-cat-icon">
+                <div class="home-cat-icon" aria-hidden="true">
                     @switch($cat->slug)
                         @case('receipt-printers')
                             <svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="14" rx="2"/><path d="M8 6V4h8v2"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="14" x2="13" y2="14"/><path d="M4 20l2-2 2 2 2-2 2 2 2-2 2 2"/></svg>
@@ -221,7 +291,7 @@
 
                 <div class="home-cat-meta">
                     <span class="home-cat-count">{{ __('home.models_count', ['count' => $cat->products_count]) }}</span>
-                    <span class="cat-arrow">→</span>
+                    <span class="cat-arrow" aria-hidden="true">→</span>
                 </div>
             </a>
             @endforeach
@@ -231,14 +301,14 @@
 
 {{-- ═══════════════ POPULAR PRODUCTS ═══════════════ --}}
 @if($featured->isNotEmpty())
-<section class="section" style="background:var(--bg-soft);padding:80px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+<section class="section section-soft">
     <div class="container">
-        <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:44px;flex-wrap:wrap;gap:16px">
+        <div class="section-header section-header-row">
             <div>
                 <div class="section-tag">{{ __('home.popular_tag') }}</div>
-                <div class="section-title">{{ __('home.popular_title') }}</div>
+                <h2 class="section-title">{{ __('home.popular_title') }}</h2>
             </div>
-            <a href="{{ route('catalog') }}" class="pub-btn pub-btn-ghost" style="font-size:13px;padding:9px 20px">
+            <a href="{{ route('catalog') }}" class="pub-btn pub-btn-ghost">
                 {{ __('home.view_all') }}
             </a>
         </div>
@@ -255,9 +325,10 @@
             <a href="{{ route('products.show', [$product->category->slug, $product->slug]) }}" class="prod-card">
                 <div class="prod-card-img">
                     @if($product->photo)
-                        <img src="{{ Storage::url($product->photo) }}" alt="{{ $trans?->name }}">
+                        <img src="{{ Storage::url($product->photo) }}" alt="{{ $trans?->name ?? $product->model_number }}"
+                             width="400" height="300" loading="lazy" decoding="async">
                     @else
-                        <svg viewBox="0 0 24 24" style="width:52px;height:52px;stroke:var(--line-hi);fill:none;stroke-width:1.2">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
                             <rect x="4" y="7" width="16" height="12" rx="1"/>
                             <path d="M7 7V4h10v3M8 11h8M8 14h5"/>
                         </svg>
@@ -271,8 +342,8 @@
                     <div class="prod-card-model">{{ $product->model_number }}</div>
                 </div>
                 <div class="prod-card-footer">
-                    <span style="font-size:12px;color:var(--muted)">{{ __('home.details') }}</span>
-                    <div class="prod-card-arrow">→</div>
+                    <span class="prod-card-more">{{ __('home.details') }}</span>
+                    <div class="prod-card-arrow" aria-hidden="true">→</div>
                 </div>
             </a>
             @endforeach
@@ -293,57 +364,57 @@
     <div class="container">
         <div class="section-header">
             <div class="section-tag">{{ __('home.scenarios_tag') }}</div>
-            <div class="section-title">{{ __('home.scenarios_title') }}</div>
+            <h2 class="section-title">{{ __('home.scenarios_title') }}</h2>
             <div class="section-sub">{{ __('home.scenarios_sub') }}</div>
         </div>
 
         <div class="scenario-grid">
             <div class="scenario-card">
-                <div class="scenario-icon">
+                <div class="scenario-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 </div>
                 <div class="scenario-name">{{ __('home.scenario_shop') }}</div>
-                <div class="scenario-models">XP-Q890K · XP-365B</div>
+                @if(!empty($scenarioModels['shop']))<div class="scenario-models">@foreach($scenarioModels['shop'] as $m)<a href="{{ $m['url'] }}">{{ $m['model'] }}</a>@if(!$loop->last) · @endif @endforeach</div>@endif
             </div>
 
             <div class="scenario-card">
-                <div class="scenario-icon">
+                <div class="scenario-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
                 </div>
                 <div class="scenario-name">{{ __('home.scenario_cafe') }}</div>
-                <div class="scenario-models">XP-58IIH {{ __('home.cafe_kitchen_note') }}</div>
+                @if(!empty($scenarioModels['cafe']))<div class="scenario-models">@foreach($scenarioModels['cafe'] as $m)<a href="{{ $m['url'] }}">{{ $m['model'] }}</a>@if(!$loop->last) · @endif @endforeach</div>@endif
             </div>
 
             <div class="scenario-card">
-                <div class="scenario-icon">
+                <div class="scenario-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24"><path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"/><path d="M8 9V7a4 4 0 0 1 8 0v2"/><line x1="12" y1="13" x2="12" y2="17"/></svg>
                 </div>
                 <div class="scenario-name">{{ __('home.scenario_pharmacy') }}</div>
-                <div class="scenario-models">XP-Q890K · XP-428B</div>
+                @if(!empty($scenarioModels['pharmacy']))<div class="scenario-models">@foreach($scenarioModels['pharmacy'] as $m)<a href="{{ $m['url'] }}">{{ $m['model'] }}</a>@if(!$loop->last) · @endif @endforeach</div>@endif
             </div>
 
             <div class="scenario-card">
-                <div class="scenario-icon">
+                <div class="scenario-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 4v4h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
                 </div>
                 <div class="scenario-name">{{ __('home.scenario_marketplace') }}</div>
-                <div class="scenario-models">XP-428B · XP-490B</div>
+                @if(!empty($scenarioModels['marketplace']))<div class="scenario-models">@foreach($scenarioModels['marketplace'] as $m)<a href="{{ $m['url'] }}">{{ $m['model'] }}</a>@if(!$loop->last) · @endif @endforeach</div>@endif
             </div>
 
             <div class="scenario-card">
-                <div class="scenario-icon">
+                <div class="scenario-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
                 </div>
                 <div class="scenario-name">{{ __('home.scenario_medical') }}</div>
-                <div class="scenario-models">XP-D281B · XP-365B</div>
+                @if(!empty($scenarioModels['medical']))<div class="scenario-models">@foreach($scenarioModels['medical'] as $m)<a href="{{ $m['url'] }}">{{ $m['model'] }}</a>@if(!$loop->last) · @endif @endforeach</div>@endif
             </div>
 
             <div class="scenario-card">
-                <div class="scenario-icon">
+                <div class="scenario-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 </div>
                 <div class="scenario-name">{{ __('home.scenario_courier') }}</div>
-                <div class="scenario-models">DX5 · MP3 · XP-P816</div>
+                @if(!empty($scenarioModels['courier']))<div class="scenario-models">@foreach($scenarioModels['courier'] as $m)<a href="{{ $m['url'] }}">{{ $m['model'] }}</a>@if(!$loop->last) · @endif @endforeach</div>@endif
             </div>
         </div>
     </div>
@@ -377,25 +448,30 @@
             </p>
 
             <div class="home-cta-btns">
-                <a href="{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_admin_bot' }}" target="_blank" class="cta-tg">
-                    <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2">
+                <a href="{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_admin_bot' }}" target="_blank" rel="noopener" class="cta-tg">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M21 5L2 12.5l7 1M21 5l-2.5 15L9 13.5M21 5L9 13.5m0 0V19l3.3-3"/>
                     </svg>
                     {{ __('home.cta_telegram_btn') }}
                 </a>
-                <a href="tel:{{ $siteSettings->phone ? preg_replace('/\s+/', '', $siteSettings->phone) : '+998901234567' }}" class="cta-phone">
-                    <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2">
+                @if($siteSettings->phone)
+                <a href="tel:{{ preg_replace('/\s+/', '', $siteSettings->phone) }}" class="cta-phone">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.72a16 16 0 0 0 6.06 6.06l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.72 2.02z"/>
                     </svg>
                     {{ __('home.cta_phone_btn') }}
                 </a>
+                @endif
+                @guest
+                <a href="{{ route('register') }}" class="cta-phone">{{ __('home.cta_dealer') }} →</a>
+                @endguest
             </div>
 
             <div class="cta-contacts">
-                <span class="cta-contact">
-                    <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <a class="cta-contact" href="mailto:{{ $siteSettings->email ?: 'info@xprinter.uz' }}">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                     {{ $siteSettings->email ?: 'info@xprinter.uz' }}
-                </span>
+                </a>
                 <span class="cta-contact">
                     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     {{ $siteSettings->work_time_display ?: __('footer.hours_fallback') }}
@@ -410,3 +486,53 @@
 </section>
 
 @endsection
+
+@push('scripts')
+<script>
+// Hero product carousel: native scroll-snap swipe + arrows + pills + gentle autoplay.
+document.querySelectorAll('[data-hero-carousel]').forEach(function (root) {
+    var track  = root.querySelector('[data-track]');
+    var slides = track.children;
+    var pills  = root.querySelectorAll('[data-goto]');
+    var index  = 0, timer = null;
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function go(i) {
+        index = (i + slides.length) % slides.length;
+        track.scrollTo({ left: index * track.clientWidth, behavior: reduce ? 'auto' : 'smooth' });
+        mark();
+    }
+    function mark() {
+        pills.forEach(function (p, i) {
+            p.classList.toggle('is-active', i === index);
+            p.setAttribute('aria-current', i === index ? 'true' : 'false');
+        });
+    }
+    function stop() { clearInterval(timer); timer = null; }
+    function start() { if (!reduce && slides.length > 1 && !timer) timer = setInterval(function () { go(index + 1); }, 5000); }
+
+    // Keep the active pill in sync when the user swipes.
+    var settle;
+    track.addEventListener('scroll', function () {
+        clearTimeout(settle);
+        settle = setTimeout(function () {
+            var i = Math.min(slides.length - 1, Math.round(track.scrollLeft / track.clientWidth));
+            if (i !== index) { index = i; mark(); }
+        }, 120);
+    }, { passive: true });
+
+    pills.forEach(function (p) { p.addEventListener('click', function () { stop(); go(+p.dataset.goto); }); });
+    var prev = root.querySelector('[data-prev]'), next = root.querySelector('[data-next]');
+    prev && prev.addEventListener('click', function () { stop(); go(index - 1); });
+    next && next.addEventListener('click', function () { stop(); go(index + 1); });
+    track.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft')  { e.preventDefault(); stop(); go(index - 1); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); stop(); go(index + 1); }
+    });
+
+    ['mouseenter', 'focusin', 'touchstart'].forEach(function (ev) { root.addEventListener(ev, stop, { passive: true }); });
+    root.addEventListener('mouseleave', start);
+    start();
+});
+</script>
+@endpush

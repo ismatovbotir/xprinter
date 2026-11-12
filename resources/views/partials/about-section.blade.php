@@ -18,17 +18,17 @@
 
 <div class="section-header">
     <div class="section-tag">{{ $content->about_tag ?: __('about_page.why_tag') }}</div>
-    <div class="section-title">{{ $content->about_title ?: __('about_page.why_title') }}</div>
+    <h2 class="section-title">{{ $content->about_title ?: __('about_page.why_title') }}</h2>
     <div class="section-sub">{{ $content->about_subtitle ?: __('about_page.why_subtitle') }}</div>
 </div>
 
 <div class="why-grid">
     @foreach($aboutCards as $i => $card)
     <div class="why-card">
-        <div class="why-icon" style="background:{{ $bgColors[$i] ?? '#EAF2FD' }}">
+        <div class="why-icon" style="background:{{ $bgColors[$i] ?? '#EAF2FD' }}" aria-hidden="true">
             {!! $icons[$i] ?? $icons[0] !!}
         </div>
-        <div class="why-title">{{ $card['title'] }}</div>
+        <h3 class="why-title">{{ $card['title'] }}</h3>
         <div class="why-text">{{ $card['text'] }}</div>
     </div>
     @endforeach

@@ -20,13 +20,13 @@
 <div class="card" style="max-width:680px">
   <div style="padding:24px;display:flex;flex-direction:column;gap:14px;max-height:520px;overflow-y:auto">
     @forelse($messages as $msg)
-      @php($isAdmin = $msg->sender === 'admin')
+      @php($isAdmin = in_array($msg->sender, ['admin', 'bot'], true))
       <div style="display:flex;{{ $isAdmin ? 'justify-content:flex-end' : 'justify-content:flex-start' }}">
         <div style="max-width:75%;padding:10px 14px;border-radius:14px;font-size:13.5px;line-height:1.5;
-                    background:{{ $isAdmin ? 'var(--blue)' : 'var(--bg-soft)' }};
+                    background:{{ $msg->sender === 'bot' ? 'var(--cyan)' : ($isAdmin ? 'var(--blue)' : 'var(--bg-soft)') }};
                     color:{{ $isAdmin ? '#fff' : 'var(--ink)' }};">
           <div style="white-space:pre-wrap">{{ $msg->body }}</div>
-          <div style="font-size:10.5px;margin-top:4px;opacity:.7">{{ $msg->created_at->format('d.m.Y H:i') }}</div>
+          <div style="font-size:10.5px;margin-top:4px;opacity:.7">{{ $msg->sender === 'bot' ? '🤖 Bot · ' : '' }}{{ $msg->created_at->format('d.m.Y H:i') }}</div>
         </div>
       </div>
     @empty

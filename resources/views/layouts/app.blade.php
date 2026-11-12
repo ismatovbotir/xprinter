@@ -128,53 +128,73 @@
 @endphp
 
 {{-- NAV --}}
-<nav class="pub-nav">
+<a href="#main" class="skip-link">{{ __('nav.skip') }}</a>
+
+@php $telegramUrl = $siteSettings->telegram_url ?: 'https://t.me/xprinter_admin_bot'; @endphp
+<nav class="pub-nav" aria-label="{{ __('nav.main') }}">
     <div class="container">
         <div class="pub-nav-inner">
-            <a href="{{ route('home') }}" class="pub-logo">
-                <div class="pub-logo-mark"></div>
-                <span>XPRINTER<span style="color:var(--blue)">.UZ</span></span>
+            <a href="{{ route('home') }}" class="pub-logo" aria-label="Xprinter.uz">
+                <div class="pub-logo-mark" aria-hidden="true"></div>
+                <span>XPRINTER<span class="pub-logo-accent">.UZ</span></span>
             </a>
 
-            <div class="pub-nav-links" style="display:flex;gap:4px">
-                <a href="{{ route('catalog') }}"
-                   class="pub-nav-link {{ request()->routeIs('catalog*','product*') ? 'active' : '' }}">
-                    {{ __('nav.catalog') }}
-                </a>
-                <a href="{{ $aboutHref }}" class="pub-nav-link {{ request()->routeIs('about') ? 'active' : '' }}">{{ __('nav.about') }}</a>
-                <a href="{{ $contactHref }}" class="pub-nav-link {{ request()->routeIs('contact') ? 'active' : '' }}">{{ __('nav.contact') }}</a>
-            </div>
+            <button type="button" class="pub-nav-toggle" aria-expanded="false" aria-controls="pub-nav-menu"
+                    aria-label="{{ __('nav.menu') }}">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+            </button>
 
-            <div class="pub-nav-actions">
-                {{-- Language switcher --}}
-                <div style="display:flex;gap:2px">
-                    @foreach(['uz','ru','en'] as $lang)
-                    <a href="{{ route('lang.switch', $lang) }}"
-                       style="padding:4px 9px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;transition:all .12s;
-                              {{ app()->getLocale() === $lang ? 'background:var(--blue);color:#fff' : 'color:var(--muted)' }}">
-                        {{ strtoupper($lang) }}
+            <div class="pub-nav-menu" id="pub-nav-menu">
+                <div class="pub-nav-links">
+                    <a href="{{ route('catalog') }}"
+                       class="pub-nav-link {{ request()->routeIs('catalog*','product*') ? 'active' : '' }}"
+                       @if(request()->routeIs('catalog*','product*')) aria-current="page" @endif>
+                        {{ __('nav.catalog') }}
                     </a>
-                    @endforeach
+                    <a href="{{ route('partners.index') }}"
+                       class="pub-nav-link {{ request()->routeIs('partners.*') ? 'active' : '' }}"
+                       @if(request()->routeIs('partners.*')) aria-current="page" @endif>{{ __('nav.partners') }}</a>
+                    <a href="{{ $aboutHref }}" class="pub-nav-link {{ request()->routeIs('about') ? 'active' : '' }}"
+                       @if(request()->routeIs('about')) aria-current="page" @endif>{{ __('nav.about') }}</a>
+                    <a href="{{ $contactHref }}" class="pub-nav-link {{ request()->routeIs('contact') ? 'active' : '' }}"
+                       @if(request()->routeIs('contact')) aria-current="page" @endif>{{ __('nav.contact') }}</a>
                 </div>
 
-                @auth
-                <a href="{{ auth()->user()->redirectPath() }}" class="pub-btn pub-btn-ghost" style="font-size:12px;padding:6px 14px">
-                    {{ __('nav.cabinet') }}
-                </a>
-                @else
-                <a href="{{ route('login') }}" class="pub-btn pub-btn-ghost" style="font-size:12px;padding:6px 14px">{{ __('nav.login') }}</a>
-                @endauth
+                <div class="pub-nav-actions">
+                    {{-- Language switcher --}}
+                    <div class="pub-lang" role="group" aria-label="{{ __('nav.language') }}">
+                        @foreach(['uz' => "O'zbekcha", 'ru' => 'Русский', 'en' => 'English'] as $lang => $langName)
+                        <a href="{{ route('lang.switch', $lang) }}" lang="{{ $lang }}" title="{{ $langName }}"
+                           class="{{ app()->getLocale() === $lang ? 'active' : '' }}"
+                           @if(app()->getLocale() === $lang) aria-current="true" @endif>
+                            {{ strtoupper($lang) }}
+                        </a>
+                        @endforeach
+                    </div>
 
-                <a href="{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_admin_bot' }}" target="_blank" class="pub-btn pub-btn-primary" style="font-size:12px;padding:6px 16px">
-                    Telegram →
-                </a>
+                    @auth
+                    <a href="{{ auth()->user()->redirectPath() }}" class="pub-btn pub-btn-ghost pub-btn-sm">
+                        {{ __('nav.cabinet') }}
+                    </a>
+                    @else
+                    <a href="{{ route('login') }}" class="pub-btn pub-btn-ghost pub-btn-sm">{{ __('nav.login') }}</a>
+                    <a href="{{ route('register') }}" class="pub-btn pub-btn-primary pub-btn-sm">{{ __('nav.become_dealer') }}</a>
+                    @endauth
+
+                    <a href="{{ $telegramUrl }}" target="_blank" rel="noopener" class="pub-btn pub-btn-tg pub-btn-sm">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 5L2 12.5l7 1M21 5l-2.5 15L9 13.5M21 5L9 13.5m0 0V19l3.3-3"/></svg>
+                        Telegram
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </nav>
 
 {{-- CONTENT --}}
+<main id="main" tabindex="-1">
 @yield('content')
+</main>
 
 {{-- FOOTER --}}
 <footer class="pub-footer" id="contact">
@@ -182,8 +202,8 @@
         <div class="pub-foot-grid">
             <div class="pub-foot-brand">
                 <a href="{{ route('home') }}" class="pub-logo">
-                    <div class="pub-logo-mark"></div>
-                    <span>XPRINTER<span style="color:var(--blue)">.UZ</span></span>
+                    <div class="pub-logo-mark" aria-hidden="true"></div>
+                    <span>XPRINTER<span class="pub-logo-accent">.UZ</span></span>
                 </a>
                 <p>{{ __('footer.tagline') }}</p>
             </div>
@@ -191,6 +211,7 @@
                 <h5>{{ __('footer.catalog_heading') }}</h5>
                 <ul>
                     <li><a href="{{ route('catalog') }}">{{ __('footer.all_products') }}</a></li>
+                    <li><a href="{{ route('partners.index') }}">{{ __('nav.partners') }}</a></li>
                     <li><a href="{{ route('catalog.category', 'receipt-printers') }}">{{ __('footer.receipt_printers') }}</a></li>
                     <li><a href="{{ route('catalog.category', 'label-printers') }}">{{ __('footer.label_printers') }}</a></li>
                     <li><a href="{{ route('catalog.category', 'mobile-printers') }}">{{ __('footer.mobile_printers') }}</a></li>
@@ -201,7 +222,8 @@
                 <ul>
                     <li><a href="{{ $aboutHref }}">{{ __('nav.about') }}</a></li>
                     <li><a href="{{ $contactHref }}">{{ __('nav.contact') }}</a></li>
-                    <li><a href="{{ route('login') }}">{{ __('footer.dealers_cta') }}</a></li>
+                    <li><a href="{{ route('register') }}">{{ __('footer.dealers_cta') }}</a></li>
+                    <li><a href="{{ route('login') }}">{{ __('nav.login') }}</a></li>
                 </ul>
             </div>
             <div class="pub-foot-col">
@@ -210,22 +232,44 @@
                     @if($siteSettings->phone)
                     <li><a href="tel:{{ preg_replace('/\s+/', '', $siteSettings->phone) }}">{{ $siteSettings->phone }}</a></li>
                     @endif
-                    <li><a href="{{ $siteSettings->telegram_url ?: 'https://t.me/xprinter_admin_bot' }}">Telegram: {{ '@' . ($siteSettings->telegram ?: 'xprinter_admin_bot') }}</a></li>
+                    <li><a href="{{ $telegramUrl }}" target="_blank" rel="noopener">Telegram: {{ '@' . ($siteSettings->telegram ?: 'xprinter_admin_bot') }}</a></li>
                     @if($siteSettings->whatsapp_url)
-                    <li><a href="{{ $siteSettings->whatsapp_url }}">WhatsApp: {{ $siteSettings->whatsapp }}</a></li>
+                    <li><a href="{{ $siteSettings->whatsapp_url }}" target="_blank" rel="noopener">WhatsApp: {{ $siteSettings->whatsapp }}</a></li>
                     @endif
                     <li><a href="mailto:{{ $siteSettings->email ?: 'info@xprinter.uz' }}">{{ $siteSettings->email ?: 'info@xprinter.uz' }}</a></li>
-                    <li style="color:var(--muted);font-size:13px">{{ $siteSettings->address ?: __('footer.address_fallback') }}</li>
-                    <li style="color:var(--muted);font-size:13px">{{ $siteSettings->work_time_display ?: __('footer.hours_fallback') }}</li>
+                    <li class="pub-foot-note">{{ $siteSettings->address ?: __('footer.address_fallback') }}</li>
+                    <li class="pub-foot-note">{{ $siteSettings->work_time_display ?: __('footer.hours_fallback') }}</li>
                 </ul>
             </div>
         </div>
         <div class="pub-foot-bottom">
             <div>© {{ date('Y') }} Xprinter.uz — {{ __('footer.copyright') }}</div>
-            <div style="text-transform:uppercase">ISO 9001:2015 · CE · FCC · RoHS</div>
+            <div class="pub-foot-certs">Xprinter: ISO 9001:2015 · CE · FCC · RoHS</div>
         </div>
     </div>
 </footer>
+
+<livewire:chat-widget />
+
+<script>
+    // Mobile nav toggle (no framework needed for one button)
+    (function () {
+        var btn = document.querySelector('.pub-nav-toggle');
+        var nav = document.querySelector('.pub-nav');
+        if (!btn || !nav) return;
+        function setOpen(open) {
+            nav.classList.toggle('is-open', open);
+            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        }
+        btn.addEventListener('click', function () { setOpen(!nav.classList.contains('is-open')); });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && nav.classList.contains('is-open')) { setOpen(false); btn.focus(); }
+        });
+        document.querySelectorAll('#pub-nav-menu a[href^="#"]').forEach(function (a) {
+            a.addEventListener('click', function () { setOpen(false); });
+        });
+    })();
+</script>
 
 @stack('scripts')
 </body>
