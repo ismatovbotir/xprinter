@@ -57,11 +57,27 @@ class SiteBot
             return $taught;
         }
 
+        // 2b. A described problem, how-to or definition ("prints blank receipt", "firmware nima",
+        //     "драйвер что это") → knowledge-base article, before category/intent matching grabs a
+        //     generic word. Skipped when the question is clearly about a place or an action
+        //     (register, contacts, buy) — those have dedicated answers.
+        $asksDefinition = (bool) preg_match('/\b(nima|nimadir|degani|что такое|что это|what is|what are)\b/u', $q);
+        $structural     = $this->findPlace($q) !== null || array_intersect($intents, ['register', 'contacts', 'buy']);
+
+        if (($words >= 3 || $asksDefinition) && !$structural && ($kb = $this->kbAnswer($q, $lang, null, 0.6))) {
+            return $kb;
+        }
+
         // 3. A specific model — in this question, or the one we were just talking about.
         $product = $this->findProduct($q, $lang)
             ?? (array_intersect($intents, ['price', 'drivers', 'specs', 'buy']) ? $this->productFromHistory($history, $lang) : null);
 
         if ($product) {
+            // "XP-Q890K prints blank" → a how-to-fix article beats the generic product card.
+            if ($words >= 3 && ($kb = $this->kbAnswer($q, $lang, $product['model']))) {
+                return $kb;
+            }
+
             return match (true) {
                 in_array('drivers', $intents, true) => $this->drivers($product, $lang),
                 in_array('price', $intents, true), in_array('buy', $intents, true) => $this->sellers($product, $lang),
@@ -83,7 +99,7 @@ class SiteBot
             in_array('contacts', $intents, true)                                  => $this->contacts($lang),
             ($category = $this->findCategory($q)) !== null                        => $this->categoryList($category, $lang),
             in_array('catalog', $intents, true)                                   => $this->catalogOverview($lang),
-            default => $this->taughtAnswer($q, $lang, 0.4) ?? $this->helpAnswer($q, $lang),
+            default => $this->taughtAnswer($q, $lang, 0.4) ?? $this->kbAnswer($q, $lang) ?? $this->helpAnswer($q, $lang),
         };
     }
 
@@ -234,6 +250,119 @@ class SiteBot
         }
 
         return $best && $bestScore >= $threshold ? $best->answer : null;
+    }
+
+    /**
+     * Knowledge-base article (troubleshooting / settings / glossary) whose title or keywords
+     * overlap the question. Optional $model (e.g. "XP-Q890K") prefers articles tied to that model.
+     */
+    private function kbAnswer(string $q, string $lang, ?string $model = null, float $threshold = 0.5): ?string
+    {
+        // Model numbers ("q890k", "420b") are handled by product matching — drop them here so an
+        // unknown model doesn't drag the score of "XP-Q890K bo'sh chek chiqaryapti" down.
+        $qStems = array_values(array_filter($this->stems($q), fn ($s) => !preg_match('/\d/u', $s)));
+
+        if (!$qStems) {
+            return null;
+        }
+
+        $articles = $this->kb->articles($lang);
+        if (!$articles) {
+            return null;
+        }
+
+        // "драйвер что это", "firmware nima", "what is tspl" → one meaningful stem left:
+        // answer only with a glossary entry whose title carries that term.
+        if (count($qStems) === 1) {
+            foreach ($articles as $article) {
+                if ($article['type'] === 'glossary'
+                    && $this->stemMatches($qStems[0], $this->stems(self::normalize($article['title_search'])))) {
+                    return $this->kbReply($article, $lang);
+                }
+            }
+
+            return null;
+        }
+
+        // Stems per article + how many articles each stem appears in, so "printer" / "chek" /
+        // "печатает" (in nearly every article) weigh far less than "bo'sh", "иероглифы", "kalibrovka".
+        $articleStems = [];
+        $titleStems   = [];
+        $df = [];
+        foreach ($articles as $i => $article) {
+            $stems = $this->stems(self::normalize($article['search']));
+            $articleStems[$i] = $stems;
+            $titleStems[$i]   = $this->stems(self::normalize($article['title_search']));
+            foreach ($stems as $s) {
+                $df[$s] = ($df[$s] ?? 0) + 1;
+            }
+        }
+        $n = count($articles);
+        // 1/df: a word found in one article is worth 1.0, in eight articles 0.125, unknown words 1.0 (they count against every article).
+        $weight = fn (string $qStem): float => 1.0 / max(1, $this->docFrequency($qStem, $df, $n));
+
+        $total = array_sum(array_map($weight, $qStems));
+        if ($total <= 0) {
+            return null;
+        }
+
+        $best      = null;
+        $bestScore = 0.0;
+
+        foreach ($articles as $i => $article) {
+            $aStems = $articleStems[$i];
+            if (!$aStems) {
+                continue;
+            }
+
+            $matched = array_filter($qStems, fn ($s) => $this->stemMatches($s, $aStems));
+            if (!$matched) {
+                continue;
+            }
+
+            // Weighted share of the question this article explains…
+            $score = array_sum(array_map($weight, $matched)) / $total;
+            // …plus a small bonus when the words sit in the title (tie-break between sibling articles)…
+            $inTitle = count(array_filter($matched, fn ($s) => $this->stemMatches($s, $titleStems[$i])));
+            $score  += min(0.1, 0.05 * $inTitle);
+            // …and a nudge for articles tied to the model we are talking about.
+            if ($model && in_array($model, $article['models'], true)) {
+                $score += 0.15;
+            }
+
+            if ($score > $bestScore) {
+                $best      = $article;
+                $bestScore = $score;
+            }
+        }
+
+        if (!$best || $bestScore < $threshold) {
+            return null;
+        }
+
+        return $this->kbReply($best, $lang);
+    }
+
+    private function kbReply(array $article, string $lang): string
+    {
+        return "{$article['title']}\n{$article['excerpt']}\n" . $this->t($lang, 'more', ['url' => $article['url']]);
+    }
+
+    /** Number of articles whose stems match this question stem (prefix-tolerant, like stemMatches). */
+    private function docFrequency(string $qStem, array $df, int $n): int
+    {
+        if (isset($df[$qStem])) {
+            return $df[$qStem];
+        }
+
+        $count = 0;
+        foreach ($df as $stem => $c) {
+            if ($this->stemMatches($qStem, [$stem])) {
+                $count += $c;
+            }
+        }
+
+        return min($count, $n);
     }
 
     private function helpAnswer(string $q, string $lang): ?string

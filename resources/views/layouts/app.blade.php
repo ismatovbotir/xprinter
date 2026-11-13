@@ -154,6 +154,9 @@
                     <a href="{{ route('partners.index') }}"
                        class="pub-nav-link {{ request()->routeIs('partners.*') ? 'active' : '' }}"
                        @if(request()->routeIs('partners.*')) aria-current="page" @endif>{{ __('nav.partners') }}</a>
+                    <a href="{{ route('support.index') }}"
+                       class="pub-nav-link {{ request()->routeIs('support.*') ? 'active' : '' }}"
+                       @if(request()->routeIs('support.*')) aria-current="page" @endif>{{ __('nav.support') }}</a>
                     <a href="{{ $aboutHref }}" class="pub-nav-link {{ request()->routeIs('about') ? 'active' : '' }}"
                        @if(request()->routeIs('about')) aria-current="page" @endif>{{ __('nav.about') }}</a>
                     <a href="{{ $contactHref }}" class="pub-nav-link {{ request()->routeIs('contact') ? 'active' : '' }}"
@@ -212,6 +215,7 @@
                 <ul>
                     <li><a href="{{ route('catalog') }}">{{ __('footer.all_products') }}</a></li>
                     <li><a href="{{ route('partners.index') }}">{{ __('nav.partners') }}</a></li>
+                    <li><a href="{{ route('support.index') }}">{{ __('nav.support') }}</a></li>
                     <li><a href="{{ route('catalog.category', 'receipt-printers') }}">{{ __('footer.receipt_printers') }}</a></li>
                     <li><a href="{{ route('catalog.category', 'label-printers') }}">{{ __('footer.label_printers') }}</a></li>
                     <li><a href="{{ route('catalog.category', 'mobile-printers') }}">{{ __('footer.mobile_printers') }}</a></li>

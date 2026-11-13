@@ -9,6 +9,8 @@ use App\Http\Controllers\Admin\FileController;
 use App\Http\Controllers\Admin\ProductFileController;
 use App\Http\Controllers\Admin\HelpController;
 use App\Http\Controllers\Admin\HomeContentController;
+use App\Http\Controllers\Admin\KbController;
+use App\Http\Controllers\SupportController;
 use App\Http\Controllers\Admin\CityController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\CountryController;
@@ -55,6 +57,12 @@ Route::get('/contact',                   [PageController::class, 'contact'])->na
 Route::get('/partners',                  [PartnerDirectoryController::class, 'index'])->name('partners.index');
 Route::get('/partners/{slug}',           [PartnerDirectoryController::class, 'show'])->name('partners.show');
 Route::get('/sitemap.xml',               [SitemapController::class, 'index'])->name('sitemap');
+
+// Knowledge base: how to fix / configure, drivers & tools explained
+Route::get('/support',                   [SupportController::class, 'index'])->name('support.index');
+Route::get('/support/article/{slug}',    [SupportController::class, 'show'])->name('support.show');
+Route::get('/support/{type}',            [SupportController::class, 'type'])->name('support.type')
+    ->whereIn('type', array_keys(\App\Models\KbArticle::TYPES));
 
 // ── Telegram bot ──────────────────────────────────────────
 Route::post('/telegram/webhook', [TelegramWebhookController::class, 'handle'])->name('telegram.webhook')->middleware('throttle:120,1');
@@ -146,8 +154,11 @@ Route::prefix('admin')
         Route::resource('banners', BannerController::class);
         Route::patch('banners/{banner}/toggle', [BannerController::class, 'toggle'])->name('banners.toggle');
 
-        // Help articles
+        // Help articles (in-app hints for dealers)
         Route::resource('help', HelpController::class);
+
+        // Knowledge base (public /support + chatbot)
+        Route::resource('kb', KbController::class)->except('show');
 
         // Homepage content
         Route::get('homepage', [HomeContentController::class, 'edit'])->name('homepage.edit');

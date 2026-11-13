@@ -92,6 +92,15 @@ class CatalogController extends Controller
             ->limit(6)
             ->get();
 
-        return view('catalog.show', compact('product', 'related', 'sellers'));
+        // Knowledge base: setup / troubleshooting articles for this model or its category.
+        $supportArticles = \App\Models\KbArticle::published()
+            ->with('translations')
+            ->forProduct($product)
+            ->orderByRaw("case type when 'troubleshooting' then 0 when 'settings' then 1 when 'driver' then 2 else 3 end")
+            ->orderBy('sort_order')
+            ->limit(6)
+            ->get();
+
+        return view('catalog.show', compact('product', 'related', 'sellers', 'supportArticles'));
     }
 }

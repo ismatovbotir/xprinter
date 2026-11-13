@@ -240,6 +240,19 @@
   </section>
   @endif
 
+  {{-- Knowledge base: setup & troubleshooting for this model --}}
+  @if(isset($supportArticles) && $supportArticles->isNotEmpty())
+  <section class="prod-section" id="support" aria-labelledby="support-title">
+    <h2 class="prod-section-title" id="support-title">{{ __('support.product_block_title') }}</h2>
+    <div class="kb-product-block">
+      @foreach($supportArticles as $article)
+        @include('support._card', ['article' => $article])
+      @endforeach
+    </div>
+    <p class="kb-more"><a href="{{ route('support.type', ['type' => 'troubleshooting', 'product' => $product->slug]) }}">{{ __('support.product_block_all') }} →</a></p>
+  </section>
+  @endif
+
   {{-- Who sells this model --}}
   <section class="prod-section" aria-labelledby="sellers-title">
     <h2 class="prod-section-title" id="sellers-title">{{ __('partners.sellers_title', ['count' => $sellers->count()]) }}</h2>

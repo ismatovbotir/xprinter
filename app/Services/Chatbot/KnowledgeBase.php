@@ -130,6 +130,43 @@ class KnowledgeBase
             ->all());
     }
 
+    /**
+     * Published knowledge-base articles (how to fix / configure, what a driver or tool is).
+     *
+     * @return array<int, array{title:string, excerpt:string, search:string, url:string, type:string, models:array}>
+     */
+    public function articles(string $lang): array
+    {
+        return Cache::remember("chatbot:kb:{$lang}", self::TTL, fn () => \App\Models\KbArticle::published()
+            ->with(['translations', 'products:id,model_number'])
+            ->orderBy('sort_order')
+            ->get()
+            ->map(function (\App\Models\KbArticle $a) use ($lang) {
+                $t = $a->translations->firstWhere('lang', $lang) ?? $a->translations->firstWhere('lang', 'uz') ?? $a->translations->first();
+                if (!$t) {
+                    return null;
+                }
+
+                return [
+                    'title'   => $t->title,
+                    'excerpt' => $t->excerpt ?: str($t->plainText())->limit(400)->toString(),
+                    'type'    => $a->type,
+                    'url'     => route('support.show', $a->slug),
+                    'models'  => $a->products->pluck('model_number')->all(),
+                    // Titles in every language + keywords, so uz/ru questions both match.
+                    'search'  => implode(' ', array_filter([
+                        $a->translations->pluck('title')->implode(' '),
+                        (string) $a->keywords,
+                    ])),
+                    // Titles only — a hit here is a stronger signal than a hit in keywords.
+                    'title_search' => $a->translations->pluck('title')->implode(' '),
+                ];
+            })
+            ->filter()
+            ->values()
+            ->all());
+    }
+
     /** "XP-Q890K" → "xpq890k". */
     public static function compact(string $text): string
     {
@@ -141,9 +178,10 @@ class KnowledgeBase
         foreach (['chatbot:knowledge', 'chatbot:partners', 'chatbot:categories', 'chatbot:places'] as $key) {
             Cache::forget($key);
         }
-        foreach (['uz', 'ru'] as $lang) {
+        foreach (['uz', 'ru', 'en'] as $lang) {
             Cache::forget("chatbot:products:{$lang}");
             Cache::forget("chatbot:help:{$lang}");
+            Cache::forget("chatbot:kb:{$lang}");
         }
     }
 }
